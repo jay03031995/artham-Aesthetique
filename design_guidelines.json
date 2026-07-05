@@ -1,0 +1,148 @@
+{
+  "theme": "light",
+  "archetype": "Archetype 1 (Organic & Earthy) + Archetype 5 (Luxury)",
+  "brand_identity": {
+    "name": "Artham Aesthetique",
+    "aesthetic_target": "Luxury editorial (Aesop × Aman Resorts)",
+    "motion_style": "Calm motion, opacity + translate + blur only, 700-1200ms ease-out cubic. NO bounce, neon, particles, or WebGL."
+  },
+  "colors": {
+    "primary": "#844d28",
+    "background_primary": "#efdfc8",
+    "background_secondary": "#f5e6d0",
+    "text_primary": "#483f37",
+    "accent": "#b8894a"
+  },
+  "typography": {
+    "imports": [
+      "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500;1,600&family=Poppins:wght@300;400;500&family=Montserrat:wght@400&family=Raleway:wght@300;400&family=Tiro+Devanagari+Hindi&display=swap"
+    ],
+    "headlines": {
+      "family": "'Playfair Display', serif",
+      "weights": [400, 500, 600],
+      "line_height": "1.05"
+    },
+    "body": {
+      "family": "'Poppins', sans-serif",
+      "weights": [300, 400, 500],
+      "line_height": "1.9"
+    },
+    "ui_elements": {
+      "family": "'Montserrat', sans-serif",
+      "weight": 400,
+      "text_transform": "uppercase",
+      "letter_spacing": "0.3em",
+      "size": "11px"
+    },
+    "fine_print": {
+      "family": "'Raleway', sans-serif",
+      "weights": [300, 400]
+    },
+    "devanagari": {
+      "family": "'Tiro Devanagari Hindi', serif"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Generous whitespace. Use p-12, p-16, p-24, p-32.",
+    "section_background_rotation": [
+      "#efdfc8",
+      "#f5e6d0",
+      "#483f37",
+      "#844d28"
+    ],
+    "button_styling": {
+      "shape": "rectangular",
+      "typography": "uppercase Montserrat 11px, tracking-[0.3em]",
+      "primary": "bg-[#844d28] text-white",
+      "secondary": "bg-transparent border border-[#844d28] text-[#844d28]",
+      "hover": "transition-all duration-500"
+    }
+  },
+  "components": {
+    "header": {
+      "description": "Innovative header with utility strip. Glassmorphism nav on scroll (backdrop-blur-xl bg-[#efdfc8]/70) with hairline gold border (border-b border-[#b8894a]).",
+      "mega_menu": "6 category columns layout with a featured card for Treatments."
+    },
+    "hero": {
+      "description": "Full-bleed muted autoplay looping video with soft armadillo (#483f37) gradient overlay (max 40-50% opacity). Text overlaid.",
+      "video_url": "https://customer-assets.emergentagent.com/job_abefdb02-6575-4919-95fe-d04bd8e6b148/artifacts/3ulgovjn_arhum%20%285%29.mp4"
+    },
+    "sticky_mobile_bar": {
+      "description": "Sticky bottom action bar on mobile with Call, WhatsApp, and Book actions."
+    },
+    "booking_flow": {
+      "description": "3-step stepper (Concern → Date/Time → Details). Use gold (#b8894a) for the progress indicator."
+    },
+    "chatbot": {
+      "description": "Floating lotus launcher with guided intents panel."
+    },
+    "footer": {
+      "description": "Armadillo background (#483f37), arabian-white text (#efdfc8), gold headings (#b8894a). 4-column layout including newsletter."
+    }
+  },
+  "page_structures": {
+    "homepage": [
+      "Hero",
+      "Stats Strip",
+      "6 Treatment Categories (Grid)",
+      "About",
+      "Quick Links (Blog/Certs/Services)",
+      "Why Us Pillars",
+      "The Artham Way (Consult → Customise → Care)",
+      "Meet Dr. Omaima",
+      "Testimonials Carousel",
+      "Offer CTA Band",
+      "Featured-in Marquee",
+      "Latest Blog",
+      "Footer"
+    ],
+    "service_page_template": [
+      "Hero",
+      "What is",
+      "Who it's for (Chips)",
+      "How it works (Timeline)",
+      "Benefits",
+      "Downtime Table",
+      "Doctor's Note",
+      "FAQ Accordion",
+      "Related Carousel",
+      "Sticky mobile CTA"
+    ]
+  },
+  "media_urls": {
+    "logo": "Wait for user to provide the literal file path for the Lotus Logo (with Devanagari) they uploaded. Do not use generic text if asset exists.",
+    "hero_video": "https://customer-assets.emergentagent.com/job_abefdb02-6575-4919-95fe-d04bd8e6b148/artifacts/3ulgovjn_arhum%20%285%29.mp4",
+    "doctor_portrait": "placeholder (Wait for user to provide, or use an elegant Unsplash portrait placeholder temporarily)",
+    "treatment_images": [
+      {
+        "url": "https://images.unsplash.com/photo-1781948237644-4bb872b37c79?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBza2luY2FyZSUyMGJvdGFuaWNhbHxlbnwwfHx8fDE3ODMyODE2NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Cosmetic dropper bottles for product feature"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1781451481536-3c387b372597?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAxODF8MHwxfHNlYXJjaHw0fHxsdXh1cnklMjBza2luY2FyZSUyMGJvdGFuaWNhbHxlbnwwfHx8fDE3ODMyODE2NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Wooden tray with natural cosmetics"
+      },
+      {
+        "url": "https://images.pexels.com/photos/27544685/pexels-photo-27544685.jpeg",
+        "description": "Minimalist spa products with lush green leaves"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1676302144341-10563603f99a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NzF8MHwxfHNlYXJjaHwzfHxzcGElMjB3ZWxsbmVzcyUyMG5ldXRyYWwlMjBsaWdodHxlbnwwfHx8fDE3ODMyODE2NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Luxury spa indoor environment"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1612239395391-dab5de40aa0f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NTY2NjZ8MHwxfHNlYXJjaHw0fHxkZXJtYXRvbG9neSUyMGhhbmRzJTIwd2FybXxlbnwwfHx8fDE3ODMyODE2NDZ8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Soft dermatology visual, woman touching face"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "CRITICAL: Do NOT use Shadcn standard UI uncustomized. Re-style inputs, cards, and accordions to fit the Aesop x Aman aesthetic (no borders, or only hairline gold borders).",
+    "CRITICAL: Ensure EVERY single interactive element has a data-testid attribute.",
+    "Add custom Tailwind classes in the config for these exact colors: burma-teak (#844d28), arabian-white (#efdfc8), armadillo (#483f37), coronation-gold (#b8894a), summer-peach (#f5e6d0).",
+    "Set up Framer Motion or Tailwind transitions exactly as requested (700-1200ms ease-out cubic). Only opacity, translate, and blur. NO bounces.",
+    "Ensure components are pure .jsx/.js and NOT .tsx.",
+    "Backgrounds MUST rotate exactly as instructed: arabian-white -> summer-peach -> armadillo -> burma-teak.",
+    "Implement mobile-first responsive behaviors, especially the sticky mobile bottom bar and chatbot."
+  ]
+}
