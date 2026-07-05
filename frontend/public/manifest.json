@@ -1,0 +1,18 @@
+{
+  "short_name": "Artham",
+  "name": "Artham Aesthetique",
+  "description": "Dermatology & Aesthetics — Noida",
+  "icons": [
+    {
+      "src": "https://customer-assets.emergentagent.com/job_abefdb02-6575-4919-95fe-d04bd8e6b148/artifacts/s3tzezxe_Artham%20Aesthetique%20.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#844d28",
+  "background_color": "#efdfc8",
+  "scope": "/"
+}
