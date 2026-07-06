@@ -112,12 +112,12 @@ export default function Header({ onOpenBooking }) {
         }`}
       >
         <div className="container-editorial flex items-center justify-between h-[76px] lg:h-[80px]">
-          {/* Logo — original black-bg PNG, rendered as-is (small badge) */}
+          {/* Logo — gold transparent lotus, rendered as-is (no wrapper) */}
           <Link to="/" data-testid="header-logo" aria-label="Artham Aesthetique home" className="flex items-center gap-3 group shrink-0">
             <img
               src={SITE.logoUrl}
               alt="Artham Aesthetique lotus logo"
-              className="h-12 w-12 lg:h-14 lg:w-14 object-contain rounded-md transition-transform duration-500 group-hover:scale-105"
+              className="h-12 w-12 lg:h-14 lg:w-14 object-contain transition-transform duration-500 group-hover:scale-105"
             />
             <div className="leading-tight hidden sm:block">
               <div className="font-display text-xl lg:text-2xl text-[#3D2F23]" style={{ letterSpacing: "0" }}>Artham</div>

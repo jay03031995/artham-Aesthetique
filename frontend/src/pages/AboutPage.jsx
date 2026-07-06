@@ -27,7 +27,7 @@ export default function AboutPage({ onOpenBooking }) {
             </div>
           </div>
           <div className="reveal" style={{ transitionDelay: "150ms" }}>
-            <img src="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1400&q=80" alt="Clinic interior" loading="lazy" className="w-full aspect-[4/5] object-cover" />
+            <img src={SITE.clinicPhotoUrl} alt="Artham Aesthetique treatment suite in Noida — warm, editorial interior" loading="lazy" className="w-full aspect-[4/5] object-cover rounded-lg" />
           </div>
         </div>
       </section>

@@ -47,7 +47,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-6 lg:col-span-4">
             <div className="flex items-center gap-3 mb-6">
-              <img src={SITE.logoUrl} alt="Artham Aesthetique lotus" className="h-14 w-14 object-contain" />
+              <img src={SITE.footerLogoUrl} alt="Artham Aesthetique lotus" className="h-14 w-14 object-contain rounded-md" />
               <div>
                 <div className="font-display text-xl text-[#FFF7EC]">Artham</div>
                 <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#b8894a]">Aesthetique</div>

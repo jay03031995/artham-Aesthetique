@@ -11,6 +11,8 @@ export const SITE = {
     line3: "Uttar Pradesh 201304, India",
   },
   logoUrl:
+    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/76vjgapp_Artham%20laesthetic%20logo%20.png",
+  footerLogoUrl:
     "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/gng6ao8r_Artham%20Aesthetique%20.png",
   doctorPortraitUrl:
     "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/oebd0rmo_omaima.png",
