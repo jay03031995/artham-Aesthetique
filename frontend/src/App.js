@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useCallback, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import "@/App.css";
 import "@/index.css";
 import { Toaster } from "sonner";
@@ -26,7 +26,19 @@ import CareersPage from "@/pages/CareersPage";
 import OffersPage from "@/pages/OffersPage";
 import BookingRouteBridge from "@/pages/BookingRouteBridge";
 
+// Reset scroll on route change; honor in-page #anchors (e.g. Journal TOC).
 function ScrollToTop() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (hash) {
+      const el = document.getElementById(hash.slice(1));
+      if (el) {
+        el.scrollIntoView();
+        return;
+      }
+    }
+    window.scrollTo(0, 0);
+  }, [pathname, hash]);
   return null;
 }
 
