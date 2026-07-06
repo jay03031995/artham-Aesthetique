@@ -10,18 +10,14 @@ export const SITE = {
     line2: "Hazipur, Sector 104, Noida",
     line3: "Uttar Pradesh 201304, India",
   },
-  logoUrl:
-    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/76vjgapp_Artham%20laesthetic%20logo%20.png",
-  footerLogoUrl:
-    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/gng6ao8r_Artham%20Aesthetique%20.png",
-  doctorPortraitUrl:
-    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/oebd0rmo_omaima.png",
-  heroImageUrl:
-    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/3q9xhx4u_image.png",
-  clinicPhotoUrl:
-    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/4crgdbma_PHOTO-2026-07-02-19-15-10.jpg",
-  heroVideoUrl:
-    "https://customer-assets.emergentagent.com/job_abefdb02-6575-4919-95fe-d04bd8e6b148/artifacts/3ulgovjn_arhum%20%285%29.mp4",
+  // Self-hosted in frontend/public/media so they load same-origin on Vercel
+  // (the previous Emergent preview-CDN URLs were unreliable in production).
+  logoUrl: "/media/logo.png",
+  footerLogoUrl: "/media/footer-logo.png",
+  doctorPortraitUrl: "/media/doctor.png",
+  heroImageUrl: "/media/hero.png",
+  clinicPhotoUrl: "/media/hero-poster.jpg",
+  heroVideoUrl: "/media/hero.mp4",
   parentBrandUrl: "https://artham-intro.preview.emergentagent.com/",
   social: {
     instagram: "https://instagram.com/artham.aesthetique",
