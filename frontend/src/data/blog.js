@@ -59,7 +59,7 @@ export const POSTS = [
     slug: "hair-loss-what-actually-helps",
     category: "Hair",
     title: "Hair Loss — What Actually Helps, and What Doesn't",
-    excerpt: "An honest, dermatologist-led framework for reading, diagnosing and treating hair loss.",
+    excerpt: "An honest, dr-led framework for reading, diagnosing and treating hair loss.",
     coverImage: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=1600&q=80",
     readingTimeMin: 9,
     date: "2025-12-30",

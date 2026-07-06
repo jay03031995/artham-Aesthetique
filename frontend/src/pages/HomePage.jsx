@@ -72,29 +72,37 @@ export default function HomePage({ onOpenBooking }) {
 
   return (
     <>
-      <Seo title="Where Science meets Soulful Care" description="Dermatologist-led skin, hair and body wellness in Noida. Editorial care by Dr. Omaima Jawed at Artham Aesthetique." jsonLd={jsonLd} />
+      <Seo title="Where Science meets Soulful Care" description="Dr-led skin, hair and body wellness in Noida. Editorial care by Dr. Omaima Jawed at Artham Aesthetique." jsonLd={jsonLd} />
 
-      {/* 1. HERO */}
-      <section className="relative h-[92vh] min-h-[620px] w-full overflow-hidden" data-testid="hero">
+      {/* 1. HERO — clinic video with dark gradient overlay */}
+      <section
+        className="relative w-full overflow-hidden bg-[#3D2F23]"
+        data-testid="hero"
+        style={{ minHeight: "min(92vh, 900px)" }}
+      >
         <video
           data-testid="hero-video"
           autoPlay muted loop playsInline
-          poster="https://images.unsplash.com/photo-1676302144341-10563603f99a?auto=format&fit=crop&w=1920&q=80"
+          poster={SITE.clinicPhotoUrl}
           className="absolute inset-0 w-full h-full object-cover"
+          style={{ zIndex: 0 }}
         >
           <source src={SITE.heroVideoUrl} type="video/mp4" />
         </video>
-        {/* Scrim: strong at top and bottom for header/CTA legibility */}
-        <div className="absolute inset-0 hero-scrim" />
-        <div className="relative z-10 h-full container-editorial flex flex-col justify-center">
-          <p className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mb-5 animate-fade-up">Artham Aesthetique · Noida</p>
-          <h1 className="font-display text-[#FFF7EC] leading-[1.05] max-w-3xl animate-fade-up" style={{ animationDelay: "120ms", fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
+        <div
+          aria-hidden="true"
+          className="absolute inset-0"
+          style={{ zIndex: 1, background: "linear-gradient(180deg, rgba(30,20,10,0.55) 0%, rgba(30,20,10,0.3) 45%, rgba(30,20,10,0.65) 100%)" }}
+        />
+        <div className="relative container-editorial py-20 lg:py-28 flex flex-col justify-center" style={{ zIndex: 2, minHeight: "inherit" }}>
+          <p className="text-[13px] font-semibold text-[#F5D89C] mb-5 animate-fade-up" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Artham Aesthetique · Noida</p>
+          <h1 className="font-display text-[#FFF7EC] leading-[1.15] max-w-3xl animate-fade-up" style={{ animationDelay: "120ms", fontSize: "clamp(2rem, 5.5vw, 3.5rem)", fontWeight: 600 }}>
             Where Science meets<br /><em className="italic font-light">Soulful Care.</em>
           </h1>
-          <p className="text-[17px] leading-[1.65] text-[#FFF7EC] max-w-xl mt-6 animate-fade-up" style={{ animationDelay: "220ms" }}>
-            Dermatologist-led skin, hair and body wellness — practised with restraint, considered like a ritual.
+          <p className="text-[17px] md:text-[18px] leading-[1.6] text-[#FFF7EC] max-w-xl mt-6 animate-fade-up" style={{ animationDelay: "220ms", fontFamily: "'Poppins', sans-serif" }}>
+            Dr-led skin, hair and body wellness — practised with restraint, considered like a ritual.
           </p>
-          <div className="flex flex-wrap gap-4 mt-9 animate-fade-up" style={{ animationDelay: "320ms" }}>
+          <div className="flex flex-wrap gap-4 mt-8 animate-fade-up" style={{ animationDelay: "320ms" }}>
             <button data-testid="hero-book-btn" onClick={onOpenBooking} className="btn-primary">Book Appointment</button>
             <Link to="/category/skin" data-testid="hero-explore-btn" className="btn-outline-light">Explore Treatments</Link>
           </div>
@@ -103,14 +111,14 @@ export default function HomePage({ onOpenBooking }) {
 
       {/* 2. TRUST BAR */}
       <section className="bg-[#3D2F23] py-6" data-testid="trust-bar">
-        <div className="container-editorial flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-[13px] md:text-[14px] text-[#FFF7EC]">
-          <div className="flex items-center gap-2"><BadgeCheck size={16} className="text-[#F5D89C]" /> Dermatologist-led</div>
-          <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
-          <div className="flex items-center gap-2"><Award size={16} className="text-[#F5D89C]" /> 10+ years experience</div>
+        <div className="container-editorial flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] md:text-[14px] text-[#FFF7EC]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+          <div className="flex items-center gap-2"><BadgeCheck size={16} className="text-[#F5D89C]" /> Dr-led</div>
           <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
           <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-[#F5D89C]" /> FDA-approved technology</div>
           <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
-          <div className="flex items-center gap-2"><Star size={16} className="text-[#F5D89C] fill-[#F5D89C]" /> 4.9 · Google reviews</div>
+          <div className="flex items-center gap-2"><Award size={16} className="text-[#F5D89C]" /> 10+ years experience</div>
+          <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
+          <div className="flex items-center gap-2"><Star size={16} className="text-[#F5D89C] fill-[#F5D89C]" /> 4.9 Google rating</div>
           <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
           <div className="flex items-center gap-2"><Users size={16} className="text-[#F5D89C]" /> 5,000+ happy clients</div>
         </div>

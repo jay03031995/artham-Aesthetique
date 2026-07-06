@@ -31,7 +31,7 @@ const baseFaqs = (name) => [
   { q: `How many sessions will I need?`, a: `It depends on your concern and skin type. We share an honest plan with the number of sessions and interval only after examining you — never as a fixed sales package.` },
   { q: `Is there downtime?`, a: `Downtime for ${name} is minimal for most people, but individual responses vary. Full aftercare instructions are shared at your visit.` },
   { q: `When will I see results?`, a: `Some benefits are visible immediately; deeper improvements build over 2–8 weeks as the skin remodels.` },
-  { q: `Is the treatment safe?`, a: `Yes — we use FDA-approved technology and single-use consumables, and every protocol is dermatologist-led.` },
+  { q: `Is the treatment safe?`, a: `Yes — we use FDA-approved technology and single-use consumables, and every protocol is dr-led.` },
 ];
 
 const serviceTemplate = (over) => ({
@@ -112,7 +112,7 @@ const SKIN = [
   }),
   serviceTemplate({
     slug: "acne-treatment", name: "Acne Treatment", short: "A medical-grade, root-cause plan for calm, clear skin.",
-    hero: "A dermatologist-led plan — not a facial. Built for the way your acne actually behaves.", image: IMG.hands,
+    hero: "A dr-led plan — not a facial. Built for the way your acne actually behaves.", image: IMG.hands,
     what: "Acne is not one condition — it's several, layered together. At Artham we begin with a proper diagnosis (hormonal, congestive, inflammatory or scarring), then combine in-clinic procedures with a simple, sustainable home regimen. The goal is quiet, resilient skin — not a temporary reset.",
     whoFor: ["Active breakouts", "Cystic / hormonal acne", "Post-acne marks", "Oily, congested skin", "Teen and adult acne"],
     howItWorks: [
@@ -441,7 +441,7 @@ const HAIR = [
   }),
   serviceTemplate({
     slug: "hair-loss-treatment", name: "Hair Loss Treatment", short: "Non-surgical protocols — PRP, growth factors and topicals.",
-    hero: "A non-surgical, dermatologist-led plan — PRP, growth factors and honest expectations.", image: IMG.hair2,
+    hero: "A non-surgical, dr-led plan — PRP, growth factors and honest expectations.", image: IMG.hair2,
     what: "Non-surgical hair loss treatment at Artham combines scalp PRP, growth-factor mesotherapy, targeted topicals and — when appropriate — oral medications. It is most effective when hair loss is caught early and treated as a medical condition, not a cosmetic one.",
     whoFor: ["Diffuse thinning", "Early male/female pattern loss", "Post-Covid shedding", "PCOD-related thinning"],
     howItWorks: [
@@ -530,7 +530,7 @@ const BODY = [
   serviceTemplate({
     slug: "weight-loss-treatment", name: "Weight Loss Treatment", short: "Medically-supervised, sustainable weight loss.",
     hero: "A medical, kind, sustainable weight-loss plan.", image: IMG.spa,
-    what: "Our weight-loss programme is dermatologist-led and includes nutrition, movement guidance, in-clinic body treatments and — when medically appropriate — prescription support. We do not sell 'quick fixes'.",
+    what: "Our weight-loss programme is dr-led and includes nutrition, movement guidance, in-clinic body treatments and — when medically appropriate — prescription support. We do not sell 'quick fixes'.",
     whoFor: ["Sustainable weight loss", "PCOD-linked weight gain", "Post-partum reshaping"],
     howItWorks: [
       { title: "Medical review", body: "Full history, labs when needed." },

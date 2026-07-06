@@ -107,21 +107,21 @@ export default function Header({ onOpenBooking }) {
       <div
         className={`transition-all duration-500 ${
           scrolled
-            ? "bg-[#FBF3E7]/95 backdrop-blur-xl shadow-[0_1px_0_0_rgba(184,137,74,0.35)]"
-            : "bg-[#FBF3E7]"
+            ? "bg-[#FBF3E7]/95 backdrop-blur-xl shadow-[0_1px_0_0_rgba(184,137,74,0.4)]"
+            : "bg-[#FBF3E7] border-b border-[#b8894a]/25"
         }`}
       >
-        <div className="container-editorial flex items-center justify-between h-[70px] lg:h-[84px]">
-          {/* Logo — transparent PNG used as-is, no wrapper background */}
+        <div className="container-editorial flex items-center justify-between h-[76px] lg:h-[80px]">
+          {/* Logo — original black-bg PNG, rendered as-is (small badge) */}
           <Link to="/" data-testid="header-logo" aria-label="Artham Aesthetique home" className="flex items-center gap-3 group shrink-0">
             <img
               src={SITE.logoUrl}
               alt="Artham Aesthetique lotus logo"
-              className="h-12 w-12 lg:h-14 lg:w-14 object-contain transition-transform duration-500 group-hover:scale-105"
+              className="h-12 w-12 lg:h-14 lg:w-14 object-contain rounded-md transition-transform duration-500 group-hover:scale-105"
             />
             <div className="leading-tight hidden sm:block">
-              <div className="font-display text-xl lg:text-2xl text-[#3D2F23]" style={{ letterSpacing: "0.01em" }}>Artham</div>
-              <div className="text-[10px] text-[#7A5A2E] font-semibold tracking-[0.18em] uppercase">Aesthetique</div>
+              <div className="font-display text-xl lg:text-2xl text-[#3D2F23]" style={{ letterSpacing: "0" }}>Artham</div>
+              <div className="text-[11px] text-[#8A6D3B] font-semibold" style={{ fontFamily: "'Raleway', sans-serif" }}>Aesthetique</div>
             </div>
           </Link>
 
@@ -191,7 +191,7 @@ export default function Header({ onOpenBooking }) {
             <div className="grid grid-cols-6 gap-8">
               {MEGA.map((col) => (
                 <div key={col.heading}>
-                  <p className="text-[13px] uppercase tracking-[0.14em] font-semibold text-[#7A5A2E] mb-4">
+                  <p className="text-[13px] font-semibold text-[#8A6D3B] mb-4" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>
                     {col.heading}
                   </p>
                   <ul className="space-y-2.5">
@@ -201,6 +201,7 @@ export default function Header({ onOpenBooking }) {
                           data-testid={`mega-svc-${s.slug}`}
                           to={`/services/${s.slug}`}
                           className="text-[15px] text-[#3D2F23] hover:text-[#7A3E1D] hover:underline underline-offset-4 transition-colors"
+                          style={{ fontFamily: "'Poppins', sans-serif" }}
                         >
                           {s.name}
                         </Link>
@@ -211,6 +212,7 @@ export default function Header({ onOpenBooking }) {
                         data-testid={`mega-cat-${col.heading.replace(/\s|&/g, "").toLowerCase()}`}
                         to={col.catLink}
                         className="text-[13px] font-semibold text-[#7A3E1D] hover:underline underline-offset-4"
+                        style={{ fontFamily: "'Poppins', sans-serif" }}
                       >
                         View all {col.heading} →
                       </Link>
@@ -220,7 +222,7 @@ export default function Header({ onOpenBooking }) {
               ))}
               {/* By Concern */}
               <div>
-                <p className="text-[13px] uppercase tracking-[0.14em] font-semibold text-[#7A5A2E] mb-4">By Concern</p>
+                <p className="text-[13px] font-semibold text-[#8A6D3B] mb-4" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>By Concern</p>
                 <ul className="space-y-2.5">
                   {CONCERN_LINKS.map((c) => (
                     <li key={c.label}>
@@ -228,6 +230,7 @@ export default function Header({ onOpenBooking }) {
                         data-testid={`mega-concern-${c.label.replace(/\s|&/g,"").toLowerCase()}`}
                         to={c.href}
                         className="text-[15px] text-[#3D2F23] hover:text-[#7A3E1D] hover:underline underline-offset-4 transition-colors"
+                        style={{ fontFamily: "'Poppins', sans-serif" }}
                       >
                         {c.label}
                       </Link>
@@ -246,8 +249,8 @@ export default function Header({ onOpenBooking }) {
                     <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=400&q=80" alt="HydraFacial" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#7A5A2E] mb-1">Most Loved</p>
-                    <h4 className="font-display text-xl text-[#3D2F23] mb-1">HydraFacial Treatment</h4>
+                    <p className="text-[12px] font-semibold text-[#8A6D3B] mb-1" style={{ fontFamily: "'Raleway', sans-serif" }}>Most Loved</p>
+                    <h4 className="font-display text-xl text-[#3D2F23] mb-1" style={{ fontWeight: 600 }}>HydraFacial Treatment</h4>
                     <p className="text-sm text-[#5C4A38]">Cleanse, extract, hydrate — in one calm hour. From ₹5,500.</p>
                   </div>
                   <span className="text-sm font-semibold text-[#7A3E1D] group-hover:underline">Book now →</span>

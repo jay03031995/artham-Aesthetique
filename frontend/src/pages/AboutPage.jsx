@@ -7,7 +7,7 @@ export default function AboutPage({ onOpenBooking }) {
   useReveal();
   return (
     <>
-      <Seo title="About Us" description="A dermatologist-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body." />
+      <Seo title="About Us" description="A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body." />
       <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
         <div className="container-editorial max-w-4xl">
           <p className="overline text-coronation-gold mb-4">About Artham Aesthetique</p>

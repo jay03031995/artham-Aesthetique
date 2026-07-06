@@ -18,7 +18,7 @@ export default function Seo({ title, description, canonical, ogImage, jsonLd }) 
       el.setAttribute("content", value);
     };
 
-    set("name", "description", description || "Dermatologist-led skin, hair and body wellness in Noida. Editorial care by Dr. Omaima Jawed.");
+    set("name", "description", description || "Dr-led skin, hair and body wellness in Noida. Editorial care by Dr. Omaima Jawed.");
     set("property", "og:title", fullTitle);
     set("property", "og:description", description || "");
     if (ogImage) set("property", "og:image", ogImage);

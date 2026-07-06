@@ -31,83 +31,79 @@ html { scroll-behavior: smooth; scroll-padding-top: 100px; }
 
 body {
   margin: 0;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Poppins', system-ui, sans-serif;
   font-weight: 400;
   font-size: 16px;
   line-height: 1.6;
   background: #efdfc8;
-  color: #3D2F23; /* darker text for 4.5:1 contrast on cream */
+  color: #3D2F23;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
-  letter-spacing: 0.005em;
+  letter-spacing: 0;
 }
 
 ::selection { background: #7A3E1D; color: #FFF7EC; }
 
-h1, h2, h3, h4, h5 {
+/* Headings — H1/H2 Playfair Display 600, H3/H4 Raleway SemiBold */
+h1, h2 {
   font-family: 'Playfair Display', serif;
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.01em;
-}
-h1 { line-height: 1.05; }
-
-/* Overline — small caps eyebrow labels only (12px, #7A5A2E-ish, 600) */
-.overline {
-  font-family: 'Inter', sans-serif;
   font-weight: 600;
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #7A5A2E; /* darker than gold for 4.5:1 */
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+}
+h1 { line-height: 1.15; }
+h3, h4, h5 {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
-/* Nav links — sans, Title Case, 15px, weight 500 */
-.nav-item {
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 15px;
-  letter-spacing: 0.01em;
-  color: #3D2F23;
+/* Eyebrow labels — Raleway 13px 600 #8A6D3B, NORMAL CASE (no uppercase) */
+.overline {
+  font-family: 'Raleway', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #8A6D3B;
 }
 
-.fine { font-family: 'Inter', sans-serif; font-weight: 400; }
+.fine { font-family: 'Poppins', sans-serif; font-weight: 400; }
 .deva { font-family: 'Tiro Devanagari Hindi', serif; }
 
-/* Body helpers — no forced color so Tailwind text-* utilities can override */
 .text-body { font-size: 16px; line-height: 1.6; }
 .text-body-lg { font-size: 18px; line-height: 1.65; }
 
-/* Buttons — solid primary #7A3E1D bg, cream text 15-16px */
+/* Buttons — Poppins Medium 15px, NORMAL CASE, no letter-spacing */
 .btn-primary {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 14px 28px; min-height: 48px;
+  padding: 14px 26px; min-height: 48px;
   background: #7A3E1D; color: #FFF7EC;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px; font-weight: 600;
-  letter-spacing: 0.02em;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px; font-weight: 500;
+  letter-spacing: 0; text-transform: none;
   border: 2px solid #7A3E1D;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease, transform 300ms ease;
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
 }
 .btn-primary:hover { background: #5C2E15; border-color: #5C2E15; }
 .btn-primary:focus-visible { outline: 3px solid #b8894a; outline-offset: 2px; }
 
 .btn-secondary {
   display: inline-flex; align-items: center; justify-content: center;
-  padding: 14px 28px; min-height: 48px;
-  background: transparent; color: #3D2F23;
-  font-family: 'Inter', sans-serif;
-  font-size: 15px; font-weight: 600;
-  letter-spacing: 0.02em;
-  border: 2px solid #3D2F23;
-  border-radius: 6px;
+  padding: 14px 26px; min-height: 48px;
+  background: transparent; color: #7A3E1D;
+  font-family: 'Poppins', sans-serif;
+  font-size: 15px; font-weight: 500;
+  letter-spacing: 0; text-transform: none;
+  border: 2px solid #7A3E1D;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
 }
-.btn-secondary:hover { background: #3D2F23; color: #FFF7EC; }
+.btn-secondary:hover { background: #7A3E1D; color: #FFF7EC; }
 .btn-secondary:focus-visible { outline: 3px solid #b8894a; outline-offset: 2px; }
 
 .btn-on-dark {
@@ -117,14 +113,14 @@ h1 { line-height: 1.05; }
 
 .btn-outline-light {
   background: transparent; color: #FFF7EC; border: 2px solid #FFF7EC;
-  padding: 14px 28px; min-height: 48px; border-radius: 6px;
-  font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; letter-spacing: 0.02em;
+  padding: 14px 26px; min-height: 48px; border-radius: 8px;
+  font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none;
   display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
   transition: background-color 300ms ease, color 300ms ease;
 }
 .btn-outline-light:hover { background: #FFF7EC; color: #3D2F23; }
 
-/* Form inputs — boxed, white bg, 48px, #C9B08C border, focus ring */
+/* Form inputs — Poppins 15px, white bg, 1px #C9B08C, 8px radius, 48px */
 .input-box, .textarea-box {
   width: 100%;
   background: #FFFFFF;
@@ -132,7 +128,7 @@ h1 { line-height: 1.05; }
   border-radius: 8px;
   padding: 12px 16px;
   min-height: 48px;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 15px;
   color: #3D2F23;
   transition: border-color 200ms ease, box-shadow 200ms ease;
@@ -146,33 +142,35 @@ h1 { line-height: 1.05; }
 }
 .form-label {
   display: block;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 500;
   color: #3D2F23;
   margin-bottom: 8px;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
-/* Global focus outline for keyboard nav */
+/* Global focus outline */
 a:focus-visible, button:focus-visible {
   outline: 3px solid #b8894a;
   outline-offset: 2px;
   border-radius: 4px;
 }
 
-/* Hero scrim - stronger for text legibility */
+/* Hero scrim */
 .hero-scrim {
-  background: linear-gradient(180deg, rgba(30,20,10,0.55) 0%, rgba(30,20,10,0.35) 50%, rgba(30,20,10,0.65) 100%);
+  background: linear-gradient(180deg, rgba(30,20,10,0.5) 0%, rgba(30,20,10,0.35) 50%, rgba(30,20,10,0.55) 100%);
 }
 
-/* Hairline */
 .hairline { height: 1px; background: #b8894a; opacity: 0.4; }
 
-/* Editorial link (gold underline) */
+/* Editorial link */
 .link-gold {
   position: relative; display: inline-block; padding-bottom: 3px;
   color: #7A3E1D;
   font-weight: 500;
+  font-family: 'Poppins', sans-serif;
   transition: color 300ms ease;
 }
 .link-gold::after {
@@ -183,15 +181,16 @@ a:focus-visible, button:focus-visible {
 .link-gold:hover { color: #5C2E15; }
 .link-gold:hover::after { transform-origin: left; transform: scaleX(0); }
 
-/* Header nav underline */
+/* Nav links — Poppins 15px Medium, NORMAL CASE */
 .nav-link {
   position: relative;
   padding: 6px 2px;
   color: #3D2F23;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 500;
   font-size: 15px;
-  letter-spacing: 0.01em;
+  letter-spacing: 0;
+  text-transform: none;
   transition: color 300ms ease;
 }
 .nav-link::after {
@@ -204,9 +203,10 @@ a:focus-visible, button:focus-visible {
 .nav-link.active { color: #7A3E1D; }
 .nav-link.active::after { transform: scaleX(1); }
 
-/* Container */
-.container-editorial { max-width: 1280px; margin: 0 auto; padding-left: 1.25rem; padding-right: 1.25rem; }
-@media (min-width: 768px) { .container-editorial { padding-left: 2.5rem; padding-right: 2.5rem; } }
+/* Container — responsive */
+.container-editorial { max-width: 1280px; margin: 0 auto; padding-left: 1rem; padding-right: 1rem; }
+@media (min-width: 640px) { .container-editorial { padding-left: 1.5rem; padding-right: 1.5rem; } }
+@media (min-width: 768px) { .container-editorial { padding-left: 2rem; padding-right: 2rem; } }
 @media (min-width: 1280px) { .container-editorial { padding-left: 3rem; padding-right: 3rem; } }
 
 /* Reveal on scroll */
