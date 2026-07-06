@@ -65,11 +65,11 @@ export default function Chatbot({ onOpenBooking }) {
         data-testid="chatbot-launcher"
         onClick={() => setOpen(true)}
         aria-label="Open chat"
-        className={`fixed z-30 bottom-20 lg:bottom-6 right-6 w-14 h-14 rounded-full bg-armadillo hover:bg-burma-teak text-arabian-white shadow-[0_10px_30px_-10px_rgba(72,63,55,0.6)] flex items-center justify-center transition-all duration-500 ${
+        className={`fixed z-30 bottom-20 lg:bottom-6 right-6 w-14 h-14 rounded-full bg-[#3D2F23] hover:bg-[#7A3E1D] text-[#FFF7EC] shadow-[0_10px_30px_-10px_rgba(72,63,55,0.6)] flex items-center justify-center transition-all duration-500 ${
           open ? "opacity-0 scale-90 pointer-events-none" : "opacity-100 scale-100"
         }`}
       >
-        <img src={SITE.logoUrl} alt="" className="w-8 h-8 object-contain" />
+        <img src={SITE.logoUrl} alt="" className="w-9 h-9 object-contain" />
       </button>
 
       {/* Panel */}

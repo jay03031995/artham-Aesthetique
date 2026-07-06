@@ -34,7 +34,7 @@ function Layout({ children, onOpenBooking }) {
   return (
     <>
       <Header onOpenBooking={() => onOpenBooking(null)} />
-      <main className="pt-24 lg:pt-28">{children}</main>
+      <main className="pt-[70px] lg:pt-[84px]">{children}</main>
       <Footer />
       <StickyMobileBar onOpenBooking={() => onOpenBooking(null)} />
       <WhatsAppFab />

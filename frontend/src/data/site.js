@@ -11,7 +11,9 @@ export const SITE = {
     line3: "Uttar Pradesh 201304, India",
   },
   logoUrl:
-    "https://customer-assets.emergentagent.com/job_abefdb02-6575-4919-95fe-d04bd8e6b148/artifacts/s3tzezxe_Artham%20Aesthetique%20.png",
+    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/76vjgapp_Artham%20laesthetic%20logo%20.png",
+  doctorPortraitUrl:
+    "https://customer-assets.emergentagent.com/job_skin-soul-clinic/artifacts/wjkqb1rt_Dr%20omaima.png",
   heroVideoUrl:
     "https://customer-assets.emergentagent.com/job_abefdb02-6575-4919-95fe-d04bd8e6b148/artifacts/3ulgovjn_arhum%20%285%29.mp4",
   parentBrandUrl: "https://artham-intro.preview.emergentagent.com/",

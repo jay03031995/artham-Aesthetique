@@ -4,17 +4,17 @@
 
 const IMG = {
   skin1: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=1600&q=80",
-  skin2: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1600&q=80",
+  skin2: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1600&q=80",
   skin3: "https://images.unsplash.com/photo-1512290746430-3ea326d9f5c8?auto=format&fit=crop&w=1600&q=80",
   facial: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=1600&q=80",
   botanical: "https://images.unsplash.com/photo-1781948237644-4bb872b37c79?auto=format&fit=crop&w=1600&q=80",
-  spa: "https://images.unsplash.com/photo-1676302144341-10563603f99a?auto=format&fit=crop&w=1600&q=80",
+  spa: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1600&q=80",
   hands: "https://images.unsplash.com/photo-1612239395391-dab5de40aa0f?auto=format&fit=crop&w=1600&q=80",
   woman1: "https://images.unsplash.com/photo-1552693673-1bf958298935?auto=format&fit=crop&w=1600&q=80",
   woman2: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1600&q=80",
   hair1: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=1600&q=80",
   hair2: "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1600&q=80",
-  laser: "https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&w=1600&q=80",
+  laser: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=80",
   body: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=1600&q=80",
   bridal: "https://images.unsplash.com/photo-1585951237318-9ea5e175b891?auto=format&fit=crop&w=1600&q=80",
   antiage: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?auto=format&fit=crop&w=1600&q=80",
@@ -44,11 +44,19 @@ const serviceTemplate = (over) => ({
   whoFor: [],
   howItWorks: [],
   benefits: [],
+  duration: "45–60 min",
+  sessions: "Personalised plan",
+  priceFrom: "₹4,500",
   downtime: [
     { label: "Session Duration", value: "45–60 minutes" },
     { label: "Downtime", value: "Minimal" },
     { label: "Sessions", value: "Personalised plan" },
     { label: "Results Visible", value: "1–2 weeks" },
+  ],
+  pricing: [
+    { label: "Single Session", value: "₹4,500 onwards" },
+    { label: "Series of 3", value: "10% off — from consult" },
+    { label: "Series of 6", value: "15% off — from consult" },
   ],
   doctorNote: doctorNote(),
   faqs: [],
@@ -86,6 +94,12 @@ const SKIN = [
   serviceTemplate({
     slug: "hydrafacial-treatment", name: "HydraFacial Treatment", short: "Cleanse, extract, hydrate — in one calm hour.",
     hero: "The gold-standard three-step facial for clean, plump, camera-ready skin.", image: IMG.skin2,
+    duration: "60 min", sessions: "1–6 sessions", priceFrom: "₹5,500",
+    pricing: [
+      { label: "Signature (Single)", value: "₹5,500" },
+      { label: "Elite (Single)", value: "₹8,500" },
+      { label: "Signature × 3", value: "₹14,850 (save 10%)" },
+    ],
     what: "HydraFacial uses patented vortex technology to lift debris from pores while simultaneously infusing serums that hydrate and soothe. It is dermatologist-loved because it works for almost every skin — teen or mature, oily or dry — and requires no downtime.",
     whoFor: ["Congested pores", "Dullness", "Fine lines", "Pre-event", "Every skin type"],
     howItWorks: [
@@ -259,6 +273,12 @@ const ANTIAGE = [
   serviceTemplate({
     slug: "dermal-fillers", name: "Dermal Fillers", short: "Hyaluronic-acid volume, placed with restraint.",
     hero: "Volume returned — never added. Sculpted with restraint.", image: IMG.antiage,
+    duration: "45–60 min", sessions: "1 session (touch-up 2 wks)", priceFrom: "₹22,000 / syringe",
+    pricing: [
+      { label: "Per Syringe (0.55 ml)", value: "₹22,000 – ₹28,000" },
+      { label: "Per Full Syringe (1.0 ml)", value: "₹32,000 – ₹42,000" },
+      { label: "Consult", value: "Complimentary 15-min" },
+    ],
     what: "Dermal fillers are FDA-approved hyaluronic acid gels used to gently restore volume and support facial structure. At Artham we practise minimal-touch aesthetics — the goal is a rested version of you, not a different face.",
     whoFor: ["Volume loss", "Under-eye hollows", "Lip refinement", "Jawline definition"],
     howItWorks: [
@@ -397,6 +417,12 @@ const HAIR = [
   serviceTemplate({
     slug: "advanced-hair-transplant", name: "Advanced Hair Transplant", short: "FUE hair transplant with dense, natural hairlines.",
     hero: "Surgical FUE — a natural, permanent solution for pattern hair loss.", image: IMG.hair1,
+    duration: "6–8 hours", sessions: "1 (single-day)", priceFrom: "₹80,000",
+    pricing: [
+      { label: "Up to 1,500 grafts", value: "₹80,000 – ₹1,20,000" },
+      { label: "1,500 – 3,000 grafts", value: "₹1,20,000 – ₹2,20,000" },
+      { label: "3,000 – 4,500 grafts", value: "₹2,20,000 – ₹3,20,000" },
+    ],
     what: "Advanced hair transplant at Artham uses FUE (follicular unit extraction) — where individual grafts are harvested from a healthy donor zone and placed one by one along a natural hairline. Good hairlines look like they were always there — that's our benchmark.",
     whoFor: ["Male pattern hair loss", "Female thinning at parting", "Post-scarring hair loss"],
     howItWorks: [
@@ -485,6 +511,12 @@ const BODY = [
   serviceTemplate({
     slug: "coolsculpting", name: "CoolSculpting", short: "Cryolipolysis fat freezing — FDA-cleared.",
     hero: "FDA-cleared fat freezing — for the pockets that never move.", image: IMG.body,
+    duration: "35–60 min / area", sessions: "1–2 per area", priceFrom: "₹28,000 / area",
+    pricing: [
+      { label: "Small Area", value: "₹28,000" },
+      { label: "Large Area", value: "₹42,000" },
+      { label: "Full Belly Protocol", value: "From ₹95,000" },
+    ],
     what: "CoolSculpting (cryolipolysis) uses controlled cooling to gradually reduce fat cells in specific pockets — belly, love handles, upper arms, inner thighs. It is non-surgical, non-invasive, and the reduction is permanent.",
     whoFor: ["Localised fat pockets", "Post-30 outline changes", "Diet & exercise plateau"],
     howItWorks: [

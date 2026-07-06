@@ -48,12 +48,14 @@ export default function DoctorProfile({ onOpenBooking }) {
               </div>
             </div>
             <div className="reveal" style={{ transitionDelay: "150ms" }}>
-              <img
-                src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=1400&q=80"
-                alt="Dr. Omaima Jawed"
-                className="w-full aspect-[4/5] object-cover"
-              />
-              <p className="fine text-xs text-armadillo/50 mt-3 italic">Portrait placeholder — replace with Dr. Omaima's clinic photograph.</p>
+              <div className="bg-[#f5e6d0] rounded-lg overflow-hidden aspect-[4/5] flex items-end justify-center">
+                <img
+                  src={SITE.doctorPortraitUrl}
+                  alt="Dr. Omaima Jawed portrait"
+                  className="w-full h-full object-contain object-bottom"
+                  loading="lazy"
+                />
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
-import { ChevronDown, ChevronRight, CalendarCheck, MessageCircle, ArrowRight } from "lucide-react";
+import { ChevronDown, ChevronRight, CalendarCheck, MessageCircle, Clock, Repeat, Sparkles, IndianRupee } from "lucide-react";
 import { findService, findCategory, RELATED } from "../data/treatments";
 import { SITE, whatsAppLink } from "../data/site";
 import Seo from "../lib/seo";
@@ -37,26 +37,47 @@ export default function ServicePage({ onOpenBooking }) {
       />
 
       {/* HERO */}
-      <section className="relative bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24" data-testid="service-hero">
+      <section className="relative bg-[#f5e6d0] pt-16 pb-14 lg:pt-24 lg:pb-20" data-testid="service-hero">
         <div className="container-editorial">
-          <nav className="fine text-xs text-armadillo/60 flex items-center gap-2 mb-8 flex-wrap" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-burma-teak">Home</Link>
+          <nav className="text-[13px] text-[#5C4A38] flex items-center gap-2 mb-8 flex-wrap" aria-label="Breadcrumb">
+            <Link to="/" className="hover:text-[#7A3E1D]">Home</Link>
             <ChevronRight size={12} />
-            <Link to={`/category/${cat.slug}`} className="hover:text-burma-teak">{cat.name}</Link>
+            <Link to={`/category/${cat.slug}`} className="hover:text-[#7A3E1D]">{cat.name}</Link>
             <ChevronRight size={12} />
-            <span className="text-armadillo">{s.name}</span>
+            <span className="text-[#3D2F23] font-medium">{s.name}</span>
           </nav>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="overline text-coronation-gold mb-4">{cat.name}</p>
-              <h1 className="font-display text-4xl md:text-5xl lg:text-6xl text-armadillo leading-[1.05] mb-6">{s.name}</h1>
-              <p className="fine text-lg text-armadillo/85 mb-8 leading-relaxed">{s.hero}</p>
+              <p className="overline mb-3">{cat.name}</p>
+              <h1 className="font-display leading-[1.05] text-[#3D2F23] mb-4" style={{ fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)" }}>{s.name}</h1>
+              <p className="text-body-lg text-[#5C4A38] mb-6">{s.hero}</p>
+
+              {/* Quick facts row */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Clock size={14} /><span className="overline text-[10px] mb-0">Duration</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.duration}</p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Repeat size={14} /><span className="overline text-[10px] mb-0">Sessions</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.sessions}</p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Sparkles size={14} /><span className="overline text-[10px] mb-0">Downtime</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">Minimal</p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><IndianRupee size={14} /><span className="overline text-[10px] mb-0">Price from</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.priceFrom}</p>
+                </div>
+              </div>
+
               <div className="flex flex-wrap gap-3">
-                <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={14} /> Book {s.name}</button>
-                <a data-testid="svc-wa-btn" href={whatsAppLink(`Hello, I'd like to know more about ${s.name}.`)} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={14} /> WhatsApp</a>
+                <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={15} /> Book {s.name}</button>
+                <a data-testid="svc-wa-btn" href={whatsAppLink(`Hello, I'd like to know more about ${s.name}.`)} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
               </div>
             </div>
-            <div className="aspect-[4/5] overflow-hidden">
+            <div className="aspect-[4/5] rounded-lg overflow-hidden">
               <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
             </div>
           </div>
@@ -149,6 +170,30 @@ export default function ServicePage({ onOpenBooking }) {
               <div className="overline text-coronation-gold text-[10px]">Dermatologist · Artham Aesthetique</div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* PRICING */}
+      <section className="bg-white py-16 lg:py-20 border-t border-[#b8894a]/25" data-testid="svc-pricing">
+        <div className="container-editorial max-w-4xl">
+          <div className="mb-8 reveal">
+            <p className="overline mb-3">Pricing</p>
+            <h2 className="text-[30px] md:text-[36px] leading-[1.1] mb-3">Transparent, shared upfront.</h2>
+            <p className="text-body text-[#5C4A38]">Indicative pricing shown below. Your final plan is confirmed after a complimentary 15-min consult, based on what your skin actually needs.</p>
+          </div>
+          <div className="border border-[#b8894a]/30 rounded-lg overflow-hidden reveal">
+            <table className="w-full">
+              <tbody>
+                {s.pricing.map((row, i) => (
+                  <tr key={i} className={i % 2 === 0 ? "bg-[#f5e6d0]/40" : "bg-white"}>
+                    <td className="py-4 px-5 text-[15px] font-medium text-[#3D2F23]">{row.label}</td>
+                    <td className="py-4 px-5 text-[15px] font-semibold text-[#7A3E1D] text-right">{row.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="text-[13px] text-[#5C4A38] mt-4">* Prices indicative and inclusive of taxes. Final quote shared after in-clinic consultation.</p>
         </div>
       </section>
 

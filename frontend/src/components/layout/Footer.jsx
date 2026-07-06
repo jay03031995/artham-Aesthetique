@@ -47,12 +47,10 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-6 lg:col-span-4">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-arabian-white/10 flex items-center justify-center overflow-hidden">
-                <img src={SITE.logoUrl} alt="Artham lotus" className="w-full h-full object-contain" />
-              </div>
+              <img src={SITE.logoUrl} alt="Artham Aesthetique lotus" className="h-14 w-14 object-contain" />
               <div>
-                <div className="font-display text-xl">Artham</div>
-                <div className="overline text-coronation-gold text-[10px]">Aesthetique</div>
+                <div className="font-display text-xl text-[#FFF7EC]">Artham</div>
+                <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#b8894a]">Aesthetique</div>
               </div>
             </div>
             <p className="fine text-arabian-white/70 text-sm max-w-sm leading-relaxed">

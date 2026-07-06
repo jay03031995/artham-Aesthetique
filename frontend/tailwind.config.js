@@ -25,10 +25,11 @@ module.exports = {
       },
       fontFamily: {
         display: ["'Playfair Display'", "serif"],
-        body: ["'Poppins'", "system-ui", "sans-serif"],
-        ui: ["'Montserrat'", "sans-serif"],
-        fine: ["'Raleway'", "sans-serif"],
+        body: ["'Inter'", "system-ui", "sans-serif"],
+        ui: ["'Inter'", "sans-serif"],
+        fine: ["'Inter'", "sans-serif"],
         deva: ["'Tiro Devanagari Hindi'", "serif"],
+        poppins: ["'Poppins'", "sans-serif"],
       },
       letterSpacing: {
         overline: "0.3em",
