@@ -1,7 +1,7 @@
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
 import { visionTool } from "@sanity/vision";
-import { schemaTypes } from "./schemas/index.js";
+import { schemaTypes } from "./schemaTypes/index.js";
 
 const PROJECT_ID = "3goot0bo";
 const DATASET = "production";
