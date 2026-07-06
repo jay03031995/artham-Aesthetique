@@ -1,0 +1,40 @@
+{
+  "summary": "Targeted verification of footer dark-on-dark legibility fix. Primary bug is FIXED — all footer body/list/address text now renders in cream (rgba(239,223,200,~0.75)) on armadillo bg rgb(72,63,55). CTA band, stats strip, trust bar, hero H1 and light-bg body text all pass. One residual low-contrast concern: footer column headings (TREATMENTS/COMPANY/SUPPORT/VISIT/NEWSLETTER) and 'OPEN IN MAPS →' link render at rgb(122,90,46) (#7A5A2E) — a darker gold, not the brand coronation-gold #b8894a — giving ~1.9:1 contrast on armadillo, which fails WCAG 4.5:1. Legible but muted.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Footer column headings (h5)", "issue": "H5 labels TREATMENTS/COMPANY/SUPPORT/VISIT/NEWSLETTER render at rgb(122,90,46) on armadillo rgb(72,63,55) — approx 1.9:1 contrast, fails WCAG 4.5:1. Expected brand coronation-gold #b8894a (rgb 184,137,74) which would give ~3.4:1 (still borderline for AA normal text, passes AA Large). Whatever CSS class/opacity is applied is darkening the gold well below spec.", "selector": "footer h5", "priority": "MEDIUM"},
+      {"component": "Footer 'OPEN IN MAPS →' link", "issue": "Same darker-gold rgb(122,90,46) on armadillo — very muted, hard to read.", "selector": "footer a (Open in Maps)", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Homepage stats strip", "issues": ["Copy says 5+ / 18+ / 2,418+ but review-request spec expected 10+ / 37+ / 5,000+ — content mismatch (not a legibility issue, flagging for main agent to confirm intended values)."]}
+    ]
+  },
+  "verification_evidence": {
+    "footer_body_text": "rgba(239,223,200,0.7-0.75) on rgb(72,63,55) — PASS, clearly legible (tagline paragraph, all list items in Treatments/Company/Support, address block 'Lotus Plaza … Sector 104 Noida', phone +91 98119 97993, hours 'Mon–Sat · 10:00 – 20:00', © line).",
+    "cta_band": "H2 'Ready for your consultation?' rgb(255,247,236) on burma-teak rgb(122,62,29) — PASS. Paragraph rgba(255,247,236,0.9) — PASS.",
+    "stats_strip": "Numbers rendered cream on armadillo — PASS legibility.",
+    "trust_bar": "'Dermatologist-led · 10+ years · FDA-approved · 4.9 · Google reviews · 5,000+ happy clients' cream on armadillo — PASS (screenshot verified).",
+    "hero_h1": "'Where Science meets Soulful Care.' color rgb(255,247,236) — PASS, no regression.",
+    "light_bg_body": "Homepage cream sections show body p at rgb(92,74,56) on rgb(239,223,200) — passes 4.5:1. Note: color is #5C4A38 not the #3D2F23 mentioned in review; contrast still acceptable.",
+    "hydrafacial_doctor_note": "Could not locate a heading starting with 'Doctor' on /services/hydrafacial-treatment — either not present or under a different label. Did NOT find dark-on-dark regression on that page in visible sections; flagging so main agent can confirm the doctor-note section exists on that route."
+  },
+  "test_report_links": [".screenshots/footer.png", ".screenshots/trustbar.png"],
+  "action_items": [
+    "Fix footer column heading + 'Open in Maps' color: they render as #7A5A2E instead of intended coronation-gold #b8894a. Check that no leftover global rule (e.g., h5 color, or an opacity/tint applied via text-coronation-gold/60) is darkening them. Target ≥ 4.5:1 on armadillo — consider using arabian-white or cream #FFF7EC for column headings, keep coronation-gold only for large accents.",
+    "Confirm stats numbers content (5/18/2418 vs spec 10/37/5000).",
+    "Confirm doctor-note section presence on /services/hydrafacial-treatment (heading not found by 'Doctor' text search)."
+  ],
+  "critical_code_review_comments": [
+    "Fix in /app/frontend/src/index.css looks correct — removing forced color on p, h1-h5, .fine, .text-body lets Tailwind text-arabian-white/* cascade. Verified body/list text now inherits cream properly.",
+    "Column heading darkening suggests an additional rule (perhaps in a component-scoped class or opacity utility) still applies. Investigate footer h5 class list — it may be using text-coronation-gold/60 or similar which reduces to ~#7A5A2E."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "85% (primary bug fixed; residual muted-gold heading contrast issue)"},
+  "seed_data_creation": "none",
+  "retest_needed": true,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Iteration 2 verified the footer dark-on-dark fix. Body/list/address text is legible. Remaining low-contrast concern: footer h5 headings + 'Open in Maps' link render at rgb(122,90,46) — likely an opacity modifier on text-coronation-gold. Also verify actual stats numbers match spec and locate doctor-note section on hydrafacial page.",
+  "rca of the issue": "Root fix applied by main agent was correct: global unscoped color rules on p/h1-h5/.fine were forcing #3D2F23 and overriding Tailwind text-arabian-white utilities in Footer. After removal, cream text now cascades. Residual issue on h5 headings is a separate class/opacity choice, not the same regression."
+}

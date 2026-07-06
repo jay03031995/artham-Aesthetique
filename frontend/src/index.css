@@ -50,11 +50,8 @@ h1, h2, h3, h4, h5 {
   font-weight: 500;
   line-height: 1.15;
   letter-spacing: -0.01em;
-  color: #3D2F23;
 }
 h1 { line-height: 1.05; }
-
-p { color: #3D2F23; }
 
 /* Overline — small caps eyebrow labels only (12px, #7A5A2E-ish, 600) */
 .overline {
@@ -75,12 +72,12 @@ p { color: #3D2F23; }
   color: #3D2F23;
 }
 
-.fine { font-family: 'Inter', sans-serif; font-weight: 400; color: #3D2F23; }
+.fine { font-family: 'Inter', sans-serif; font-weight: 400; }
 .deva { font-family: 'Tiro Devanagari Hindi', serif; }
 
-/* Body helpers */
-.text-body { font-size: 16px; line-height: 1.6; color: #3D2F23; }
-.text-body-lg { font-size: 18px; line-height: 1.65; color: #3D2F23; }
+/* Body helpers — no forced color so Tailwind text-* utilities can override */
+.text-body { font-size: 16px; line-height: 1.6; }
+.text-body-lg { font-size: 18px; line-height: 1.65; }
 
 /* Buttons — solid primary #7A3E1D bg, cream text 15-16px */
 .btn-primary {
