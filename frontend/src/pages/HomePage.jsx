@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Award, Users, Clock, Quote, Phone, MessageCircle } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Award, Users, Clock, Quote, Phone, MessageCircle, Check, CalendarCheck } from "lucide-react";
 import { SITE, whatsAppLink } from "../data/site";
 import { CATEGORIES, ALL_SERVICES } from "../data/treatments";
 import { POSTS } from "../data/blog";
@@ -138,7 +138,7 @@ export default function HomePage({ onOpenBooking }) {
                 key={cat.name}
                 data-testid={`home-cat-${cat.name.replace(/\s|&/g, "").toLowerCase()}`}
                 to={cat.link}
-                className="group block reveal bg-white rounded-lg overflow-hidden border border-[#b8894a]/25 hover:border-[#7A3E1D] transition-all duration-500"
+                className="group block reveal card-3d rounded-lg overflow-hidden"
                 style={{ transitionDelay: `${i * 80}ms` }}
               >
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -169,7 +169,7 @@ export default function HomePage({ onOpenBooking }) {
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {signature.map((s, i) => (
-              <div key={s.slug} className="bg-white rounded-lg overflow-hidden border border-[#b8894a]/25 flex flex-col reveal" style={{ transitionDelay: `${i * 80}ms` }} data-testid={`sig-${s.slug}`}>
+              <div key={s.slug} className="card-3d rounded-lg overflow-hidden flex flex-col reveal" style={{ transitionDelay: `${i * 80}ms` }} data-testid={`sig-${s.slug}`}>
                 <Link to={`/services/${s.slug}`} className="block aspect-[4/3] overflow-hidden">
                   <img src={s.image} alt={s.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1000ms] hover:scale-105" />
                 </Link>
@@ -180,7 +180,7 @@ export default function HomePage({ onOpenBooking }) {
                   <p className="text-[14px] text-[#5C4A38] leading-relaxed mb-4">{s.short}</p>
                   <div className="flex items-center gap-4 text-[12px] text-[#5C4A38] mb-5 pt-4 border-t border-[#b8894a]/20">
                     <span className="flex items-center gap-1.5"><Clock size={13} className="text-[#7A5A2E]" /> {s.duration}</span>
-                    <span className="font-semibold text-[#3D2F23]">from {s.priceFrom}</span>
+                    {s.sessions && <span className="text-[#5C4A38]">{s.sessions}</span>}
                   </div>
                   <div className="flex items-center gap-3 mt-auto">
                     <button data-testid={`sig-book-${s.slug}`} onClick={() => onOpenBooking()} className="btn-primary" style={{ padding: "10px 20px", minHeight: "40px", fontSize: "13px" }}>Book</button>
@@ -275,7 +275,7 @@ export default function HomePage({ onOpenBooking }) {
             {[
               { icon: HeartHandshake, title: "Personalised protocols", body: "Never a shelf package. Every plan is written to your skin, calendar and season." },
               { icon: Sparkles, title: "Medical-grade devices", body: "FDA-approved technology, single-use consumables — physician oversight on every visit." },
-              { icon: BadgeCheck, title: "Transparent pricing", body: "Ranges shared upfront. No hidden charges, no surprise bills at the counter." },
+              { icon: BadgeCheck, title: "Consultation-first", body: "Your plan is shaped in a complimentary consult — only what your skin actually needs, nothing it doesn't." },
               { icon: ShieldCheck, title: "Follow-up care", body: "You are never handed off. The same doctor sees you at every visit and follow-up." },
             ].map((p, i) => (
               <div key={p.title} className="reveal" style={{ transitionDelay: `${i * 80}ms` }}>
@@ -321,16 +321,26 @@ export default function HomePage({ onOpenBooking }) {
         </div>
       </section>
 
-      {/* 9. CTA BAND */}
-      <section className="bg-[#7A3E1D] text-[#FFF7EC] py-16 lg:py-20" data-testid="cta-band">
-        <div className="container-editorial text-center max-w-3xl mx-auto reveal">
-          <p className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mb-4">A Slow, Considered Beginning</p>
-          <h2 className="font-display text-[36px] md:text-[44px] leading-[1.1] mb-4">Ready for your consultation?</h2>
-          <p className="text-[17px] leading-[1.65] text-[#FFF7EC]/90 mb-8">A 15-minute discovery consult with Dr. Omaima Jawed is complimentary.</p>
-          <div className="flex flex-wrap gap-3 justify-center">
-            <a data-testid="cta-call-btn" href={`tel:${SITE.phoneDigits}`} className="btn-on-dark inline-flex items-center gap-2"><Phone size={15} /> {SITE.phone}</a>
-            <a data-testid="cta-wa-btn" href={whatsAppLink()} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
-            <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-outline-light">Book Appointment</button>
+      {/* 9. CTA BAND — dermaheal "simple book" style */}
+      <section className="bg-[#3D2F23] text-[#FFF7EC] py-20 lg:py-24 overflow-hidden" data-testid="cta-band">
+        <div className="container-editorial reveal">
+          <div className="max-w-2xl">
+            <p className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-[#F5D89C] mb-5">
+              <span className="w-6 h-px bg-[#F5D89C]" aria-hidden="true" />
+              A Slow, Considered Beginning
+            </p>
+            <h2 className="font-display text-[36px] md:text-[44px] leading-[1.1] mb-4">Ready for your consultation?</h2>
+            <p className="text-[17px] leading-[1.65] text-[#FFF7EC]/75 mb-8 max-w-lg">A 15-minute discovery consult with Dr. Omaima Jawed is complimentary — an unhurried conversation about your skin, no obligation.</p>
+            <div className="flex flex-wrap gap-3">
+              <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-on-dark inline-flex items-center gap-2"><CalendarCheck size={16} /> Book Appointment</button>
+              <a data-testid="cta-wa-btn" href={whatsAppLink()} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
+              <a data-testid="cta-call-btn" href={`tel:${SITE.phoneDigits}`} className="btn-outline-light inline-flex items-center gap-2"><Phone size={15} /> {SITE.phone}</a>
+            </div>
+            <div className="flex flex-wrap gap-x-7 gap-y-2 mt-8 text-[13px] text-[#F5D89C]">
+              {["Complimentary 15-min consult", "MD-led dermatology", "No obligation"].map((m) => (
+                <span key={m} className="inline-flex items-center gap-2"><Check size={15} className="text-[#b8894a]" /> {m}</span>
+              ))}
+            </div>
           </div>
         </div>
       </section>

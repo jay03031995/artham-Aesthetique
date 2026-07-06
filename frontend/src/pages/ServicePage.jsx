@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
-import { ChevronDown, ChevronRight, CalendarCheck, MessageCircle, Clock, Repeat, Sparkles, IndianRupee } from "lucide-react";
+import { ChevronDown, ChevronRight, CalendarCheck, MessageCircle, Clock, Repeat, Sparkles } from "lucide-react";
 import { findService, findCategory, RELATED } from "../data/treatments";
 import { SITE, whatsAppLink } from "../data/site";
 import Seo from "../lib/seo";
@@ -53,7 +53,7 @@ export default function ServicePage({ onOpenBooking }) {
               <p className="text-body-lg text-[#5C4A38] mb-6">{s.hero}</p>
 
               {/* Quick facts row */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
+              <div className="grid grid-cols-3 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
                 <div>
                   <div className="flex items-center gap-2 text-[#7A5A2E]"><Clock size={14} /><span className="overline text-[10px] mb-0">Duration</span></div>
                   <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.duration}</p>
@@ -65,10 +65,6 @@ export default function ServicePage({ onOpenBooking }) {
                 <div>
                   <div className="flex items-center gap-2 text-[#7A5A2E]"><Sparkles size={14} /><span className="overline text-[10px] mb-0">Downtime</span></div>
                   <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">Minimal</p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 text-[#7A5A2E]"><IndianRupee size={14} /><span className="overline text-[10px] mb-0">Price from</span></div>
-                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.priceFrom}</p>
                 </div>
               </div>
 
@@ -170,30 +166,6 @@ export default function ServicePage({ onOpenBooking }) {
               <div className="overline text-coronation-gold text-[10px]">Dermatologist · Artham Aesthetique</div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* PRICING */}
-      <section className="bg-white py-16 lg:py-20 border-t border-[#b8894a]/25" data-testid="svc-pricing">
-        <div className="container-editorial max-w-4xl">
-          <div className="mb-8 reveal">
-            <p className="overline mb-3">Pricing</p>
-            <h2 className="text-[30px] md:text-[36px] leading-[1.1] mb-3">Transparent, shared upfront.</h2>
-            <p className="text-body text-[#5C4A38]">Indicative pricing shown below. Your final plan is confirmed after a complimentary 15-min consult, based on what your skin actually needs.</p>
-          </div>
-          <div className="border border-[#b8894a]/30 rounded-lg overflow-hidden reveal">
-            <table className="w-full">
-              <tbody>
-                {s.pricing.map((row, i) => (
-                  <tr key={i} className={i % 2 === 0 ? "bg-[#f5e6d0]/40" : "bg-white"}>
-                    <td className="py-4 px-5 text-[15px] font-medium text-[#3D2F23]">{row.label}</td>
-                    <td className="py-4 px-5 text-[15px] font-semibold text-[#7A3E1D] text-right">{row.value}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="text-[13px] text-[#5C4A38] mt-4">* Prices indicative and inclusive of taxes. Final quote shared after in-clinic consultation.</p>
         </div>
       </section>
 

@@ -65,7 +65,7 @@ export default function BlogIndex() {
                 <div className="aspect-[4/3] overflow-hidden mb-5">
                   <img src={p.coverImage} alt={p.title} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
                 </div>
-                <p className="overline text-coronation-gold text-[10px] mb-2">{p.category} · {p.readingTimeMin} min</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-coronation-gold mb-2" style={{ fontFamily: "'Raleway', sans-serif" }}>{p.category} · {p.readingTimeMin} min</p>
                 <h3 className="font-display text-xl text-armadillo group-hover:text-burma-teak transition-colors duration-500 leading-tight mb-2">{p.title}</h3>
                 <p className="fine text-sm text-armadillo/70 leading-relaxed">{p.excerpt}</p>
               </Link>

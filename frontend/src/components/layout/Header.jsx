@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, Instagram, Youtube, Facebook, ArrowRight } from "lucide-react";
 import { SITE } from "../../data/site";
 import { ALL_SERVICES } from "../../data/treatments";
 
@@ -104,6 +104,20 @@ export default function Header({ onOpenBooking }) {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40" data-testid="site-header">
+      {/* Announcement bar — dermaheal style */}
+      <div className="bg-[#3D2F23] text-[#F5D89C] text-center" data-testid="announce-bar">
+        <div className="container-editorial flex items-center justify-center gap-3 sm:gap-6 h-[34px] text-[10px] sm:text-[11px] tracking-[0.12em] uppercase">
+          <span className="truncate">Book a consultation with an MD Dermatologist</span>
+          <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-[#F5D89C]/50 shrink-0" aria-hidden="true" />
+          <button
+            data-testid="announce-cta"
+            onClick={onOpenBooking}
+            className="hidden sm:inline-flex items-center gap-1.5 border-b border-[#F5D89C]/40 pb-px hover:text-[#FFF7EC] hover:border-[#FFF7EC] transition-colors shrink-0"
+          >
+            Book this week <ArrowRight size={11} />
+          </button>
+        </div>
+      </div>
       <div
         className={`transition-all duration-500 ${
           scrolled
@@ -152,6 +166,24 @@ export default function Header({ onOpenBooking }) {
           </nav>
 
           <div className="flex items-center gap-3">
+            <div className="hidden xl:flex items-center gap-2" data-testid="header-socials">
+              {[
+                { href: SITE.social.instagram, label: "Instagram", Icon: Instagram },
+                { href: SITE.social.youtube, label: "YouTube", Icon: Youtube },
+                { href: SITE.social.facebook, label: "Facebook", Icon: Facebook },
+              ].map(({ href, label, Icon }) => (
+                <a
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
+                  className="w-8 h-8 grid place-items-center rounded-full border border-[#b8894a]/40 text-[#7A5A2E] hover:bg-[#3D2F23] hover:border-[#3D2F23] hover:text-[#F5D89C] transition-colors"
+                >
+                  <Icon size={14} />
+                </a>
+              ))}
+            </div>
             <a
               href={`tel:${SITE.phoneDigits}`}
               className="hidden md:block text-sm font-semibold text-[#3D2F23] hover:text-[#7A3E1D] transition-colors"
@@ -182,13 +214,13 @@ export default function Header({ onOpenBooking }) {
         <div
           onMouseEnter={openMega}
           onMouseLeave={closeMega}
-          className={`hidden lg:block absolute left-0 right-0 top-full border-t border-[#b8894a]/40 bg-[#FBF3E7] shadow-[0_20px_40px_-20px_rgba(72,63,55,0.25)] transition-all duration-200 ${
-            megaOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          className={`hidden lg:block absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[920px] max-w-[calc(100vw-32px)] rounded-xl border border-[#b8894a]/40 bg-[#FBF3E7] shadow-[0_28px_64px_-28px_rgba(72,63,55,0.5)] transition-all duration-200 ${
+            megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
           data-testid="mega-panel"
         >
-          <div className="container-editorial py-10">
-            <div className="grid grid-cols-6 gap-8">
+          <div className="px-8 py-8">
+            <div className="grid grid-cols-5 gap-x-8 gap-y-2">
               {MEGA.map((col) => (
                 <div key={col.heading}>
                   <p className="text-[13px] font-semibold text-[#8A6D3B] mb-4" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>
@@ -239,7 +271,7 @@ export default function Header({ onOpenBooking }) {
                 </ul>
               </div>
               {/* Featured card */}
-              <div className="col-span-6 pt-8 mt-4 border-t border-[#b8894a]/30">
+              <div className="col-span-5 pt-6 mt-4 border-t border-[#b8894a]/30">
                 <Link
                   to="/services/hydrafacial-treatment"
                   data-testid="mega-featured-hydrafacial"
@@ -251,7 +283,7 @@ export default function Header({ onOpenBooking }) {
                   <div className="flex-1">
                     <p className="text-[12px] font-semibold text-[#8A6D3B] mb-1" style={{ fontFamily: "'Raleway', sans-serif" }}>Most Loved</p>
                     <h4 className="font-display text-xl text-[#3D2F23] mb-1" style={{ fontWeight: 600 }}>HydraFacial Treatment</h4>
-                    <p className="text-sm text-[#5C4A38]">Cleanse, extract, hydrate — in one calm hour. From ₹5,500.</p>
+                    <p className="text-sm text-[#5C4A38]">Cleanse, extract, hydrate — in one calm hour of quiet glow.</p>
                   </div>
                   <span className="text-sm font-semibold text-[#7A3E1D] group-hover:underline">Book now →</span>
                 </Link>

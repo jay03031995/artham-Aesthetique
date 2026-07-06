@@ -58,17 +58,19 @@ export default function CategoryPage({ onOpenBooking }) {
                 key={s.slug}
                 data-testid={`cat-svc-${s.slug}`}
                 to={`/services/${s.slug}`}
-                className="group block reveal"
+                className="group block reveal card-3d rounded-lg overflow-hidden"
                 style={{ transitionDelay: `${(i % 6) * 80}ms` }}
               >
-                <div className="aspect-[5/4] overflow-hidden mb-5">
+                <div className="aspect-[5/4] overflow-hidden">
                   <img src={s.image} alt={s.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1200ms] group-hover:scale-105" />
                 </div>
-                <h3 className="font-display text-xl text-armadillo group-hover:text-burma-teak transition-colors duration-500 mb-2 leading-tight">{s.name}</h3>
-                <p className="fine text-sm text-armadillo/70 leading-relaxed mb-4">{s.short}</p>
-                <span className="overline text-burma-teak flex items-center gap-2">
-                  Explore <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-500" />
-                </span>
+                <div className="p-6">
+                  <h3 className="font-display text-xl text-armadillo group-hover:text-burma-teak transition-colors duration-500 mb-2 leading-tight">{s.name}</h3>
+                  <p className="fine text-sm text-armadillo/70 leading-relaxed mb-4">{s.short}</p>
+                  <span className="text-burma-teak font-semibold text-[13px] flex items-center gap-2">
+                    Explore <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform duration-500" />
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
