@@ -10,6 +10,7 @@ import StickyMobileBar from "@/components/layout/StickyMobileBar";
 import WhatsAppFab from "@/components/layout/WhatsAppFab";
 import Chatbot from "@/components/layout/Chatbot";
 import BookingFlow from "@/components/booking/BookingFlow";
+import useReveal from "@/hooks/useReveal";
 
 import HomePage from "@/pages/HomePage";
 import CategoryPage from "@/pages/CategoryPage";
@@ -43,6 +44,8 @@ function ScrollToTop() {
 }
 
 function Layout({ children, onOpenBooking }) {
+  const { pathname } = useLocation();
+  useReveal(pathname); // site-wide scroll-reveal; re-scans on route change
   return (
     <>
       <Header onOpenBooking={() => onOpenBooking(null)} />
