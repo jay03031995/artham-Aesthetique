@@ -75,7 +75,7 @@ export default function Footer() {
 
           {/* Treatments */}
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
-            <h5 className="overline text-coronation-gold mb-5">Treatments</h5>
+            <h5 className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#FFF7EC] mb-5">Treatments</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
               {CATEGORIES.map((c) => (
                 <li key={c.slug}>
@@ -87,7 +87,7 @@ export default function Footer() {
 
           {/* Company */}
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
-            <h5 className="overline text-coronation-gold mb-5">Company</h5>
+            <h5 className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#FFF7EC] mb-5">Company</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
               <li><Link data-testid="footer-about" to="/about" className="hover:text-coronation-gold transition-colors duration-500">About</Link></li>
               <li><Link data-testid="footer-doctor" to="/doctors/dr-omaima-jawed" className="hover:text-coronation-gold transition-colors duration-500">Dr. Omaima Jawed</Link></li>
@@ -99,7 +99,7 @@ export default function Footer() {
 
           {/* Support / Policies */}
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
-            <h5 className="overline text-coronation-gold mb-5">Support</h5>
+            <h5 className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#FFF7EC] mb-5">Support</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
               <li><Link to="/faq" className="hover:text-coronation-gold transition-colors duration-500">FAQs</Link></li>
               <li><Link to="/book" className="hover:text-coronation-gold transition-colors duration-500">Book Appointment</Link></li>
@@ -113,7 +113,7 @@ export default function Footer() {
 
           {/* Contact & newsletter */}
           <div className="col-span-2 md:col-span-3 lg:col-span-2">
-            <h5 className="overline text-coronation-gold mb-5">Visit</h5>
+            <h5 className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#FFF7EC] mb-5">Visit</h5>
             <address className="not-italic fine text-sm text-arabian-white/75 leading-relaxed mb-5">
               {SITE.address.line1}<br />
               {SITE.address.line2}<br />
@@ -126,13 +126,13 @@ export default function Footer() {
               href="https://maps.google.com/?q=Lotus+Plaza+Sector+104+Noida"
               target="_blank"
               rel="noreferrer"
-              className="overline text-coronation-gold hover:text-arabian-white transition-colors duration-500"
+              className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] hover:text-[#FFF7EC] transition-colors duration-500"
             >
               Open in Maps →
             </a>
 
             <form onSubmit={subscribe} className="mt-8 border-t border-arabian-white/15 pt-6">
-              <label className="overline text-coronation-gold block mb-3">Newsletter</label>
+              <label className="text-[12px] uppercase tracking-[0.14em] font-semibold text-[#FFF7EC] block mb-3">Newsletter</label>
               <div className="flex">
                 <input
                   data-testid="footer-newsletter-input"
