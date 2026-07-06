@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.sanity/
+scripts/_data/
+.env
+.env.local
+*.log

@@ -23,6 +23,45 @@ db = client[os.environ["DB_NAME"]]
 # Emergent LLM
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
+# Sanity — appointments are mirrored here so staff manage them in the Studio
+# "Appointments" dashboard. Best-effort: a Sanity outage never blocks a booking.
+SANITY_PROJECT_ID = os.environ.get("SANITY_PROJECT_ID", "k39wznoo")
+SANITY_DATASET = os.environ.get("SANITY_DATASET", "production")
+SANITY_TOKEN = os.environ.get("SANITY_TOKEN", "")
+
+
+def _sync_appointment_to_sanity(booking: "Booking") -> None:
+    if not SANITY_TOKEN:
+        return
+    try:
+        import requests
+
+        url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/{SANITY_DATASET}"
+        doc = {
+            "_id": f"appointment-{booking.id}",
+            "_type": "appointment",
+            "name": booking.name,
+            "phone": booking.phone,
+            "email": booking.email,
+            "treatmentName": booking.treatment_name,
+            "category": booking.category,
+            "preferredDate": booking.date,
+            "preferredTime": booking.time_slot,
+            "note": booking.note,
+            "status": booking.status or "new",
+            "source": "website",
+            "createdAt": booking.created_at,
+        }
+        requests.post(
+            url,
+            headers={"Authorization": f"Bearer {SANITY_TOKEN}", "Content-Type": "application/json"},
+            json={"mutations": [{"createOrReplace": doc}]},
+            timeout=6,
+        )
+    except Exception as e:  # pragma: no cover - best effort
+        logging.warning("Sanity appointment sync failed: %s", e)
+
+
 app = FastAPI(title="Artham Aesthetique API")
 api = APIRouter(prefix="/api")
 
@@ -101,6 +140,7 @@ async def root():
 async def create_booking(payload: BookingCreate):
     booking = Booking(**payload.model_dump())
     await db.bookings.insert_one(booking.model_dump())
+    _sync_appointment_to_sanity(booking)
     return booking
 
 
