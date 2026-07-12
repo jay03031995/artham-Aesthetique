@@ -63,7 +63,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "craco build && npm --prefix ../studio ci --legacy-peer-deps && npm --prefix ../studio run build -- ../frontend/build/studio -y && node ./patch-studio.js",
     "test": "craco test"
   },
   "browserslist": {

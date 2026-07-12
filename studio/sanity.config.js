@@ -58,6 +58,8 @@ export default defineConfig({
   title: "Artham Aesthetique",
   projectId: PROJECT_ID,
   dataset: DATASET,
+  // Served at /studio on the main site (see frontend build script)
+  basePath: "/studio",
   plugins: [structureTool({ structure }), visionTool()],
   schema: {
     types: schemaTypes,
