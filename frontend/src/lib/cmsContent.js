@@ -47,8 +47,9 @@ const CMS_QUERY = `{
     "slug": slug.current,
     "image": coalesce(image.url, image.asset.asset->url),
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, hero, what, whoFor, benefits, duration, sessions, priceFrom, pricing, doctorNote, faqs,
+      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, benefits, duration, sessions, priceFrom, pricing, doctorNote, faqs,
       quickInfo, howItWorks, symptoms, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
+      "realResults": realResults[]->{title, patientAge, gender, description, sessionsInfo, note, "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url), "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)},
       "name": title,
       "slug": slug.current,
       "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url),
@@ -150,6 +151,15 @@ const normalizeService = (service, category) => {
     categorySlug: service.categorySlug || category?.slug,
     short: service.short || service.shortDescription || "",
     hero: service.hero || service.heroSubtitle || service.short || "",
+    heroDescription: service.heroDescription || service.description || "",
+    overviewHeading: service.overviewHeading || "",
+    ctaText: service.ctaText || "",
+    ctaLink: service.ctaLink || "",
+    heroBackgroundImage: service.heroBackgroundImage || "",
+    featuredImage: service.featuredImage || "",
+    cardImage: service.cardImage || "",
+    priceFrom: service.priceFrom || "",
+    pricing: service.pricing || [],
     image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
@@ -161,8 +171,11 @@ const normalizeService = (service, category) => {
     symptoms: service.symptoms || [],
     howItWorks: normalizeSteps(service.howItWorks),
     faqs: normalizeFaqs(service.faqs),
+    quickInfoRows: quickInfoRows(service),
     downtime,
     relatedTreatments: service.relatedTreatments || [],
+    realResults: service.realResults || [],
+    results: (service.realResults && service.realResults.length) ? service.realResults : service.results || [],
   };
 };
 
