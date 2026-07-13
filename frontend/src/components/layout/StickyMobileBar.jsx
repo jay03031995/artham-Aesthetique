@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { Phone, MessageCircle, Home, LayoutGrid, CalendarCheck } from "lucide-react";
-import { SITE, whatsAppLink } from "../../data/site";
+import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 
 export default function StickyMobileBar({ onOpenBooking }) {
+  const { site: SITE } = useCmsContent();
   return (
     <div
       data-testid="sticky-mobile-bar"
@@ -31,7 +32,7 @@ export default function StickyMobileBar({ onOpenBooking }) {
           <Phone size={16} />
           <span className="overline text-[9px]">Call</span>
         </a>
-        <a data-testid="smb-wa" href={whatsAppLink()} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-1 text-armadillo">
+        <a data-testid="smb-wa" href={cmsWhatsAppLink(SITE)} target="_blank" rel="noreferrer" className="flex flex-col items-center justify-center gap-1 text-armadillo">
           <MessageCircle size={16} />
           <span className="overline text-[9px]">Chat</span>
         </a>

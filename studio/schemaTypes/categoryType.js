@@ -8,6 +8,7 @@ export const categoryType = defineType({
     defineField({name: 'title', title: 'Name', type: 'string', validation: (r) => r.required()}),
     defineField({name: 'slug', title: 'Slug', type: 'slug', options: {source: 'title'}, validation: (r) => r.required()}),
     defineField({name: 'intro', title: 'Intro', type: 'text', rows: 2}),
+    defineField({name: 'icon', title: 'Icon / image', type: 'mediaImage'}),
     defineField({name: 'image', title: 'Image', type: 'mediaImage'}),
     defineField({name: 'order', title: 'Order', type: 'number', initialValue: 0}),
   ],

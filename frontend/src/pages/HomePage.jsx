@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Award, Users, Clock, Quote, Phone, MessageCircle, Check, CalendarCheck } from "lucide-react";
-import { SITE, whatsAppLink } from "../data/site";
-import { CATEGORIES, ALL_SERVICES } from "../data/treatments";
-import { POSTS } from "../data/blog";
+import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
@@ -45,7 +43,25 @@ const SIGNATURE_SLUGS = ["hydrafacial-treatment", "pdrn-skin-boosters", "hifu", 
 
 export default function HomePage({ onOpenBooking }) {
   useReveal();
+  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, posts: POSTS, testimonials } = useCmsContent();
+  const cmsHomeCategories = CATEGORIES.slice(0, 4).map((cat) => ({
+    name: cat.name,
+    link: `/category/${cat.slug}`,
+    image: cat.image,
+    desc: cat.intro,
+  }));
+  const homeCategories = cmsHomeCategories.length ? cmsHomeCategories : HOME_CATEGORIES;
   const signature = SIGNATURE_SLUGS.map((s) => ALL_SERVICES.find((x) => x.slug === s)).filter(Boolean);
+  const homeTestimonials = testimonials?.length ? testimonials.map((t) => ({
+    name: t.name,
+    area: t.area || "Artham Guest",
+    rating: t.rating || 5,
+    quote: t.quote || t.review,
+  })) : [
+    { name: "Ananya S.", area: "Noida", rating: 5, quote: "The first clinic I've visited where nobody tried to upsell me. I got exactly the two treatments I actually needed — and my skin has never behaved better." },
+    { name: "Rhea K.", area: "Delhi", rating: 5, quote: "Six months out from my wedding, I walked in nervous. I walked out with a plan I understood — and skin I actually recognise on my wedding photos." },
+    { name: "Kabir M.", area: "Gurgaon", rating: 5, quote: "The beard-line laser at Artham is the cleanest, quietest treatment I've had. Private, precise, done in 25 minutes. Booked back." },
+  ];
 
   const [statsRef1, n1] = useCountUp(10);
   const [statsRef2, n2] = useCountUp(37);
@@ -133,7 +149,7 @@ export default function HomePage({ onOpenBooking }) {
             <p className="text-body-lg text-[#5C4A38]">From the softest facials to advanced regenerative protocols — designed and supervised by Dr. Omaima Jawed.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {HOME_CATEGORIES.map((cat, i) => (
+            {homeCategories.map((cat, i) => (
               <Link
                 key={cat.name}
                 data-testid={`home-cat-${cat.name.replace(/\s|&/g, "").toLowerCase()}`}
@@ -240,11 +256,7 @@ export default function HomePage({ onOpenBooking }) {
             <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Considered stories, not scripted reviews.</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {[
-              { name: "Ananya S.", area: "Noida", rating: 5, quote: "The first clinic I've visited where nobody tried to upsell me. I got exactly the two treatments I actually needed — and my skin has never behaved better." },
-              { name: "Rhea K.", area: "Delhi", rating: 5, quote: "Six months out from my wedding, I walked in nervous. I walked out with a plan I understood — and skin I actually recognise on my wedding photos." },
-              { name: "Kabir M.", area: "Gurgaon", rating: 5, quote: "The beard-line laser at Artham is the cleanest, quietest treatment I've had. Private, precise, done in 25 minutes. Booked back." },
-            ].map((t, i) => (
+            {homeTestimonials.map((t, i) => (
               <figure key={t.name} className="bg-white rounded-lg p-7 border border-[#b8894a]/25 reveal" style={{ transitionDelay: `${i * 80}ms` }}>
                 <div className="flex items-center gap-1 mb-4">
                   {Array.from({ length: t.rating }).map((_, i) => <Star key={i} size={14} className="text-[#b8894a] fill-[#b8894a]" />)}
@@ -333,7 +345,7 @@ export default function HomePage({ onOpenBooking }) {
             <p className="text-[17px] leading-[1.65] text-[#FFF7EC]/75 mb-8 max-w-lg">A 15-minute discovery consult with Dr. Omaima Jawed is complimentary — an unhurried conversation about your skin, no obligation.</p>
             <div className="flex flex-wrap gap-3">
               <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-on-dark inline-flex items-center gap-2"><CalendarCheck size={16} /> Book Appointment</button>
-              <a data-testid="cta-wa-btn" href={whatsAppLink()} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
+              <a data-testid="cta-wa-btn" href={cmsWhatsAppLink(SITE)} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
               <a data-testid="cta-call-btn" href={`tel:${SITE.phoneDigits}`} className="btn-outline-light inline-flex items-center gap-2"><Phone size={15} /> {SITE.phone}</a>
             </div>
             <div className="flex flex-wrap gap-x-7 gap-y-2 mt-8 text-[13px] text-[#F5D89C]">

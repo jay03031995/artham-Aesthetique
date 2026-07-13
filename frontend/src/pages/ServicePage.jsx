@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ChevronDown, ChevronRight, CalendarCheck, MessageCircle, Clock, Repeat, Sparkles } from "lucide-react";
-import { findService, findCategory, RELATED } from "../data/treatments";
-import { SITE, whatsAppLink } from "../data/site";
+import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
 export default function ServicePage({ onOpenBooking }) {
   useReveal();
   const { slug } = useParams();
+  const { site: SITE, findService, findCategory, related: getRelated } = useCmsContent();
   const s = findService(slug);
   const [openFaq, setOpenFaq] = useState(null);
   if (!s) return <Navigate to="/" replace />;
-  const cat = findCategory(s.categorySlug);
-  const related = RELATED(s.categorySlug, s.slug);
+  const cat = findCategory(s.categorySlug) || { slug: s.categorySlug || "skin", name: s.category || "Treatments" };
+  const related = s.relatedTreatments?.length ? s.relatedTreatments : getRelated(s.categorySlug, s.slug);
 
   const bookThis = () => onOpenBooking(s.slug);
 
@@ -70,7 +70,7 @@ export default function ServicePage({ onOpenBooking }) {
 
               <div className="flex flex-wrap gap-3">
                 <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={15} /> Book {s.name}</button>
-                <a data-testid="svc-wa-btn" href={whatsAppLink(`Hello, I'd like to know more about ${s.name}.`)} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
+                <a data-testid="svc-wa-btn" href={cmsWhatsAppLink(SITE, `Hello, I'd like to know more about ${s.name}.`)} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
               </div>
             </div>
             <div className="aspect-[4/5] rounded-lg overflow-hidden">
@@ -118,7 +118,7 @@ export default function ServicePage({ onOpenBooking }) {
                   <div className="h-px flex-1 bg-coronation-gold/40" />
                 </div>
                 <h3 className="font-display text-2xl text-armadillo mb-3">{step.title}</h3>
-                <p className="fine text-armadillo/75 leading-relaxed">{step.body}</p>
+                  <p className="fine text-armadillo/75 leading-relaxed">{step.body || step.description}</p>
               </div>
             ))}
           </div>
@@ -177,7 +177,7 @@ export default function ServicePage({ onOpenBooking }) {
             <h2 className="font-display text-3xl md:text-4xl text-armadillo">What patients ask, honestly.</h2>
           </div>
           <div className="lg:col-span-3 divide-y divide-coronation-gold/30 border-y border-coronation-gold/30 reveal" style={{ transitionDelay: "120ms" }}>
-            {s.faqs.map((f, i) => {
+            {(s.faqs || []).map((f, i) => {
               const open = openFaq === i;
               return (
                 <div key={i}>

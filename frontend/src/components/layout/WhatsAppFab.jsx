@@ -1,11 +1,12 @@
 import { MessageCircle } from "lucide-react";
-import { whatsAppLink } from "../../data/site";
+import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 
 export default function WhatsAppFab() {
+  const { site } = useCmsContent();
   return (
     <a
       data-testid="wa-fab"
-      href={whatsAppLink()}
+      href={cmsWhatsAppLink(site)}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat on WhatsApp"

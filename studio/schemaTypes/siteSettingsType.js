@@ -33,7 +33,9 @@ export const siteSettingsType = defineType({
     defineField({name: 'footerLogo', title: 'Footer logo', type: 'mediaImage', group: 'media'}),
     defineField({name: 'doctorPortrait', title: 'Doctor portrait', type: 'mediaImage', group: 'media'}),
     defineField({name: 'heroImage', title: 'Hero image', type: 'mediaImage', group: 'media'}),
+    defineField({name: 'clinicPhoto', title: 'Clinic photo', type: 'mediaImage', group: 'media'}),
     defineField({name: 'heroVideoUrl', title: 'Hero video URL', type: 'string', group: 'media'}),
+    defineField({name: 'parentBrandUrl', title: 'Parent brand URL', type: 'url', group: 'brand'}),
     defineField({
       name: 'nav',
       title: 'Primary nav items',

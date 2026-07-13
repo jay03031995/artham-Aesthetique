@@ -15,6 +15,25 @@ const structure = (S) =>
       S.listItem()
         .title("⚙️  Site Settings & Menu")
         .child(S.document().schemaType("siteSettings").documentId("siteSettings")),
+      S.listItem()
+        .title("🧭  Navigation")
+        .child(S.document().schemaType("navigationSettings").documentId("navigationSettings")),
+      S.listItem()
+        .title("🦶  Footer")
+        .child(S.document().schemaType("footerSettings").documentId("footerSettings")),
+      S.listItem()
+        .title("🔎  Global SEO")
+        .child(S.document().schemaType("seoSettings").documentId("seoSettings")),
+      S.divider(),
+      S.listItem()
+        .title("🏠  Home Page")
+        .child(S.document().schemaType("homePage").documentId("homePage")),
+      S.listItem()
+        .title("📖  About Page")
+        .child(S.document().schemaType("aboutPage").documentId("aboutPage")),
+      S.listItem()
+        .title("📍  Contact Page")
+        .child(S.document().schemaType("contactPage").documentId("contactPage")),
       S.divider(),
 
       S.listItem()
@@ -64,12 +83,13 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
     // Hide the singleton from the global "create new" menu
-    templates: (templates) => templates.filter((t) => t.schemaType !== "siteSettings"),
+    templates: (templates) =>
+      templates.filter((t) => !["siteSettings", "navigationSettings", "footerSettings", "seoSettings", "homePage", "aboutPage", "contactPage"].includes(t.schemaType)),
   },
   document: {
     // Prevent duplicate/delete of the singleton
     actions: (input, context) =>
-      context.schemaType === "siteSettings"
+      ["siteSettings", "navigationSettings", "footerSettings", "seoSettings", "homePage", "aboutPage", "contactPage"].includes(context.schemaType)
         ? input.filter(({ action }) => !["unpublish", "delete", "duplicate"].includes(action))
         : input,
   },

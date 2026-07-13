@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { X, Send } from "lucide-react";
 import { streamChat } from "../../lib/api";
-import { SITE, whatsAppLink } from "../../data/site";
+import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 
 const uuid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
 export default function Chatbot({ onOpenBooking }) {
+  const { site: SITE } = useCmsContent();
   const [open, setOpen] = useState(false);
   const [sessionId] = useState(() => uuid());
   const [messages, setMessages] = useState([
@@ -55,7 +56,7 @@ export default function Chatbot({ onOpenBooking }) {
     { label: "Book a consult", action: () => { setOpen(false); onOpenBooking(); } },
     { label: "About Dr. Omaima", action: () => send("Tell me about Dr. Omaima Jawed and her approach.") },
     { label: "Which facial suits me?", action: () => send("Which facial would you suggest for dull, dehydrated skin?") },
-    { label: "WhatsApp us", action: () => window.open(whatsAppLink(), "_blank") },
+    { label: "WhatsApp us", action: () => window.open(cmsWhatsAppLink(SITE), "_blank") },
   ];
 
   return (

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, Instagram, Youtube, Facebook, ArrowRight } from "lucide-react";
-import { SITE } from "../../data/site";
+import { useCmsContent } from "../../lib/cmsContent";
 import { ALL_SERVICES } from "../../data/treatments";
 
 // Group services into Dermapuritys-style mega menu columns.
@@ -72,6 +72,7 @@ const CONCERN_LINKS = [
 ];
 
 export default function Header({ onOpenBooking }) {
+  const { site: SITE, categories, megaGroups, nav } = useCmsContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
@@ -101,6 +102,24 @@ export default function Header({ onOpenBooking }) {
   const closeMega = () => { megaTimeout.current = setTimeout(() => setMegaOpen(false), 120); };
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + "/");
+  const cmsMega = megaGroups?.filter((group) => group.heading && group.items?.length);
+  const categoryMega = categories?.length
+    ? categories.map((cat) => ({
+        heading: cat.name,
+        catLink: `/category/${cat.slug}`,
+        items: (cat.services || []).slice(0, 9),
+      }))
+    : [];
+  const menuGroups = cmsMega?.length ? cmsMega : (categoryMega.length ? categoryMega : MEGA);
+  const featuredService = menuGroups.flatMap((group) => group.items || []).find((item) => item.slug === "hydrafacial-treatment") || menuGroups[0]?.items?.[0];
+  const navItems = nav?.length ? nav : [
+    { label: "Home", href: "/" },
+    { label: "Treatments", href: "#treatments" },
+    { label: "Doctor", href: "/doctors/dr-omaima-jawed" },
+    { label: "Journal", href: "/blog" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+  ];
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40" data-testid="site-header">
@@ -141,28 +160,28 @@ export default function Header({ onOpenBooking }) {
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-8">
-            <Link data-testid="nav-home" to="/" className={`nav-link ${isActive("/") && location.pathname === "/" ? "active" : ""}`}>Home</Link>
-
-            <div className="relative"
-              onMouseEnter={openMega}
-              onMouseLeave={closeMega}
-            >
-              <button
-                data-testid="nav-treatments"
-                onFocus={openMega}
-                onClick={() => setMegaOpen((v) => !v)}
-                className={`nav-link flex items-center gap-1.5 ${megaOpen ? "active" : ""}`}
-                aria-expanded={megaOpen}
-                aria-haspopup="true"
-              >
-                Treatments <ChevronDown size={14} className={`transition-transform duration-300 ${megaOpen ? "rotate-180" : ""}`} />
-              </button>
-            </div>
-
-            <Link data-testid="nav-doctors" to="/doctors/dr-omaima-jawed" className={`nav-link ${isActive("/doctors") ? "active" : ""}`}>Doctor</Link>
-            <Link data-testid="nav-blog" to="/blog" className={`nav-link ${isActive("/blog") ? "active" : ""}`}>Journal</Link>
-            <Link data-testid="nav-about" to="/about" className={`nav-link ${isActive("/about") ? "active" : ""}`}>About</Link>
-            <Link data-testid="nav-contact" to="/contact" className={`nav-link ${isActive("/contact") ? "active" : ""}`}>Contact</Link>
+            {navItems.map((item) => {
+              const isTreatments = item.label?.toLowerCase().includes("treatment") || item.href === "#treatments";
+              if (isTreatments) {
+                return (
+                  <div key={item.label} className="relative" onMouseEnter={openMega} onMouseLeave={closeMega}>
+                    <button
+                      data-testid="nav-treatments"
+                      onFocus={openMega}
+                      onClick={() => setMegaOpen((v) => !v)}
+                      className={`nav-link flex items-center gap-1.5 ${megaOpen ? "active" : ""}`}
+                      aria-expanded={megaOpen}
+                      aria-haspopup="true"
+                    >
+                      {item.label || "Treatments"} <ChevronDown size={14} className={`transition-transform duration-300 ${megaOpen ? "rotate-180" : ""}`} />
+                    </button>
+                  </div>
+                );
+              }
+              return (
+                <Link key={item.label} data-testid={`nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`} to={item.href || "#"} className={`nav-link ${isActive(item.href || "#") && item.href !== "/" ? "active" : location.pathname === "/" && item.href === "/" ? "active" : ""}`}>{item.label}</Link>
+              );
+            })}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -221,7 +240,7 @@ export default function Header({ onOpenBooking }) {
         >
           <div className="px-8 py-8">
             <div className="grid grid-cols-5 gap-x-8 gap-y-2">
-              {MEGA.map((col) => (
+              {menuGroups.map((col) => (
                 <div key={col.heading}>
                   <p className="text-[13px] font-semibold text-[#8A6D3B] mb-4" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>
                     {col.heading}
@@ -273,17 +292,17 @@ export default function Header({ onOpenBooking }) {
               {/* Featured card */}
               <div className="col-span-5 pt-6 mt-4 border-t border-[#b8894a]/30">
                 <Link
-                  to="/services/hydrafacial-treatment"
-                  data-testid="mega-featured-hydrafacial"
+                  to={featuredService ? `/services/${featuredService.slug}` : "/category/skin"}
+                  data-testid={featuredService ? `mega-featured-${featuredService.slug}` : "mega-featured"}
                   className="flex items-center gap-6 group"
                 >
                   <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-                    <img src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=400&q=80" alt="HydraFacial" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    <img src={featuredService?.image || SITE.clinicPhotoUrl} alt={featuredService?.name || "Featured treatment"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="flex-1">
                     <p className="text-[12px] font-semibold text-[#8A6D3B] mb-1" style={{ fontFamily: "'Raleway', sans-serif" }}>Most Loved</p>
-                    <h4 className="font-display text-xl text-[#3D2F23] mb-1" style={{ fontWeight: 600 }}>HydraFacial Treatment</h4>
-                    <p className="text-sm text-[#5C4A38]">Cleanse, extract, hydrate — in one calm hour of quiet glow.</p>
+                    <h4 className="font-display text-xl text-[#3D2F23] mb-1" style={{ fontWeight: 600 }}>{featuredService?.name || "Featured Treatment"}</h4>
+                    <p className="text-sm text-[#5C4A38]">{featuredService?.short || "Explore our doctor-led treatment protocols."}</p>
                   </div>
                   <span className="text-sm font-semibold text-[#7A3E1D] group-hover:underline">Book now →</span>
                 </Link>
@@ -309,7 +328,9 @@ export default function Header({ onOpenBooking }) {
         </div>
         <div className="container-editorial py-6 overflow-y-auto h-[calc(100vh-70px)] pb-32">
           <nav className="space-y-1">
-            <Link data-testid="mnav-home" to="/" className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">Home</Link>
+            {navItems.filter((item) => !(item.label?.toLowerCase().includes("treatment") || item.href === "#treatments")).map((item) => (
+              <Link key={item.label} data-testid={`mnav-${item.label.toLowerCase().replace(/\s+/g, "-")}`} to={item.href || "#"} className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">{item.label}</Link>
+            ))}
             <div className="border-b border-[#b8894a]/25">
               <button
                 data-testid="mnav-treatments"
@@ -320,7 +341,7 @@ export default function Header({ onOpenBooking }) {
               </button>
               {openMobileCat === "root" && (
                 <div className="pl-2 pb-3 space-y-1">
-                  {MEGA.map((col) => (
+                  {menuGroups.map((col) => (
                     <details key={col.heading} className="group border-b border-[#b8894a]/15 last:border-0">
                       <summary className="list-none py-2 flex items-center justify-between cursor-pointer text-[14px] text-[#3D2F23]">
                         <span>{col.heading}</span>
@@ -352,10 +373,6 @@ export default function Header({ onOpenBooking }) {
                 </div>
               )}
             </div>
-            <Link data-testid="mnav-doctor" to="/doctors/dr-omaima-jawed" className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">Doctor</Link>
-            <Link data-testid="mnav-blog" to="/blog" className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">Journal</Link>
-            <Link data-testid="mnav-about" to="/about" className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">About</Link>
-            <Link data-testid="mnav-contact" to="/contact" className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">Contact</Link>
           </nav>
           <button data-testid="mnav-book" onClick={() => { setMobileOpen(false); onOpenBooking(); }} className="btn-primary w-full mt-6">Book Appointment</button>
           <div className="mt-8 text-[13px] text-[#5C4A38] leading-relaxed">

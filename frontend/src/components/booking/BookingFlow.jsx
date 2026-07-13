@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { X, Search, ChevronLeft, Check } from "lucide-react";
-import { CATEGORIES, ALL_SERVICES, findService } from "../../data/treatments";
 import { api } from "../../lib/api";
-import { SITE, whatsAppLink } from "../../data/site";
+import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 import { toast } from "sonner";
 
 const timeSlots = [
@@ -29,6 +28,7 @@ const fmtDate = (d) => d.toISOString().slice(0, 10);
 const displayDate = (d) => d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
 
 export default function BookingFlow({ open, onClose, initialSlug }) {
+  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, findService } = useCmsContent();
   const [step, setStep] = useState(1);
   const [query, setQuery] = useState("");
   const [treatmentSlug, setTreatmentSlug] = useState(initialSlug || "");
@@ -57,7 +57,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
     const q = query.trim().toLowerCase();
     if (!q) return null;
     return ALL_SERVICES.filter((s) => s.name.toLowerCase().includes(q));
-  }, [query]);
+  }, [query, ALL_SERVICES]);
 
   const goNext = () => setStep((s) => Math.min(3, s + 1));
   const goBack = () => setStep((s) => Math.max(1, s - 1));
@@ -149,7 +149,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
               <div className="flex flex-wrap gap-3 justify-center">
                 <a
                   data-testid="booking-wa-confirm"
-                  href={whatsAppLink(`Hello Artham! I just booked ${treatment.name} for ${displayDate(new Date(date))} at ${time}. Reference: ${confirmedId.slice(0,8).toUpperCase()}`)}
+                  href={cmsWhatsAppLink(SITE, `Hello Artham! I just booked ${treatment.name} for ${displayDate(new Date(date))} at ${time}. Reference: ${confirmedId.slice(0,8).toUpperCase()}`)}
                   target="_blank" rel="noreferrer"
                   className="btn-primary"
                 >WhatsApp us</a>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { POSTS, postsByCategory } from "../data/blog";
+import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
@@ -9,6 +9,7 @@ const CATS = ["All", "Skin", "Hair", "Anti-Ageing", "Laser Hair Removal", "Body"
 export default function BlogIndex() {
   useReveal();
   const [cat, setCat] = useState("All");
+  const { postsByCategory } = useCmsContent();
   const list = postsByCategory(cat);
   const [featured, ...rest] = list;
 

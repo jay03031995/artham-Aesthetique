@@ -11,6 +11,7 @@ import WhatsAppFab from "@/components/layout/WhatsAppFab";
 import Chatbot from "@/components/layout/Chatbot";
 import BookingFlow from "@/components/booking/BookingFlow";
 import useReveal from "@/hooks/useReveal";
+import { CMSContentProvider } from "@/lib/cmsContent";
 
 import HomePage from "@/pages/HomePage";
 import CategoryPage from "@/pages/CategoryPage";
@@ -101,7 +102,9 @@ function AppInner() {
 export default function App() {
   return (
     <div className="App bg-arabian-white text-armadillo">
-      <AppInner />
+      <CMSContentProvider>
+        <AppInner />
+      </CMSContentProvider>
     </div>
   );
 }

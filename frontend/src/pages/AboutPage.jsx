@@ -1,29 +1,32 @@
 import { Link } from "react-router-dom";
-import { SITE } from "../data/site";
+import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
 export default function AboutPage({ onOpenBooking }) {
   useReveal();
+  const { site: SITE, about } = useCmsContent();
   return (
     <>
-      <Seo title="About Us" description="A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body." />
+      <Seo title={about?.seoTitle || "About Us"} description={about?.metaDescription || "A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body."} />
       <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
         <div className="container-editorial max-w-4xl">
-          <p className="overline text-coronation-gold mb-4">About Artham Aesthetique</p>
-          <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-8">A quieter dermatology.</h1>
-          <p className="fine text-lg text-armadillo/80 leading-relaxed">Artham Aesthetique is the dermatology and aesthetics vertical of the Artham family of healthcare brands. We began with a simple conviction — that the best clinics do less, but do it beautifully. Every treatment here begins with a consult, not a device.</p>
+          <p className="overline text-coronation-gold mb-4">{about?.eyebrow || "About Artham Aesthetique"}</p>
+          <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-8">{about?.heroTitle || "A quieter dermatology."}</h1>
+          <p className="fine text-lg text-armadillo/80 leading-relaxed">{about?.heroDescription || "Artham Aesthetique is the dermatology and aesthetics vertical of the Artham family of healthcare brands. We began with a simple conviction — that the best clinics do less, but do it beautifully. Every treatment here begins with a consult, not a device."}</p>
         </div>
       </section>
 
       <section className="bg-arabian-white py-24 lg:py-28">
         <div className="container-editorial grid lg:grid-cols-2 gap-14 items-center">
           <div className="reveal">
-            <p className="overline text-coronation-gold mb-4">Our story</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-6">Built around one consult at a time.</h2>
+            <p className="overline text-coronation-gold mb-4">{about?.storyEyebrow || "Our story"}</p>
+            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-6">{about?.storyTitle || "Built around one consult at a time."}</h2>
             <div className="fine text-armadillo/80 leading-[1.9] space-y-4">
-              <p>Founded by Dr. Omaima Jawed in 2017, Artham Aesthetique began as a single, quiet room — offering considered dermatology to a small circle of Noida families. Nearly a decade later, the room is a full clinic, but the ethos is unchanged.</p>
-              <p>We use only FDA-approved devices, single-use consumables and evidence-based protocols. We refuse to sell 'packages' that do not consider your individual skin. And we take our time.</p>
+              {(about?.storyBody || [
+                "Founded by Dr. Omaima Jawed in 2017, Artham Aesthetique began as a single, quiet room — offering considered dermatology to a small circle of Noida families. Nearly a decade later, the room is a full clinic, but the ethos is unchanged.",
+                "We use only FDA-approved devices, single-use consumables and evidence-based protocols. We refuse to sell 'packages' that do not consider your individual skin. And we take our time.",
+              ]).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
             </div>
           </div>
           <div className="reveal" style={{ transitionDelay: "150ms" }}>

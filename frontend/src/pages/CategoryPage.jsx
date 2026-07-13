@@ -1,12 +1,13 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ArrowRight, ChevronRight } from "lucide-react";
-import { findCategory } from "../data/treatments";
+import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
 export default function CategoryPage({ onOpenBooking }) {
   useReveal();
   const { slug } = useParams();
+  const { findCategory } = useCmsContent();
   const cat = findCategory(slug);
   if (!cat) return <Navigate to="/" replace />;
 

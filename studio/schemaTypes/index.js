@@ -9,6 +9,14 @@ import {offerType} from './offerType'
 import {testimonialType} from './testimonialType'
 import {faqType} from './faqType'
 import {appointmentType} from './appointmentType'
+import {
+  homePageType,
+  aboutPageType,
+  contactPageType,
+  footerSettingsType,
+  seoSettingsType,
+  navigationSettingsType,
+} from './pageTypes'
 
 export const schemaTypes = [
   // documents
@@ -22,6 +30,12 @@ export const schemaTypes = [
   testimonialType,
   faqType,
   appointmentType,
+  homePageType,
+  aboutPageType,
+  contactPageType,
+  footerSettingsType,
+  seoSettingsType,
+  navigationSettingsType,
   // shared objects
   ...objectTypes,
 ]

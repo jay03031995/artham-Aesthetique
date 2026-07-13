@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import { SITE } from "../data/site";
-import { CATEGORIES } from "../data/treatments";
+import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
@@ -9,19 +8,22 @@ const featured = ["hydrafacial-treatment", "dermal-fillers", "chemical-peel", "a
 
 export default function DoctorProfile({ onOpenBooking }) {
   useReveal();
+  const { site: SITE, categories: CATEGORIES, doctors } = useCmsContent();
+  const doctor = doctors?.[0] || {};
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Physician",
-    name: "Dr. Omaima Jawed",
+    name: doctor.name || "Dr. Omaima Jawed",
     medicalSpecialty: "Dermatology",
     worksFor: { "@type": "MedicalClinic", name: "Artham Aesthetique" },
     telephone: SITE.phone,
     image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=1200&q=80",
   };
 
-  const signatureServices = CATEGORIES.flatMap((c) => c.services)
-    .filter((s) => featured.includes(s.slug));
+  const signatureServices = doctor.signatureServices?.length
+    ? doctor.signatureServices
+    : CATEGORIES.flatMap((c) => c.services).filter((s) => featured.includes(s.slug));
 
   return (
     <>
@@ -35,13 +37,13 @@ export default function DoctorProfile({ onOpenBooking }) {
             <ChevronRight size={12} />
             <Link to="/doctors" className="hover:text-burma-teak">Doctors</Link>
             <ChevronRight size={12} />
-            <span className="text-armadillo">Dr. Omaima Jawed</span>
+            <span className="text-armadillo">{doctor.name || "Dr. Omaima Jawed"}</span>
           </nav>
           <div className="grid lg:grid-cols-2 gap-14 items-end">
             <div className="reveal">
               <p className="overline text-coronation-gold mb-4">Founder · Dermatologist</p>
-              <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.02] mb-6">Dr. Omaima Jawed</h1>
-              <p className="font-display text-xl text-armadillo/70 italic leading-snug mb-8">"Care that enhances what is already yours — never replaces it."</p>
+              <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.02] mb-6">{doctor.name || "Dr. Omaima Jawed"}</h1>
+              <p className="font-display text-xl text-armadillo/70 italic leading-snug mb-8">"{doctor.philosophy || "Care that enhances what is already yours — never replaces it."}"</p>
               <div className="flex flex-wrap gap-3">
                 <button data-testid="dr-book-btn" onClick={onOpenBooking} className="btn-primary">Book with Dr. Omaima</button>
                 <a data-testid="dr-contact-btn" href="/contact" className="btn-secondary">Visit the Clinic</a>
@@ -50,8 +52,8 @@ export default function DoctorProfile({ onOpenBooking }) {
             <div className="reveal" style={{ transitionDelay: "150ms" }}>
               <div className="bg-[#f5e6d0] rounded-lg overflow-hidden aspect-[4/5] flex items-end justify-center">
                 <img
-                  src={SITE.doctorPortraitUrl}
-                  alt="Dr. Omaima Jawed portrait"
+                  src={doctor.portrait || SITE.doctorPortraitUrl}
+                  alt={`${doctor.name || "Dr. Omaima Jawed"} portrait`}
                   className="w-full h-full object-contain object-bottom"
                   loading="lazy"
                 />
@@ -67,25 +69,29 @@ export default function DoctorProfile({ onOpenBooking }) {
           <div className="reveal">
             <p className="overline text-coronation-gold mb-4">Education</p>
             <ul className="space-y-3 fine text-armadillo/80">
-              <li>MBBS · Government Medical College</li>
-              <li>MD, Dermatology, Venereology & Leprosy</li>
-              <li>Advanced training in Aesthetic Dermatology</li>
-              <li>Certifications: Injectables, Lasers, Regenerative</li>
+              {(doctor.education || doctor.qualifications || [
+                "MBBS · Government Medical College",
+                "MD, Dermatology, Venereology & Leprosy",
+                "Advanced training in Aesthetic Dermatology",
+                "Certifications: Injectables, Lasers, Regenerative",
+              ]).map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
           <div className="reveal" style={{ transitionDelay: "100ms" }}>
             <p className="overline text-coronation-gold mb-4">Memberships</p>
             <ul className="space-y-3 fine text-armadillo/80">
-              <li>Indian Association of Dermatologists</li>
-              <li>Cosmetic Dermatology Society of India</li>
-              <li>International Society of Dermatology</li>
-              <li>American Academy of Aesthetic Medicine (Affiliate)</li>
+              {(doctor.memberships || [
+                "Indian Association of Dermatologists",
+                "Cosmetic Dermatology Society of India",
+                "International Society of Dermatology",
+                "American Academy of Aesthetic Medicine (Affiliate)",
+              ]).map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
           <div className="reveal" style={{ transitionDelay: "200ms" }}>
             <p className="overline text-coronation-gold mb-4">Expertise</p>
             <div className="flex flex-wrap gap-2">
-              {["Acne", "Pigmentation", "Anti-ageing", "Lasers", "Hair restoration", "Injectables", "Regenerative", "Bridal programmes"].map((c) => (
+              {(doctor.expertise || ["Acne", "Pigmentation", "Anti-ageing", "Lasers", "Hair restoration", "Injectables", "Regenerative", "Bridal programmes"]).map((c) => (
                 <span key={c} className="fine text-xs px-3 py-1 border border-coronation-gold/50 text-armadillo/80">{c}</span>
               ))}
             </div>
@@ -97,7 +103,7 @@ export default function DoctorProfile({ onOpenBooking }) {
       <section className="bg-armadillo text-arabian-white py-24 lg:py-28 text-center">
         <div className="container-editorial max-w-3xl mx-auto reveal">
           <p className="overline text-coronation-gold mb-6">Philosophy</p>
-          <blockquote className="font-display italic text-3xl md:text-4xl leading-snug">"A quieter dermatology. We do less, on purpose — because faces should age beautifully, not obviously."</blockquote>
+          <blockquote className="font-display italic text-3xl md:text-4xl leading-snug">"{doctor.philosophy || "A quieter dermatology. We do less, on purpose — because faces should age beautifully, not obviously."}"</blockquote>
         </div>
       </section>
 

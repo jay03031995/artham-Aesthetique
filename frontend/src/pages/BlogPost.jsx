@@ -1,7 +1,6 @@
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ChevronRight, Info, Clock, Calendar } from "lucide-react";
-import { findPost, POSTS } from "../data/blog";
-import { findService } from "../data/treatments";
+import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 import {
@@ -23,13 +22,14 @@ const fmtDate = (d) =>
 export default function BlogPost({ onOpenBooking }) {
   useReveal();
   const { slug } = useParams();
+  const { posts: POSTS, findPost, findService } = useCmsContent();
   const post = findPost(slug);
   if (!post) return <Navigate to="/blog" replace />;
 
   const toc = buildToc(post);
-  const targets = buildLinkTargets();
+  const targets = buildLinkTargets(POSTS);
   const linkify = makeLinker(post.slug, targets);
-  const seeAlso = getSeeAlso(post);
+  const seeAlso = getSeeAlso(post, POSTS);
   const backlinks = getBacklinks(post, POSTS);
   const related = (post.relatedSlugs || []).map(findService).filter(Boolean);
   const readingTime = computeReadingTime(post);

@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Linkedin, Youtube, MessageCircle } from "lucide-react";
-import { SITE } from "../../data/site";
-import { CATEGORIES } from "../../data/treatments";
+import { useCmsContent } from "../../lib/cmsContent";
 import { api } from "../../lib/api";
 import { toast } from "sonner";
 
@@ -13,6 +12,7 @@ const XIcon = ({ size = 16 }) => (
 );
 
 export default function Footer() {
+  const { site: SITE, categories: CATEGORIES, footer } = useCmsContent();
   const [email, setEmail] = useState("");
   const [subscribing, setSubscribing] = useState(false);
 
@@ -54,7 +54,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="fine text-arabian-white/70 text-sm max-w-sm leading-relaxed">
-              A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body.
+              {footer?.brandText || "A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body."}
             </p>
             <div className="flex items-center gap-4 mt-8">
               {socialIcons.map(({ key, href, Icon }) => (
@@ -89,11 +89,17 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
             <h5 className="text-[13px] font-semibold text-[#FFF7EC] mb-5" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Company</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
-              <li><Link data-testid="footer-about" to="/about" className="hover:text-coronation-gold transition-colors duration-500">About</Link></li>
-              <li><Link data-testid="footer-doctor" to="/doctors/dr-omaima-jawed" className="hover:text-coronation-gold transition-colors duration-500">Dr. Omaima Jawed</Link></li>
-              <li><Link to="/blog" className="hover:text-coronation-gold transition-colors duration-500">Journal</Link></li>
-              <li><Link to="/careers" className="hover:text-coronation-gold transition-colors duration-500">Careers</Link></li>
-              <li><Link to="/contact" className="hover:text-coronation-gold transition-colors duration-500">Contact</Link></li>
+              {(footer?.quickLinks || [
+                { label: "About", href: "/about" },
+                { label: "Dr. Omaima Jawed", href: "/doctors/dr-omaima-jawed" },
+                { label: "Journal", href: "/blog" },
+                { label: "Careers", href: "/careers" },
+                { label: "Contact", href: "/contact" },
+              ]).map((link) => (
+                <li key={link.label}>
+                  <Link data-testid={`footer-${link.label.toLowerCase().replace(/\s+/g, "-")}`} to={link.href || link.url || "#"} className="hover:text-coronation-gold transition-colors duration-500">{link.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -101,13 +107,19 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
             <h5 className="text-[13px] font-semibold text-[#FFF7EC] mb-5" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Support</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
-              <li><Link to="/faq" className="hover:text-coronation-gold transition-colors duration-500">FAQs</Link></li>
-              <li><Link to="/book" className="hover:text-coronation-gold transition-colors duration-500">Book Appointment</Link></li>
-              <li><Link to="/offers" className="hover:text-coronation-gold transition-colors duration-500">Offers</Link></li>
-              <li className="pt-4"><Link to="/policies/terms" className="hover:text-coronation-gold transition-colors duration-500">Terms</Link></li>
-              <li><Link to="/policies/privacy" className="hover:text-coronation-gold transition-colors duration-500">Privacy</Link></li>
-              <li><Link to="/policies/refund" className="hover:text-coronation-gold transition-colors duration-500">Refund</Link></li>
-              <li><Link to="/policies/cancellation" className="hover:text-coronation-gold transition-colors duration-500">Cancellation</Link></li>
+              {(footer?.legalLinks || [
+                { label: "FAQs", href: "/faq" },
+                { label: "Book Appointment", href: "/book" },
+                { label: "Offers", href: "/offers" },
+                { label: "Terms", href: "/policies/terms" },
+                { label: "Privacy", href: "/policies/privacy" },
+                { label: "Refund", href: "/policies/refund" },
+                { label: "Cancellation", href: "/policies/cancellation" },
+              ]).map((link, index) => (
+                <li key={link.label} className={index === 3 ? "pt-4" : ""}>
+                  <Link to={link.href || link.url || "#"} className="hover:text-coronation-gold transition-colors duration-500">{link.label}</Link>
+                </li>
+              ))}
             </ul>
           </div>
 
@@ -155,7 +167,7 @@ export default function Footer() {
 
       <div className="border-t border-arabian-white/15">
         <div className="container-editorial flex flex-col md:flex-row items-center justify-between py-6 gap-2 fine text-xs text-arabian-white/50">
-          <p>© {new Date().getFullYear()} Artham Aesthetique. All rights reserved.</p>
+          <p>{footer?.copyrightText || `© ${new Date().getFullYear()} Artham Aesthetique. All rights reserved.`}</p>
           <p>
             Part of the{" "}
             <a data-testid="footer-parent-link" href={SITE.parentBrandUrl} target="_blank" rel="noreferrer" className="text-coronation-gold hover:text-arabian-white transition-colors duration-500">Artham family</a>.
