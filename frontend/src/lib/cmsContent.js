@@ -69,6 +69,15 @@ const CMS_QUERY = `{
     "relatedSlugs": relatedTreatments[]->slug.current,
     "readingTimeMin": round(length(pt::text(sections[].blocks[].text)) / 900)
   },
+  "results": *[_type == "beforeAfter"]|order(order asc){
+    _id, title, patientAge, gender, description, sessionsInfo, note,
+    "featured": coalesce(featured, false),
+    "treatmentSlug": treatment->slug,
+    "treatmentName": treatment->title,
+    "category": category->title,
+    "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url),
+    "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)
+  },
   "doctors": *[_type == "doctor"]|order(_createdAt asc){
     name, title, designation, qualifications, experience, languages, achievements, bio, education, memberships, expertise, philosophy, consultationCta,
     "slug": slug.current,
@@ -144,7 +153,11 @@ const normalizeService = (service, category) => {
     image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
-    benefits: (service.benefits || []).map((b) => (typeof b === "string" ? b : b.title || b.description)).filter(Boolean),
+    benefits: (service.benefits || []).map((b) =>
+      typeof b === "string"
+        ? b
+        : b.title || b.description || b.text || ""
+    ).filter(Boolean),
     symptoms: service.symptoms || [],
     howItWorks: normalizeSteps(service.howItWorks),
     faqs: normalizeFaqs(service.faqs),
@@ -194,6 +207,7 @@ const composeContent = (result = {}) => {
     categories,
     allServices,
     posts: normalizePosts(result.posts),
+    results: result.results || [],
     doctors: result.doctors || [],
     testimonials: result.testimonials || [],
     home: result.home || {},
