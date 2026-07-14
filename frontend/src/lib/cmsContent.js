@@ -47,8 +47,11 @@ const CMS_QUERY = `{
     "slug": slug.current,
     "image": coalesce(image.url, image.asset.asset->url),
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, hero, what, whoFor, benefits, duration, sessions, priceFrom, pricing, doctorNote, faqs,
-      quickInfo, howItWorks, symptoms, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
+      _id, title, short, hero, what, whoFor, duration, sessions, priceFrom, pricing, doctorNote, faqs,
+      quickInfo, howItWorks,
+      "symptoms": symptoms[]{title, description, "image": coalesce(image.url, image.asset.asset->url)},
+      "benefits": benefits[]{title, description, "image": coalesce(image.url, image.asset.asset->url)},
+      relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
       "name": title,
       "slug": slug.current,
       "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url),
@@ -144,8 +147,16 @@ const normalizeService = (service, category) => {
     image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
-    benefits: (service.benefits || []).map((b) => (typeof b === "string" ? b : b.title || b.description)).filter(Boolean),
-    symptoms: service.symptoms || [],
+    benefits: (service.benefits || []).map((b) =>
+      typeof b === "string"
+        ? { title: b, description: "", image: "" }
+        : { title: b.title || b.text || "", description: b.description || "", image: b.image || "" }
+    ).filter((b) => b.title),
+    symptoms: (service.symptoms || []).map((s) =>
+      typeof s === "string"
+        ? { title: s, description: "", image: "" }
+        : { title: s.title || s.text || "", description: s.description || "", image: s.image || "" }
+    ).filter((s) => s.title),
     howItWorks: normalizeSteps(service.howItWorks),
     faqs: normalizeFaqs(service.faqs),
     downtime,

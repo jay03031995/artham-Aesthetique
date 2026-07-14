@@ -103,6 +103,31 @@ export default function ServicePage({ onOpenBooking }) {
         </div>
       </section>
 
+      {/* SYMPTOMS */}
+      {s.symptoms?.length > 0 && (
+        <section className="bg-arabian-white py-16 lg:py-20" data-testid="svc-symptoms">
+          <div className="container-editorial">
+            <div className="max-w-3xl mb-8 reveal">
+              <p className="overline text-coronation-gold mb-4">Symptoms</p>
+              <h2 className="font-display text-3xl md:text-4xl text-armadillo">Symptoms we commonly treat</h2>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {s.symptoms.map((sym, i) => (
+                <div key={i} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-6 reveal">
+                  {sym.image && (
+                    <div className="mb-3 h-12 w-12 overflow-hidden rounded-full bg-white">
+                      <img src={sym.image} alt={sym.title || ""} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <h3 className="font-semibold text-armadillo mb-2">{sym.title}</h3>
+                  {sym.description && <p className="fine text-armadillo/75 leading-relaxed">{sym.description}</p>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* HOW IT WORKS */}
       <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-how">
         <div className="container-editorial">
@@ -131,13 +156,23 @@ export default function ServicePage({ onOpenBooking }) {
           <div className="reveal">
             <p className="overline text-coronation-gold mb-4">Benefits</p>
             <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Small changes, meaningfully.</h2>
-            <ul className="space-y-4">
-              {s.benefits.map((b) => (
-                <li key={b} className="flex items-start gap-3 fine text-armadillo/85 leading-relaxed">
-                  <span className="w-1.5 h-1.5 rounded-full bg-coronation-gold mt-2.5 shrink-0" />{b}
-                </li>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {(s.benefits || []).map((b, i) => (
+                <div key={`${b.title || b}-${i}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5 flex gap-4 items-start">
+                  {b.image ? (
+                    <div className="flex-shrink-0 h-12 w-12 overflow-hidden rounded-full bg-white">
+                      <img src={b.image} alt={b.title || ""} className="w-full h-full object-cover" />
+                    </div>
+                  ) : (
+                    <div className="h-3 w-3 rounded-full bg-coronation-gold mt-3" />
+                  )}
+                  <div>
+                    <h4 className="font-semibold text-armadillo mb-1">{b.title || b}</h4>
+                    {b.description && <p className="fine text-armadillo/75 leading-relaxed">{b.description}</p>}
+                  </div>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
           <div className="reveal" style={{ transitionDelay: "120ms" }}>
             <p className="overline text-coronation-gold mb-4">Expectations</p>
