@@ -112,18 +112,14 @@ export default function Header({ onOpenBooking }) {
     : [];
   const menuGroups = cmsMega?.length ? cmsMega : (categoryMega.length ? categoryMega : MEGA);
   const featuredService = menuGroups.flatMap((group) => group.items || []).find((item) => item.slug === "hydrafacial-treatment") || menuGroups[0]?.items?.[0];
-  const rawNavItems = nav?.length ? nav : [
+  const navItems = nav?.length ? nav : [
+    { label: "Home", href: "/" },
     { label: "Treatments", href: "#treatments" },
     { label: "Doctor", href: "/doctors/dr-omaima-jawed" },
     { label: "Journal", href: "/blog" },
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ];
-  const navItems = rawNavItems.filter((item) => {
-    const label = (item.label || "").trim().toLowerCase();
-    const href = (item.href || "").trim().toLowerCase();
-    return label !== "home" && href !== "/" && href !== "#home";
-  });
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40" data-testid="site-header">
@@ -163,7 +159,7 @@ export default function Header({ onOpenBooking }) {
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8 flex-nowrap overflow-x-auto">
+          <nav className="hidden lg:flex items-center gap-8">
             {navItems.map((item) => {
               const isTreatments = item.label?.toLowerCase().includes("treatment") || item.href === "#treatments";
               if (isTreatments) {
@@ -217,7 +213,7 @@ export default function Header({ onOpenBooking }) {
             <button
               data-testid="header-book-btn"
               onClick={onOpenBooking}
-              className="btn-primary hidden md:inline-flex whitespace-nowrap shrink-0"
+              className="btn-primary hidden md:inline-flex"
               style={{ padding: "10px 22px", minHeight: "44px" }}
             >
               Book Appointment

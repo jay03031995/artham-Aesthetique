@@ -20,7 +20,6 @@ import DoctorsIndex from "@/pages/DoctorsIndex";
 import DoctorProfile from "@/pages/DoctorProfile";
 import BlogIndex from "@/pages/BlogIndex";
 import BlogPost from "@/pages/BlogPost";
-import ResultsPage from "@/pages/ResultsPage";
 import AboutPage from "@/pages/AboutPage";
 import ContactPage from "@/pages/ContactPage";
 import FaqPage from "@/pages/FaqPage";
@@ -83,7 +82,6 @@ function AppInner() {
           <Route path="/doctors/:slug" element={<DoctorProfile onOpenBooking={() => openBooking(null)} />} />
           <Route path="/blog" element={<BlogIndex />} />
           <Route path="/blog/:slug" element={<BlogPost onOpenBooking={() => openBooking(null)} />} />
-          <Route path="/results" element={<ResultsPage />} />
           <Route path="/about" element={<AboutPage onOpenBooking={() => openBooking(null)} />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/faq" element={<FaqPage />} />

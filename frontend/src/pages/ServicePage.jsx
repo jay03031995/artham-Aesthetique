@@ -50,28 +50,27 @@ export default function ServicePage({ onOpenBooking }) {
             <div>
               <p className="overline mb-3">{cat.name}</p>
               <h1 className="font-display leading-[1.05] text-[#3D2F23] mb-4" style={{ fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)" }}>{s.name}</h1>
-              {s.heroTitle && <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7A5A2E] mb-3">{s.heroTitle}</p>}
-              <p className="text-body-lg text-[#5C4A38] mb-4">{s.hero}</p>
-              {s.heroDescription && <p className="fine text-armadillo/75 leading-relaxed mb-6">{s.heroDescription}</p>}
+              <p className="text-body-lg text-[#5C4A38] mb-6">{s.hero}</p>
 
               {/* Quick facts row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
-                {(s.quickInfoRows || []).slice(0, 3).map((row) => (
-                  <div key={row.label}>
-                    <div className="flex items-center gap-2 text-[#7A5A2E]"><span className="overline text-[10px] mb-0">{row.label}</span></div>
-                    <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{row.value}</p>
-                  </div>
-                ))}
+              <div className="grid grid-cols-3 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Clock size={14} /><span className="overline text-[10px] mb-0">Duration</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.duration}</p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Repeat size={14} /><span className="overline text-[10px] mb-0">Sessions</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.sessions}</p>
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Sparkles size={14} /><span className="overline text-[10px] mb-0">Downtime</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">Minimal</p>
+                </div>
               </div>
 
               <div className="flex flex-wrap gap-3">
                 <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={15} /> Book {s.name}</button>
                 <a data-testid="svc-wa-btn" href={cmsWhatsAppLink(SITE, `Hello, I'd like to know more about ${s.name}.`)} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
-                {s.ctaText && s.ctaLink && (s.ctaLink.startsWith('/') ? (
-                  <Link to={s.ctaLink} className="btn-tertiary flex items-center gap-2">{s.ctaText}</Link>
-                ) : (
-                  <a href={s.ctaLink} target="_blank" rel="noreferrer" className="btn-tertiary flex items-center gap-2">{s.ctaText}</a>
-                ))}
               </div>
             </div>
             <div className="aspect-[4/5] rounded-lg overflow-hidden">
@@ -86,17 +85,14 @@ export default function ServicePage({ onOpenBooking }) {
         <div className="container-editorial grid lg:grid-cols-5 gap-16">
           <div className="lg:col-span-2 reveal">
             <p className="overline text-coronation-gold mb-4">What is {s.name}</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">
-              {s.overviewHeading || "A quiet primer — "}
-              {!s.overviewHeading && <em className="italic font-light">before you book.</em>}
-            </h2>
+            <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">A quiet primer — <em className="italic font-light">before you book.</em></h2>
           </div>
           <div className="lg:col-span-3 reveal" style={{ transitionDelay: "120ms" }}>
             <p className="fine text-armadillo/85 leading-[1.9] mb-8">{s.what}</p>
             {s.whoFor.length > 0 && (
               <>
                 <p className="overline text-armadillo/60 mb-4">Who it's for</p>
-                <div className="flex flex-wrap gap-2 mb-8">
+                <div className="flex flex-wrap gap-2">
                   {s.whoFor.map((w) => (
                     <span key={w} className="fine text-sm px-4 py-1.5 border border-coronation-gold/50 text-armadillo/80">{w}</span>
                   ))}
@@ -106,31 +102,6 @@ export default function ServicePage({ onOpenBooking }) {
           </div>
         </div>
       </section>
-
-      {/* SYMPTOMS */}
-      {s.symptoms?.length > 0 && (
-        <section className="bg-arabian-white py-16 lg:py-20" data-testid="svc-symptoms">
-          <div className="container-editorial">
-            <div className="max-w-3xl mb-8 reveal">
-              <p className="overline text-coronation-gold mb-4">Symptoms</p>
-              <h2 className="font-display text-3xl md:text-4xl text-armadillo">Symptoms we commonly treat</h2>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {s.symptoms.map((sym, i) => (
-                <div key={i} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-6 reveal">
-                  {sym.image && (
-                    <div className="mb-3 h-12 w-12 overflow-hidden rounded-full bg-white">
-                      <img src={sym.image} alt={sym.title || ""} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <h3 className="font-semibold text-armadillo mb-2">{sym.title}</h3>
-                  {sym.description && <p className="fine text-armadillo/75 leading-relaxed">{sym.description}</p>}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* HOW IT WORKS */}
       <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-how">
@@ -160,113 +131,31 @@ export default function ServicePage({ onOpenBooking }) {
           <div className="reveal">
             <p className="overline text-coronation-gold mb-4">Benefits</p>
             <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Small changes, meaningfully.</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {(s.benefits || []).map((b, i) => (
-                <div key={`${b.title || b}-${i}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5 flex gap-4 items-start">
-                  {b.icon ? (
-                    <div className="flex-shrink-0 h-12 w-12 overflow-hidden rounded-full bg-white">
-                      <img src={b.icon} alt={b.title || ""} className="w-full h-full object-cover" />
-                    </div>
-                  ) : (
-                    <div className="h-3 w-3 rounded-full bg-coronation-gold mt-3" />
-                  )}
-                  <div>
-                    <h4 className="font-semibold text-armadillo mb-1">{b.title}</h4>
-                    {b.description && <p className="fine text-armadillo/75 leading-relaxed">{b.description}</p>}
-                  </div>
-                </div>
+            <ul className="space-y-4">
+              {s.benefits.map((b) => (
+                <li key={b} className="flex items-start gap-3 fine text-armadillo/85 leading-relaxed">
+                  <span className="w-1.5 h-1.5 rounded-full bg-coronation-gold mt-2.5 shrink-0" />{b}
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
           <div className="reveal" style={{ transitionDelay: "120ms" }}>
             <p className="overline text-coronation-gold mb-4">Expectations</p>
             <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Time, downtime, and results.</h2>
             <dl className="divide-y divide-coronation-gold/30 border-y border-coronation-gold/30">
-              {(s.downtime || []).map((row) => (
-                <div key={row.label} className="flex justify-between py-4 gap-4 flex-wrap">
+              {s.downtime.map((row) => (
+                <div key={row.label} className="flex justify-between py-4">
                   <dt className="overline text-armadillo/60">{row.label}</dt>
                   <dd className="fine text-sm text-armadillo">{row.value}</dd>
                 </div>
               ))}
             </dl>
-            {(s.priceFrom || (s.pricing || []).length > 0) && (
-              <div className="mt-8 space-y-6">
-                {s.priceFrom && (
-                  <div className="rounded-3xl bg-[#f7f0e4] p-6 border border-[#b8894a]/20">
-                    <p className="overline text-armadillo/60 mb-2">Starting price</p>
-                    <p className="text-2xl font-semibold text-armadillo">{s.priceFrom}</p>
-                  </div>
-                )}
-                {(s.pricing || []).length > 0 && (
-                  <dl className="grid gap-4 sm:grid-cols-2">
-                    {s.pricing.map((item, index) => (
-                      <div key={`${item.label || item.value}-${index}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-4">
-                        {item.label && <dt className="overline text-armadillo/60 mb-2 block">{item.label}</dt>}
-                        <dd className="fine text-sm text-armadillo">{item.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </div>
-            )}
           </div>
         </div>
       </section>
 
-      {/* BEFORE / AFTER RESULTS */}
-      {s.results?.length > 0 && (
-        <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-results">
-          <div className="container-editorial">
-            <div className="flex items-end justify-between mb-12 gap-6 flex-wrap">
-              <div>
-                <p className="overline text-coronation-gold mb-4">Before & After</p>
-                <h2 className="font-display text-3xl md:text-4xl text-armadillo">Real patient results.</h2>
-              </div>
-              <Link to="/results" className="link-gold overline">View all results →</Link>
-            </div>
-            <div className="grid gap-6 lg:grid-cols-2">
-              {s.results.map((item, index) => (
-                <article key={item._id || index} className="rounded-3xl overflow-hidden border border-[#b8894a]/20 bg-white shadow-sm">
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    {item.beforeImage && (
-                      <figure className="overflow-hidden bg-[#f7f0e4]">
-                        <img src={item.beforeImage} alt={`${item.title || "Before"} before`} loading="lazy" className="w-full h-full object-cover" />
-                      </figure>
-                    )}
-                    {item.afterImage && (
-                      <figure className="overflow-hidden bg-[#f7f0e4]">
-                        <img src={item.afterImage} alt={`${item.title || "After"} after`} loading="lazy" className="w-full h-full object-cover" />
-                      </figure>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-coronation-gold mb-2">{item.category || item.treatmentName}</p>
-                    <h3 className="font-display text-xl text-armadillo mb-3">{item.title || item.treatmentName || "Treatment result"}</h3>
-                    {item.sessionsInfo && <p className="fine text-armadillo/75 mb-3">{item.sessionsInfo}</p>}
-                    <div className="grid gap-2 text-sm text-armadillo/75">
-                      {item.patientAge && (
-                        <div className="flex justify-between">
-                          <span>Age</span>
-                          <span>{item.patientAge}</span>
-                        </div>
-                      )}
-                      {item.gender && (
-                        <div className="flex justify-between">
-                          <span>Gender</span>
-                          <span>{item.gender}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* DOCTOR'S NOTE */}
-      <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-doctor-note">
+      <section className="bg-armadillo text-arabian-white py-24 lg:py-28" data-testid="svc-doctor-note">
         <div className="container-editorial max-w-3xl reveal">
           <p className="overline text-coronation-gold mb-6">A note from Dr. Omaima</p>
           <blockquote className="font-display text-2xl md:text-4xl italic leading-snug mb-8">"{s.doctorNote}"</blockquote>

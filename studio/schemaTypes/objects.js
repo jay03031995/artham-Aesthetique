@@ -90,21 +90,6 @@ export const iconText = defineType({
   preview: {select: {title: 'title', subtitle: 'description', media: 'image.asset'}},
 })
 
-export const benefitItem = defineType({
-  name: 'benefitItem',
-  title: 'Benefit item',
-  type: 'object',
-  fields: [
-    defineField({name: 'title', title: 'Benefit', type: 'string'}),
-    defineField({name: 'description', title: 'Description', type: 'text', rows: 2}),
-    defineField({name: 'icon', title: 'Icon / image', type: 'mediaImage'}),
-  ],
-  preview: {
-    select: {title: 'title', subtitle: 'description', media: 'icon.asset'},
-    prepare: ({title, subtitle}) => ({title: title || subtitle || 'Benefit item', subtitle}),
-  },
-})
-
 export const keyFact = defineType({
   name: 'keyFact',
   title: 'Key fact',
@@ -208,7 +193,6 @@ export const objectTypes = [
   seoFields,
   quickInfo,
   iconText,
-  benefitItem,
   keyFact,
   tableRow,
   journalBlock,

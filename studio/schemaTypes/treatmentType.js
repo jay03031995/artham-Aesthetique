@@ -35,7 +35,7 @@ export const treatmentType = defineType({
     defineField({name: 'quickInfo', title: 'Quick information', type: 'quickInfo', group: 'content'}),
     defineField({name: 'whoFor', title: "Who it's for", type: 'array', of: [{type: 'string'}], group: 'content'}),
     defineField({name: 'symptoms', title: 'Symptoms', type: 'array', of: [{type: 'iconText'}], group: 'content'}),
-    defineField({name: 'benefits', title: 'Benefits', type: 'array', of: [{type: 'benefitItem'}], group: 'content'}),
+    defineField({name: 'benefits', title: 'Benefits', type: 'array', of: [{type: 'string'}, {type: 'iconText'}], group: 'content'}),
     defineField({name: 'duration', title: 'Duration', type: 'string', group: 'content'}),
     defineField({name: 'sessions', title: 'Sessions', type: 'string', group: 'content'}),
     defineField({name: 'downtime', title: 'Downtime notes', type: 'array', of: [{type: 'string'}], group: 'content'}),

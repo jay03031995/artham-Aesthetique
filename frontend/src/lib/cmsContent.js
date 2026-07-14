@@ -47,12 +47,8 @@ const CMS_QUERY = `{
     "slug": slug.current,
     "image": coalesce(image.url, image.asset.asset->url),
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, duration, sessions, priceFrom, pricing, doctorNote, faqs,
-      quickInfo, howItWorks,
-      "symptoms": symptoms[]{title, description, "image": coalesce(image.url, image.asset.asset->url)},
-      "benefits": benefits[]{title, description, "icon": coalesce(icon.url, icon.asset.asset->url)},
-      relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
-      "realResults": realResults[]->{title, patientAge, gender, description, sessionsInfo, note, "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url), "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)},
+      _id, title, short, hero, what, whoFor, benefits, duration, sessions, priceFrom, pricing, doctorNote, faqs,
+      quickInfo, howItWorks, symptoms, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
       "name": title,
       "slug": slug.current,
       "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url),
@@ -72,15 +68,6 @@ const CMS_QUERY = `{
     "coverImage": coalesce(cover.url, cover.asset.asset->url),
     "relatedSlugs": relatedTreatments[]->slug.current,
     "readingTimeMin": round(length(pt::text(sections[].blocks[].text)) / 900)
-  },
-  "results": *[_type == "beforeAfter"]|order(order asc){
-    _id, title, patientAge, gender, description, sessionsInfo, note,
-    "featured": coalesce(featured, false),
-    "treatmentSlug": treatment->slug,
-    "treatmentName": treatment->title,
-    "category": category->title,
-    "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url),
-    "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)
   },
   "doctors": *[_type == "doctor"]|order(_createdAt asc){
     name, title, designation, qualifications, experience, languages, achievements, bio, education, memberships, expertise, philosophy, consultationCta,
@@ -154,35 +141,15 @@ const normalizeService = (service, category) => {
     categorySlug: service.categorySlug || category?.slug,
     short: service.short || service.shortDescription || "",
     hero: service.hero || service.heroSubtitle || service.short || "",
-    heroDescription: service.heroDescription || service.description || "",
-    overviewHeading: service.overviewHeading || "",
-    ctaText: service.ctaText || "",
-    ctaLink: service.ctaLink || "",
-    heroBackgroundImage: service.heroBackgroundImage || "",
-    featuredImage: service.featuredImage || "",
-    cardImage: service.cardImage || "",
-    priceFrom: service.priceFrom || "",
-    pricing: service.pricing || [],
     image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
-    benefits: (service.benefits || []).map((b) =>
-      typeof b === "string"
-        ? { title: b, description: "", icon: "" }
-        : { title: b.title || b.text || "", description: b.description || "", icon: b.icon || "" }
-    ).filter((b) => b.title),
-    symptoms: (service.symptoms || []).map((s) =>
-      typeof s === "string"
-        ? { title: s, description: "", image: "" }
-        : { title: s.title || s.text || "", description: s.description || "", image: s.image || "" }
-    ).filter((s) => s.title),
+    benefits: (service.benefits || []).map((b) => (typeof b === "string" ? b : b.title || b.description)).filter(Boolean),
+    symptoms: service.symptoms || [],
     howItWorks: normalizeSteps(service.howItWorks),
     faqs: normalizeFaqs(service.faqs),
-    quickInfoRows: quickInfoRows(service),
     downtime,
     relatedTreatments: service.relatedTreatments || [],
-    realResults: service.realResults || [],
-    results: (service.realResults && service.realResults.length) ? service.realResults : service.results || [],
   };
 };
 
@@ -227,7 +194,6 @@ const composeContent = (result = {}) => {
     categories,
     allServices,
     posts: normalizePosts(result.posts),
-    results: result.results || [],
     doctors: result.doctors || [],
     testimonials: result.testimonials || [],
     home: result.home || {},

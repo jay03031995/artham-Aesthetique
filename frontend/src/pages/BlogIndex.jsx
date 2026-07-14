@@ -1,26 +1,15 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
+const CATS = ["All", "Skin", "Hair", "Anti-Ageing", "Laser Hair Removal", "Body", "Bridal"];
+
 export default function BlogIndex() {
   useReveal();
   const [cat, setCat] = useState("All");
-  const { posts, postsByCategory } = useCmsContent();
-  const categories = useMemo(
-    () => [
-      "All",
-      ...Array.from(
-        new Set(
-          (posts || [])
-            .map((p) => p.category?.trim())
-            .filter(Boolean),
-        ),
-      ),
-    ],
-    [posts],
-  );
+  const { postsByCategory } = useCmsContent();
   const list = postsByCategory(cat);
   const [featured, ...rest] = list;
 
@@ -60,7 +49,7 @@ export default function BlogIndex() {
       <section className="bg-arabian-white py-24">
         <div className="container-editorial">
           <div className="flex flex-wrap gap-2 mb-12">
-            {categories.map((c) => (
+            {CATS.map((c) => (
               <button
                 key={c}
                 data-testid={`blog-filter-${c}`}
