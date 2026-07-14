@@ -1,28 +1,21 @@
 import Seo from "../lib/seo";
-import { useCmsContent } from "../lib/cmsContent";
 
 export default function CareersPage() {
-  const { careers } = useCmsContent();
   return (
     <>
-      <Seo title={careers?.seo?.title || careers?.heroTitle} description={careers?.seo?.description || careers?.heroDescription} />
+      <Seo title="Careers" description="Join Artham Aesthetique — dermatologists, technicians and hospitality-minded team members." />
       <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
         <div className="container-editorial max-w-3xl">
-          {careers?.eyebrow && <p className="overline text-coronation-gold mb-4">{careers.eyebrow}</p>}
-          {careers?.heroTitle && <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-6">{careers.heroTitle}</h1>}
-          {careers?.heroDescription && <p className="fine text-lg text-armadillo/80">{careers.heroDescription}</p>}
+          <p className="overline text-coronation-gold mb-4">Careers</p>
+          <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-6">Come build a quieter clinic.</h1>
+          <p className="fine text-lg text-armadillo/80">We hire slowly, and we hire for warmth. If our approach resonates, we would love to hear from you.</p>
         </div>
       </section>
       <section className="bg-arabian-white py-24">
         <div className="container-editorial max-w-3xl">
           <div className="space-y-6 fine text-armadillo/85 leading-[1.9]">
-            {(careers?.sections || []).map((section) => (
-              <section key={section.heading || section.body}>
-                {section.heading && <h2 className="font-display text-2xl text-armadillo mb-3">{section.heading}</h2>}
-                {section.body && <p>{section.body}</p>}
-              </section>
-            ))}
-            {careers?.cta?.label && <a href={careers.cta.url || "#"} className="link-gold">{careers.cta.label}</a>}
+            <p>Current openings — Dermatology Consultant, Laser Technician (Female), Front-of-House Host.</p>
+            <p>Send your CV and a short note about the work you would like to do to <a href="mailto:careers@arthamaesthetique.com" className="link-gold">careers@arthamaesthetique.com</a>.</p>
           </div>
         </div>
       </section>

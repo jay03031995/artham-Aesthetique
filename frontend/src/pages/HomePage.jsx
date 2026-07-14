@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Clock, Quote, Phone, MessageCircle, Check, CalendarCheck } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Award, Users, Clock, Quote, Phone, MessageCircle, Check, CalendarCheck } from "lucide-react";
 import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
@@ -30,47 +30,56 @@ const useCountUp = (target, duration = 1400) => {
   return [ref, n];
 };
 
-const ICONS = [BadgeCheck, ShieldCheck, Sparkles, HeartHandshake];
-const statNumber = (value) => Number(String(value || "").replace(/[^0-9.]/g, "")) || 0;
+// Homepage shows 4 grouped categories per spec
+const HOME_CATEGORIES = [
+  { name: "Skin", link: "/category/skin", image: "https://images.unsplash.com/photo-1512290923902-8a9f81dc236c?auto=format&fit=crop&w=900&q=80", desc: "Facials, peels, boosters and lasers — for calm, camera-ready skin." },
+  { name: "Hair", link: "/category/hair", image: "https://images.unsplash.com/photo-1560869713-7d0a29430803?auto=format&fit=crop&w=900&q=80", desc: "PRP, growth factors and FUE — a proper, evidence-led plan." },
+  { name: "Body", link: "/category/body", image: "https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&w=900&q=80", desc: "CoolSculpting, contouring and bridal — for real, measured change." },
+  { name: "Laser & Advanced", link: "/category/anti-ageing", image: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=900&q=80", desc: "Skin-tone-safe lasers, injectables and regenerative protocols." },
+];
+
+// 6 signature treatments with quick facts
+const SIGNATURE_SLUGS = ["hydrafacial-treatment", "pdrn-skin-boosters", "hifu", "laser-hair-removal", "acne-treatment", "vampire-facial-prp"];
 
 export default function HomePage({ onOpenBooking }) {
   useReveal();
-  const { site: SITE, categories: CATEGORIES, posts: POSTS, home } = useCmsContent();
+  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, posts: POSTS, testimonials } = useCmsContent();
   const cmsHomeCategories = CATEGORIES.slice(0, 4).map((cat) => ({
     name: cat.name,
     link: `/category/${cat.slug}`,
     image: cat.image,
     desc: cat.intro,
   }));
-  const homeCategories = cmsHomeCategories;
-  const signature = home?.featuredTreatments || [];
-  const homeTestimonials = (home?.testimonials || []).map((t) => ({
+  const homeCategories = cmsHomeCategories.length ? cmsHomeCategories : HOME_CATEGORIES;
+  const signature = SIGNATURE_SLUGS.map((s) => ALL_SERVICES.find((x) => x.slug === s)).filter(Boolean);
+  const homeTestimonials = testimonials?.length ? testimonials.map((t) => ({
     name: t.name,
-    area: t.area || "",
+    area: t.area || "Artham Guest",
     rating: t.rating || 5,
     quote: t.quote || t.review,
-  })).filter((t) => t.name && t.quote);
-  const trustItems = home?.trustItems || [];
-  const whyItems = home?.whyChooseUs || [];
-  const stats = home?.statistics || [];
-  const doctor = home?.doctor;
+  })) : [
+    { name: "Ananya S.", area: "Noida", rating: 5, quote: "The first clinic I've visited where nobody tried to upsell me. I got exactly the two treatments I actually needed — and my skin has never behaved better." },
+    { name: "Rhea K.", area: "Delhi", rating: 5, quote: "Six months out from my wedding, I walked in nervous. I walked out with a plan I understood — and skin I actually recognise on my wedding photos." },
+    { name: "Kabir M.", area: "Gurgaon", rating: 5, quote: "The beard-line laser at Artham is the cleanest, quietest treatment I've had. Private, precise, done in 25 minutes. Booked back." },
+  ];
 
-  const [statsRef1, n1] = useCountUp(statNumber(stats[0]?.value));
-  const [statsRef2, n2] = useCountUp(statNumber(stats[1]?.value));
-  const [statsRef3, n3] = useCountUp(statNumber(stats[2]?.value));
+  const [statsRef1, n1] = useCountUp(10);
+  const [statsRef2, n2] = useCountUp(37);
+  const [statsRef3, n3] = useCountUp(5000);
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "MedicalClinic",
-    name: SITE.title,
+    name: "Artham Aesthetique",
     image: SITE.logoUrl,
     telephone: SITE.phone,
     priceRange: "$$$",
     address: {
       "@type": "PostalAddress",
       streetAddress: `${SITE.address.line1}, ${SITE.address.line2}`,
-      addressLocality: SITE.address.line2,
-      addressRegion: SITE.address.line3,
+      addressLocality: "Noida",
+      addressRegion: "Uttar Pradesh",
+      postalCode: "201304",
       addressCountry: "IN",
     },
     openingHours: "Mo-Sa 10:00-20:00",
@@ -79,7 +88,7 @@ export default function HomePage({ onOpenBooking }) {
 
   return (
     <>
-      <Seo title={home?.seo?.title || home?.seoTitle || home?.heroTitle} description={home?.seo?.description || home?.metaDescription || home?.heroDescription} jsonLd={jsonLd} ogImage={home?.heroImageUrl || SITE.heroImageUrl} />
+      <Seo title="Where Science meets Soulful Care" description="Dr-led skin, hair and body wellness in Noida. Editorial care by Dr. Omaima Jawed at Artham Aesthetique." jsonLd={jsonLd} />
 
       {/* 1. HERO — clinic video with dark gradient overlay */}
       <section
@@ -90,7 +99,7 @@ export default function HomePage({ onOpenBooking }) {
         <video
           data-testid="hero-video"
           autoPlay muted loop playsInline
-          poster={home?.heroImageUrl || SITE.clinicPhotoUrl}
+          poster={SITE.clinicPhotoUrl}
           className="absolute inset-0 w-full h-full object-cover"
           style={{ zIndex: 0 }}
         >
@@ -102,33 +111,42 @@ export default function HomePage({ onOpenBooking }) {
           style={{ zIndex: 1, background: "linear-gradient(180deg, rgba(30,20,10,0.55) 0%, rgba(30,20,10,0.3) 45%, rgba(30,20,10,0.65) 100%)" }}
         />
         <div className="relative container-editorial py-20 lg:py-28 flex flex-col justify-center" style={{ zIndex: 2, minHeight: "inherit" }}>
-          {home?.eyebrow && <p className="text-[13px] font-semibold text-[#F5D89C] mb-5 animate-fade-up" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>{home.eyebrow}</p>}
+          <p className="text-[13px] font-semibold text-[#F5D89C] mb-5 animate-fade-up" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Artham Aesthetique · Noida</p>
           <h1 className="font-display text-[#FFF7EC] leading-[1.15] max-w-3xl animate-fade-up" style={{ animationDelay: "120ms", fontSize: "clamp(2rem, 5.5vw, 3.5rem)", fontWeight: 600 }}>
-            {home?.heroTitle}
+            Where Science meets<br /><em className="italic font-light">Soulful Care.</em>
           </h1>
-          {home?.heroDescription && <p className="text-[17px] md:text-[18px] leading-[1.6] text-[#FFF7EC] max-w-xl mt-6 animate-fade-up" style={{ animationDelay: "220ms", fontFamily: "'Poppins', sans-serif" }}>{home.heroDescription}</p>}
+          <p className="text-[17px] md:text-[18px] leading-[1.6] text-[#FFF7EC] max-w-xl mt-6 animate-fade-up" style={{ animationDelay: "220ms", fontFamily: "'Poppins', sans-serif" }}>
+            Dr-led skin, hair and body wellness — practised with restraint, considered like a ritual.
+          </p>
           <div className="flex flex-wrap gap-4 mt-8 animate-fade-up" style={{ animationDelay: "320ms" }}>
-            {SITE.headerCta?.label && <button data-testid="hero-book-btn" onClick={onOpenBooking} className="btn-primary">{SITE.headerCta.label}</button>}
-            {home?.featuredSectionLink?.label && <Link to={home.featuredSectionLink.url || "#"} data-testid="hero-explore-btn" className="btn-outline-light">{home.featuredSectionLink.label}</Link>}
+            <button data-testid="hero-book-btn" onClick={onOpenBooking} className="btn-primary">Book Appointment</button>
+            <Link to="/category/skin" data-testid="hero-explore-btn" className="btn-outline-light">Explore Treatments</Link>
           </div>
         </div>
       </section>
 
-      {trustItems.length > 0 && <section className="bg-[#3D2F23] py-6" data-testid="trust-bar">
+      {/* 2. TRUST BAR */}
+      <section className="bg-[#3D2F23] py-6" data-testid="trust-bar">
         <div className="container-editorial flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] md:text-[14px] text-[#FFF7EC]" style={{ fontFamily: "'Poppins', sans-serif" }}>
-          {trustItems.map((item, index) => {
-            const Icon = ICONS[index % ICONS.length];
-            return <div key={item.title} className="flex items-center gap-2"><Icon size={16} className="text-[#F5D89C]" /> {item.title}</div>;
-          })}
+          <div className="flex items-center gap-2"><BadgeCheck size={16} className="text-[#F5D89C]" /> Dr-led</div>
+          <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
+          <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-[#F5D89C]" /> FDA-approved technology</div>
+          <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
+          <div className="flex items-center gap-2"><Award size={16} className="text-[#F5D89C]" /> 10+ years experience</div>
+          <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
+          <div className="flex items-center gap-2"><Star size={16} className="text-[#F5D89C] fill-[#F5D89C]" /> 4.9 Google rating</div>
+          <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
+          <div className="flex items-center gap-2"><Users size={16} className="text-[#F5D89C]" /> 5,000+ happy clients</div>
         </div>
-      </section>}
+      </section>
 
-      {homeCategories.length > 0 && <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="categories-section">
+      {/* 3. TREATMENT CATEGORIES */}
+      <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="categories-section">
         <div className="container-editorial">
           <div className="max-w-2xl mb-14 reveal">
-            {home?.categorySectionEyebrow && <p className="overline mb-3">{home.categorySectionEyebrow}</p>}
-            {home?.categorySectionTitle && <h2 className="text-[36px] md:text-[44px] leading-[1.1] mb-4">{home.categorySectionTitle}</h2>}
-            {home?.categorySectionText && <p className="text-body-lg text-[#5C4A38]">{home.categorySectionText}</p>}
+            <p className="overline mb-3">Explore Our Treatments</p>
+            <h2 className="text-[36px] md:text-[44px] leading-[1.1] mb-4">Four worlds of care, one editorial approach.</h2>
+            <p className="text-body-lg text-[#5C4A38]">From the softest facials to advanced regenerative protocols — designed and supervised by Dr. Omaima Jawed.</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {homeCategories.map((cat, i) => (
@@ -153,16 +171,17 @@ export default function HomePage({ onOpenBooking }) {
             ))}
           </div>
         </div>
-      </section>}
+      </section>
 
-      {signature.length > 0 && <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="signature-treatments">
+      {/* 4. SIGNATURE TREATMENTS */}
+      <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="signature-treatments">
         <div className="container-editorial">
           <div className="flex items-end justify-between mb-12 gap-8 flex-wrap reveal">
             <div className="max-w-xl">
-              {home?.featuredSectionEyebrow && <p className="overline mb-3">{home.featuredSectionEyebrow}</p>}
-              {home?.featuredSectionTitle && <h2 className="text-[36px] md:text-[44px] leading-[1.1]">{home.featuredSectionTitle}</h2>}
+              <p className="overline mb-3">Signature Treatments</p>
+              <h2 className="text-[36px] md:text-[44px] leading-[1.1]">The protocols we're loved for.</h2>
             </div>
-            {home?.featuredSectionLink?.label && <Link to={home.featuredSectionLink.url || "#"} className="link-gold text-[15px] font-semibold">{home.featuredSectionLink.label}</Link>}
+            <Link to="/category/skin" className="link-gold text-[15px] font-semibold">View all treatments →</Link>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {signature.map((s, i) => (
@@ -188,51 +207,53 @@ export default function HomePage({ onOpenBooking }) {
             ))}
           </div>
         </div>
-      </section>}
+      </section>
 
-      {doctor && <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="meet-doctor">
+      {/* 5. MEET THE DOCTOR */}
+      <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="meet-doctor">
         <div className="container-editorial grid lg:grid-cols-2 gap-16 items-center">
           <div className="relative order-2 lg:order-1 reveal">
             <div className="bg-[#f5e6d0] rounded-lg overflow-hidden aspect-[4/5] flex items-end justify-center">
               <img
-                src={doctor.portrait || SITE.doctorPortraitUrl}
-                alt={doctor.name || ""}
+                src={SITE.doctorPortraitUrl}
+                alt="Dr. Omaima Jawed, Dermatologist and Founder of Artham Aesthetique"
                 className="w-full h-full object-contain object-bottom"
                 loading="lazy"
               />
             </div>
             <div className="absolute -top-5 -right-5 bg-white px-5 py-3 rounded-lg border border-[#b8894a]/40 shadow-md hidden md:block">
-              {doctor.designation && <p className="overline text-[10px] mb-1">{doctor.designation}</p>}
-              <p className="font-display text-[#3D2F23] text-lg">{doctor.name}</p>
+              <p className="overline text-[10px] mb-1">Founder</p>
+              <p className="font-display text-[#3D2F23] text-lg">Dr. Omaima Jawed</p>
             </div>
           </div>
           <div className="order-1 lg:order-2 reveal" style={{ transitionDelay: "120ms" }}>
-            {home?.doctorEyebrow && <p className="overline mb-3">{home.doctorEyebrow}</p>}
-            <h2 className="text-[36px] md:text-[44px] leading-[1.1] mb-4">{doctor.name}</h2>
-            {doctor.qualifications?.length > 0 && <p className="text-[15px] font-semibold text-[#7A5A2E] mb-6">{doctor.qualifications.join(" · ")}</p>}
-            {doctor.philosophy && <p className="font-display text-xl text-[#5C4A38] italic mb-6 leading-snug">"{doctor.philosophy}"</p>}
+            <p className="overline mb-3">Meet Your Doctor</p>
+            <h2 className="text-[36px] md:text-[44px] leading-[1.1] mb-4">Dr. Omaima Jawed</h2>
+            <p className="text-[15px] font-semibold text-[#7A5A2E] mb-6">MBBS · MD Dermatology · Cosmetic Dermatology Fellowship</p>
+            <p className="font-display text-xl text-[#5C4A38] italic mb-6 leading-snug">"Care that enhances what is already yours — never replaces it."</p>
             <div className="text-body space-y-4">
-              {(doctor.bio || []).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+              <p>Founder and lead dermatologist at Artham Aesthetique, Dr. Omaima leads every consult personally. Her practice sits at the intersection of medical dermatology (acne, pigmentation, hair loss) and considered aesthetics (injectables, lasers, regenerative protocols).</p>
+              <p>Member — Indian Association of Dermatologists · Cosmetic Dermatology Society of India.</p>
             </div>
-            {doctor.expertise?.length > 0 && <div className="flex flex-wrap gap-2 mt-6">
-              {doctor.expertise.map((chip) => (
+            <div className="flex flex-wrap gap-2 mt-6">
+              {["Acne", "Pigmentation", "Anti-ageing", "Lasers", "Hair restoration"].map((chip) => (
                 <span key={chip} className="text-[13px] px-3 py-1.5 border border-[#b8894a]/50 text-[#3D2F23] rounded-full">{chip}</span>
               ))}
-            </div>}
+            </div>
             <div className="flex flex-wrap gap-3 mt-8">
-              <Link to={`/doctors/${doctor.slug}`} data-testid="home-doctor-link" className="btn-secondary">{doctor.consultationCta?.label || doctor.name}</Link>
-              {SITE.headerCta?.label && <button data-testid="home-doctor-book" onClick={onOpenBooking} className="btn-primary">{SITE.headerCta.label}</button>}
+              <Link to="/doctors/dr-omaima-jawed" data-testid="home-doctor-link" className="btn-secondary">About Dr. Omaima →</Link>
+              <button data-testid="home-doctor-book" onClick={onOpenBooking} className="btn-primary">Book with Dr. Omaima</button>
             </div>
           </div>
         </div>
-      </section>}
+      </section>
 
       {/* 6. TESTIMONIALS */}
-      {homeTestimonials.length > 0 && <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="testimonials">
+      <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="testimonials">
         <div className="container-editorial">
           <div className="max-w-2xl mb-12 reveal">
-            {home?.testimonialEyebrow && <p className="overline mb-3">{home.testimonialEyebrow}</p>}
-            {home?.testimonialTitle && <h2 className="text-[36px] md:text-[44px] leading-[1.1]">{home.testimonialTitle}</h2>}
+            <p className="overline mb-3">In Our Guests' Words</p>
+            <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Considered stories, not scripted reviews.</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
             {homeTestimonials.map((t, i) => (
@@ -247,35 +268,39 @@ export default function HomePage({ onOpenBooking }) {
                     <div className="font-semibold text-[#3D2F23]">{t.name}</div>
                     <div className="text-[12px] text-[#5C4A38]">{t.area}</div>
                   </div>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-[#7A5A2E]">Google Review</span>
                 </figcaption>
               </figure>
             ))}
           </div>
         </div>
-      </section>}
+      </section>
 
       {/* 7. WHY ARTHAM */}
-      {whyItems.length > 0 && <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="why-us">
+      <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="why-us">
         <div className="container-editorial">
           <div className="max-w-2xl mb-14 reveal">
-            {home?.whyChooseEyebrow && <p className="overline mb-3">{home.whyChooseEyebrow}</p>}
-            {home?.whyChooseTitle && <h2 className="text-[36px] md:text-[44px] leading-[1.1]">{home.whyChooseTitle}</h2>}
+            <p className="overline mb-3">Why Artham</p>
+            <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Four quiet reasons patients stay.</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {whyItems.map((p, i) => {
-              const Icon = ICONS[i % ICONS.length];
-              return (
+            {[
+              { icon: HeartHandshake, title: "Personalised protocols", body: "Never a shelf package. Every plan is written to your skin, calendar and season." },
+              { icon: Sparkles, title: "Medical-grade devices", body: "FDA-approved technology, single-use consumables — physician oversight on every visit." },
+              { icon: BadgeCheck, title: "Consultation-first", body: "Your plan is shaped in a complimentary consult — only what your skin actually needs, nothing it doesn't." },
+              { icon: ShieldCheck, title: "Follow-up care", body: "You are never handed off. The same doctor sees you at every visit and follow-up." },
+            ].map((p, i) => (
               <div key={p.title} className="reveal" style={{ transitionDelay: `${i * 80}ms` }}>
                 <div className="w-12 h-12 rounded-full bg-white border border-[#b8894a]/50 flex items-center justify-center mb-4">
-                  <Icon className="text-[#7A3E1D]" size={20} />
+                  <p.icon className="text-[#7A3E1D]" size={20} />
                 </div>
                 <h4 className="font-display text-xl text-[#3D2F23] mb-2 leading-tight">{p.title}</h4>
-                <p className="text-[15px] text-[#5C4A38] leading-relaxed">{p.description}</p>
+                <p className="text-[15px] text-[#5C4A38] leading-relaxed">{p.body}</p>
               </div>
-            )})}
+            ))}
           </div>
         </div>
-      </section>}
+      </section>
 
       {/* 8. JOURNAL TEASER */}
       <section className="bg-white py-20 lg:py-24 border-t border-[#b8894a]/25" data-testid="latest-blog">
@@ -312,43 +337,43 @@ export default function HomePage({ onOpenBooking }) {
       <section className="bg-[#3D2F23] text-[#FFF7EC] py-20 lg:py-24 overflow-hidden" data-testid="cta-band">
         <div className="container-editorial reveal">
           <div className="max-w-2xl">
-            {home?.ctaEyebrow && <p className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-[#F5D89C] mb-5">
+            <p className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-[#F5D89C] mb-5">
               <span className="w-6 h-px bg-[#F5D89C]" aria-hidden="true" />
-              {home.ctaEyebrow}
-            </p>}
-            {home?.ctaTitle && <h2 className="font-display text-[36px] md:text-[44px] leading-[1.1] mb-4">{home.ctaTitle}</h2>}
-            {home?.ctaText && <p className="text-[17px] leading-[1.65] text-[#FFF7EC]/75 mb-8 max-w-lg">{home.ctaText}</p>}
+              A Slow, Considered Beginning
+            </p>
+            <h2 className="font-display text-[36px] md:text-[44px] leading-[1.1] mb-4">Ready for your consultation?</h2>
+            <p className="text-[17px] leading-[1.65] text-[#FFF7EC]/75 mb-8 max-w-lg">A 15-minute discovery consult with Dr. Omaima Jawed is complimentary — an unhurried conversation about your skin, no obligation.</p>
             <div className="flex flex-wrap gap-3">
-              {SITE.headerCta?.label && <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-on-dark inline-flex items-center gap-2"><CalendarCheck size={16} /> {SITE.headerCta.label}</button>}
-              {SITE.whatsapp && <a data-testid="cta-wa-btn" href={cmsWhatsAppLink(SITE)} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>}
+              <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-on-dark inline-flex items-center gap-2"><CalendarCheck size={16} /> Book Appointment</button>
+              <a data-testid="cta-wa-btn" href={cmsWhatsAppLink(SITE)} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
               <a data-testid="cta-call-btn" href={`tel:${SITE.phoneDigits}`} className="btn-outline-light inline-flex items-center gap-2"><Phone size={15} /> {SITE.phone}</a>
             </div>
-            {home?.ctaBullets?.length > 0 && <div className="flex flex-wrap gap-x-7 gap-y-2 mt-8 text-[13px] text-[#F5D89C]">
-              {home.ctaBullets.map((m) => (
+            <div className="flex flex-wrap gap-x-7 gap-y-2 mt-8 text-[13px] text-[#F5D89C]">
+              {["Complimentary 15-min consult", "MD-led dermatology", "No obligation"].map((m) => (
                 <span key={m} className="inline-flex items-center gap-2"><Check size={15} className="text-[#b8894a]" /> {m}</span>
               ))}
-            </div>}
+            </div>
           </div>
         </div>
       </section>
 
       {/* STATS strip (small, moved after main content per revised order) */}
-      {stats.length > 0 && <section className="bg-[#3D2F23] py-12" data-testid="stats-strip">
+      <section className="bg-[#3D2F23] py-12" data-testid="stats-strip">
         <div className="container-editorial grid grid-cols-3 gap-6 text-center">
           <div ref={statsRef1}>
             <div className="font-display text-3xl md:text-4xl text-[#FFF7EC]">{n1}+</div>
-            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mt-2">{stats[0]?.label}</div>
+            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mt-2">Years of Care</div>
           </div>
           <div ref={statsRef2}>
             <div className="font-display text-3xl md:text-4xl text-[#FFF7EC]">{n2}+</div>
-            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mt-2">{stats[1]?.label}</div>
+            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mt-2">Signature Treatments</div>
           </div>
           <div ref={statsRef3}>
             <div className="font-display text-3xl md:text-4xl text-[#FFF7EC]">{n3.toLocaleString("en-IN")}+</div>
-            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mt-2">{stats[2]?.label}</div>
+            <div className="text-[11px] uppercase tracking-[0.14em] font-semibold text-[#F5D89C] mt-2">Happy Clients</div>
           </div>
         </div>
-      </section>}
+      </section>
     </>
   );
 }

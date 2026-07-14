@@ -22,7 +22,7 @@ const fmtDate = (d) =>
 export default function BlogPost({ onOpenBooking }) {
   useReveal();
   const { slug } = useParams();
-  const { site: SITE, seo, doctors, posts: POSTS, findPost, findService } = useCmsContent();
+  const { posts: POSTS, findPost, findService } = useCmsContent();
   const post = findPost(slug);
   if (!post) return <Navigate to="/blog" replace />;
 
@@ -46,8 +46,8 @@ export default function BlogPost({ onOpenBooking }) {
       image: post.coverImage,
       articleSection: post.category,
       keywords: (post.keywords || []).join(", "),
-      author: { "@type": "Person", name: post.author || doctors?.[0]?.name },
-      publisher: { "@type": "Organization", name: SITE.title },
+      author: { "@type": "Person", name: "Dr. Omaima Jawed" },
+      publisher: { "@type": "Organization", name: "Artham Aesthetique" },
       articleBody: bodyText(post),
     },
   ];
@@ -147,7 +147,7 @@ export default function BlogPost({ onOpenBooking }) {
       <section className="bg-summer-peach pt-40 pb-14 lg:pt-48 lg:pb-16">
         <div className="container-editorial max-w-4xl">
           <nav className="fine text-xs text-armadillo/60 flex items-center flex-wrap gap-2 mb-6" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-burma-teak">{SITE.title}</Link>
+            <Link to="/" className="hover:text-burma-teak">Home</Link>
             <ChevronRight size={12} />
             <Link to="/blog" className="hover:text-burma-teak">Journal</Link>
             <ChevronRight size={12} />
@@ -161,8 +161,8 @@ export default function BlogPost({ onOpenBooking }) {
           <h1 className="font-display text-4xl md:text-5xl text-armadillo leading-[1.05] mt-3 mb-6">{post.title}</h1>
           <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-armadillo/70">
             <span className="inline-flex items-center gap-2">
-              {doctors?.[0]?.portrait && <img src={doctors[0].portrait} alt={post.author || doctors?.[0]?.name || ""} className="w-9 h-9 rounded-full object-cover" loading="lazy" />}
-              <span className="font-display text-armadillo">{post.author || doctors?.[0]?.name}</span>
+              <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=200&q=80" alt="Dr. Omaima Jawed" className="w-9 h-9 rounded-full object-cover" loading="lazy" />
+              <span className="font-display text-armadillo">Dr. Omaima Jawed</span>
             </span>
             <span className="inline-flex items-center gap-1.5"><Calendar size={14} /> Published {fmtDate(post.date)}</span>
             {post.updated && <span className="inline-flex items-center gap-1.5"><Calendar size={14} /> Updated {fmtDate(post.updated)}</span>}
@@ -256,10 +256,15 @@ export default function BlogPost({ onOpenBooking }) {
               </div>
 
               {/* Medical disclaimer */}
-              {seo?.medicalDisclaimer && <aside role="note" aria-label={seo?.medicalDisclaimerLabel || ""} className="mt-10 flex gap-3 border border-coronation-gold/30 bg-summer-peach/70 p-4 text-sm text-armadillo/75">
+              <aside role="note" aria-label="Medical disclaimer" className="mt-10 flex gap-3 border border-coronation-gold/30 bg-summer-peach/70 p-4 text-sm text-armadillo/75">
                 <Info size={20} className="mt-0.5 shrink-0 text-coronation-gold" />
-                <p>{seo.medicalDisclaimer}</p>
-              </aside>}
+                <p>
+                  <strong className="text-armadillo">Not medical advice.</strong> This article is for general
+                  information and education only. It is not a substitute for professional diagnosis or treatment.
+                  Please consult a qualified healthcare professional — or book a consultation with Dr. Omaima Jawed —
+                  before acting on anything here.
+                </p>
+              </aside>
 
               {/* Explored in this post — treatment CTA */}
               {related.length > 0 && (

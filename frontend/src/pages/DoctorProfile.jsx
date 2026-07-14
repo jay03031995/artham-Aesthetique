@@ -4,52 +4,56 @@ import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
+const featured = ["hydrafacial-treatment", "dermal-fillers", "chemical-peel", "acne-treatment", "morpheus", "vampire-facial-prp"];
+
 export default function DoctorProfile({ onOpenBooking }) {
   useReveal();
-  const { site: SITE, doctors } = useCmsContent();
+  const { site: SITE, categories: CATEGORIES, doctors } = useCmsContent();
   const doctor = doctors?.[0] || {};
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Physician",
-    name: doctor.name,
-    medicalSpecialty: doctor.designation,
-    worksFor: { "@type": "MedicalClinic", name: SITE.title },
+    name: doctor.name || "Dr. Omaima Jawed",
+    medicalSpecialty: "Dermatology",
+    worksFor: { "@type": "MedicalClinic", name: "Artham Aesthetique" },
     telephone: SITE.phone,
-    image: doctor.portrait,
+    image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=1200&q=80",
   };
 
-  const signatureServices = doctor.signatureServices || [];
+  const signatureServices = doctor.signatureServices?.length
+    ? doctor.signatureServices
+    : CATEGORIES.flatMap((c) => c.services).filter((s) => featured.includes(s.slug));
 
   return (
     <>
-      <Seo title={doctor.name} description={doctor.bio?.[0]} jsonLd={jsonLd} ogImage={doctor.portrait} />
+      <Seo title="Dr. Omaima Jawed — Dermatologist" description="Meet Dr. Omaima Jawed — dermatologist and founder of Artham Aesthetique, Noida. Restrained, evidence-based skin, hair and body care." jsonLd={jsonLd} />
 
       {/* HERO */}
       <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24" data-testid="doctor-hero">
         <div className="container-editorial">
           <nav className="fine text-xs text-armadillo/60 flex items-center gap-2 mb-8" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-burma-teak">{SITE.title}</Link>
+            <Link to="/" className="hover:text-burma-teak">Home</Link>
             <ChevronRight size={12} />
-            <Link to="/doctors" className="hover:text-burma-teak">{doctor.designation}</Link>
+            <Link to="/doctors" className="hover:text-burma-teak">Doctors</Link>
             <ChevronRight size={12} />
-            <span className="text-armadillo">{doctor.name}</span>
+            <span className="text-armadillo">{doctor.name || "Dr. Omaima Jawed"}</span>
           </nav>
           <div className="grid lg:grid-cols-2 gap-14 items-end">
             <div className="reveal">
-              {doctor.designation && <p className="overline text-coronation-gold mb-4">{doctor.designation}</p>}
-              <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.02] mb-6">{doctor.name}</h1>
-              {doctor.philosophy && <p className="font-display text-xl text-armadillo/70 italic leading-snug mb-8">"{doctor.philosophy}"</p>}
+              <p className="overline text-coronation-gold mb-4">Founder · Dermatologist</p>
+              <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.02] mb-6">{doctor.name || "Dr. Omaima Jawed"}</h1>
+              <p className="font-display text-xl text-armadillo/70 italic leading-snug mb-8">"{doctor.philosophy || "Care that enhances what is already yours — never replaces it."}"</p>
               <div className="flex flex-wrap gap-3">
-                {doctor.consultationCta?.label && <button data-testid="dr-book-btn" onClick={onOpenBooking} className="btn-primary">{doctor.consultationCta.label}</button>}
-                {SITE.footerCta?.label && <a data-testid="dr-contact-btn" href={SITE.footerCta.url || "/contact"} className="btn-secondary">{SITE.footerCta.label}</a>}
+                <button data-testid="dr-book-btn" onClick={onOpenBooking} className="btn-primary">Book with Dr. Omaima</button>
+                <a data-testid="dr-contact-btn" href="/contact" className="btn-secondary">Visit the Clinic</a>
               </div>
             </div>
             <div className="reveal" style={{ transitionDelay: "150ms" }}>
               <div className="bg-[#f5e6d0] rounded-lg overflow-hidden aspect-[4/5] flex items-end justify-center">
                 <img
                   src={doctor.portrait || SITE.doctorPortraitUrl}
-                  alt={doctor.name || ""}
+                  alt={`${doctor.name || "Dr. Omaima Jawed"} portrait`}
                   className="w-full h-full object-contain object-bottom"
                   loading="lazy"
                 />
@@ -65,19 +69,29 @@ export default function DoctorProfile({ onOpenBooking }) {
           <div className="reveal">
             <p className="overline text-coronation-gold mb-4">Education</p>
             <ul className="space-y-3 fine text-armadillo/80">
-              {(doctor.education || doctor.qualifications || []).map((item) => <li key={item}>{item}</li>)}
+              {(doctor.education || doctor.qualifications || [
+                "MBBS · Government Medical College",
+                "MD, Dermatology, Venereology & Leprosy",
+                "Advanced training in Aesthetic Dermatology",
+                "Certifications: Injectables, Lasers, Regenerative",
+              ]).map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
           <div className="reveal" style={{ transitionDelay: "100ms" }}>
             <p className="overline text-coronation-gold mb-4">Memberships</p>
             <ul className="space-y-3 fine text-armadillo/80">
-              {(doctor.memberships || []).map((item) => <li key={item}>{item}</li>)}
+              {(doctor.memberships || [
+                "Indian Association of Dermatologists",
+                "Cosmetic Dermatology Society of India",
+                "International Society of Dermatology",
+                "American Academy of Aesthetic Medicine (Affiliate)",
+              ]).map((item) => <li key={item}>{item}</li>)}
             </ul>
           </div>
           <div className="reveal" style={{ transitionDelay: "200ms" }}>
             <p className="overline text-coronation-gold mb-4">Expertise</p>
             <div className="flex flex-wrap gap-2">
-              {(doctor.expertise || []).map((c) => (
+              {(doctor.expertise || ["Acne", "Pigmentation", "Anti-ageing", "Lasers", "Hair restoration", "Injectables", "Regenerative", "Bridal programmes"]).map((c) => (
                 <span key={c} className="fine text-xs px-3 py-1 border border-coronation-gold/50 text-armadillo/80">{c}</span>
               ))}
             </div>
@@ -86,19 +100,19 @@ export default function DoctorProfile({ onOpenBooking }) {
       </section>
 
       {/* PHILOSOPHY QUOTE */}
-      {doctor.philosophy && <section className="bg-armadillo text-arabian-white py-24 lg:py-28 text-center">
+      <section className="bg-armadillo text-arabian-white py-24 lg:py-28 text-center">
         <div className="container-editorial max-w-3xl mx-auto reveal">
-          {doctor.philosophyLabel && <p className="overline text-coronation-gold mb-6">{doctor.philosophyLabel}</p>}
-          <blockquote className="font-display italic text-3xl md:text-4xl leading-snug">"{doctor.philosophy}"</blockquote>
+          <p className="overline text-coronation-gold mb-6">Philosophy</p>
+          <blockquote className="font-display italic text-3xl md:text-4xl leading-snug">"{doctor.philosophy || "A quieter dermatology. We do less, on purpose — because faces should age beautifully, not obviously."}"</blockquote>
         </div>
-      </section>}
+      </section>
 
       {/* SIGNATURE TREATMENTS */}
-      {signatureServices.length > 0 && <section className="bg-arabian-white py-24 lg:py-28" data-testid="doctor-signature">
+      <section className="bg-arabian-white py-24 lg:py-28" data-testid="doctor-signature">
         <div className="container-editorial">
           <div className="max-w-2xl mb-14 reveal">
-            {doctor.signatureEyebrow && <p className="overline text-coronation-gold mb-4">{doctor.signatureEyebrow}</p>}
-            {doctor.signatureTitle && <h2 className="font-display text-4xl md:text-5xl text-armadillo">{doctor.signatureTitle}</h2>}
+            <p className="overline text-coronation-gold mb-4">Signature Treatments</p>
+            <h2 className="font-display text-4xl md:text-5xl text-armadillo">Where Dr. Omaima's hand shows most.</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
             {signatureServices.map((s, i) => (
@@ -118,16 +132,16 @@ export default function DoctorProfile({ onOpenBooking }) {
             ))}
           </div>
         </div>
-      </section>}
+      </section>
 
       {/* CTA */}
-      {doctor.consultationCta?.label && <section className="bg-burma-teak text-arabian-white py-20 text-center">
+      <section className="bg-burma-teak text-arabian-white py-20 text-center">
         <div className="container-editorial max-w-2xl mx-auto">
-          {doctor.ctaTitle && <h2 className="font-display text-4xl mb-6">{doctor.ctaTitle}</h2>}
-          {doctor.ctaText && <p className="fine text-arabian-white/85 mb-8">{doctor.ctaText}</p>}
-          <button data-testid="dr-cta-book" onClick={onOpenBooking} className="btn-primary btn-on-dark">{doctor.consultationCta.label}</button>
+          <h2 className="font-display text-4xl mb-6">A conversation, first.</h2>
+          <p className="fine text-arabian-white/85 mb-8">Book a complimentary 15-minute consult with Dr. Omaima.</p>
+          <button data-testid="dr-cta-book" onClick={onOpenBooking} className="btn-primary btn-on-dark">Book with Dr. Omaima</button>
         </div>
-      </section>}
+      </section>
     </>
   );
 }

@@ -14,8 +14,8 @@ export default function CategoryPage({ onOpenBooking }) {
   return (
     <>
       <Seo
-        title={cat.seo?.title || cat.name}
-        description={cat.seo?.description || cat.intro}
+        title={`${cat.name} Treatments in Noida`}
+        description={cat.intro}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
@@ -31,15 +31,15 @@ export default function CategoryPage({ onOpenBooking }) {
       <section className="relative bg-summer-peach pt-40 pb-20 lg:pt-48 lg:pb-28" data-testid="category-hero">
         <div className="container-editorial">
           <nav className="fine text-xs text-armadillo/60 flex items-center gap-2 mb-8" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-burma-teak">{cat.breadcrumbHomeLabel}</Link>
+            <Link to="/" className="hover:text-burma-teak">Home</Link>
             <ChevronRight size={12} />
-            <span>{cat.breadcrumbTreatmentsLabel}</span>
+            <span>Treatments</span>
             <ChevronRight size={12} />
             <span className="text-armadillo">{cat.name}</span>
           </nav>
           <div className="grid lg:grid-cols-2 gap-12 items-end">
             <div>
-              {cat.countLabel && <p className="overline text-coronation-gold mb-4">{cat.services.length} {cat.countLabel}</p>}
+              <p className="overline text-coronation-gold mb-4">{cat.services.length} Treatments</p>
               <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-6">{cat.name}</h1>
               <p className="fine text-lg text-armadillo/80 max-w-lg leading-relaxed">{cat.intro}</p>
             </div>
@@ -79,14 +79,14 @@ export default function CategoryPage({ onOpenBooking }) {
       </section>
 
       {/* CTA */}
-      {(cat.ctaEyebrow || cat.ctaTitle || cat.ctaText) && <section className="bg-armadillo text-arabian-white py-20 text-center">
+      <section className="bg-armadillo text-arabian-white py-20 text-center">
         <div className="container-editorial max-w-2xl mx-auto">
-          {cat.ctaEyebrow && <p className="overline text-coronation-gold mb-4">{cat.ctaEyebrow}</p>}
-          {cat.ctaTitle && <h2 className="font-display text-4xl mb-6">{cat.ctaTitle}</h2>}
-          {cat.ctaText && <p className="fine text-arabian-white/80 mb-8">{cat.ctaText}</p>}
-          {cat.ctaButtonText && <button data-testid="category-cta-book" onClick={onOpenBooking} className="btn-primary btn-on-dark">{cat.ctaButtonText}</button>}
+          <p className="overline text-coronation-gold mb-4">Not sure where to begin?</p>
+          <h2 className="font-display text-4xl mb-6">Book a 15-minute consult.</h2>
+          <p className="fine text-arabian-white/80 mb-8">Dr. Omaima will help you pick the right first step — complimentary, no pressure.</p>
+          <button data-testid="category-cta-book" onClick={onOpenBooking} className="btn-primary btn-on-dark">Book Appointment</button>
         </div>
-      </section>}
+      </section>
     </>
   );
 }

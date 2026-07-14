@@ -22,10 +22,10 @@ export default function Footer() {
     setSubscribing(true);
     try {
       await api.post("/newsletter", { email });
-      toast.success(footer?.newsletterSuccess || "");
+      toast.success("You're on the list. Small, considered notes only.");
       setEmail("");
     } catch (err) {
-      toast.error(footer?.newsletterError || "");
+      toast.error("Could not subscribe. Please try again.");
     } finally {
       setSubscribing(false);
     }
@@ -47,14 +47,14 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-6 lg:col-span-4">
             <div className="flex items-center gap-3 mb-6">
-              {SITE.footerLogoUrl && <img src={SITE.footerLogoUrl} alt={SITE.title || ""} className="h-14 w-14 object-contain rounded-md" />}
+              <img src={SITE.footerLogoUrl} alt="Artham Aesthetique lotus" className="h-14 w-14 object-contain rounded-md" />
               <div>
-                <div className="font-display text-xl text-[#FFF7EC]">{SITE.title}</div>
-                {SITE.tagline && <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#b8894a]">{SITE.tagline}</div>}
+                <div className="font-display text-xl text-[#FFF7EC]">Artham</div>
+                <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#b8894a]">Aesthetique</div>
               </div>
             </div>
             <p className="fine text-arabian-white/70 text-sm max-w-sm leading-relaxed">
-              {footer?.brandText}
+              {footer?.brandText || "A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body."}
             </p>
             <div className="flex items-center gap-4 mt-8">
               {socialIcons.map(({ key, href, Icon }) => (
@@ -89,7 +89,13 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
             <h5 className="text-[13px] font-semibold text-[#FFF7EC] mb-5" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Company</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
-              {(footer?.quickLinks || []).map((link) => (
+              {(footer?.quickLinks || [
+                { label: "About", href: "/about" },
+                { label: "Dr. Omaima Jawed", href: "/doctors/dr-omaima-jawed" },
+                { label: "Journal", href: "/blog" },
+                { label: "Careers", href: "/careers" },
+                { label: "Contact", href: "/contact" },
+              ]).map((link) => (
                 <li key={link.label}>
                   <Link data-testid={`footer-${link.label.toLowerCase().replace(/\s+/g, "-")}`} to={link.href || link.url || "#"} className="hover:text-coronation-gold transition-colors duration-500">{link.label}</Link>
                 </li>
@@ -101,8 +107,16 @@ export default function Footer() {
           <div className="col-span-1 md:col-span-3 lg:col-span-2">
             <h5 className="text-[13px] font-semibold text-[#FFF7EC] mb-5" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Support</h5>
             <ul className="space-y-3 fine text-sm text-arabian-white/75">
-              {(footer?.legalLinks || []).map((link) => (
-                <li key={link.label}>
+              {(footer?.legalLinks || [
+                { label: "FAQs", href: "/faq" },
+                { label: "Book Appointment", href: "/book" },
+                { label: "Offers", href: "/offers" },
+                { label: "Terms", href: "/policies/terms" },
+                { label: "Privacy", href: "/policies/privacy" },
+                { label: "Refund", href: "/policies/refund" },
+                { label: "Cancellation", href: "/policies/cancellation" },
+              ]).map((link, index) => (
+                <li key={link.label} className={index === 3 ? "pt-4" : ""}>
                   <Link to={link.href || link.url || "#"} className="hover:text-coronation-gold transition-colors duration-500">{link.label}</Link>
                 </li>
               ))}
@@ -121,18 +135,17 @@ export default function Footer() {
             </address>
             <a
               data-testid="footer-map"
-              href={SITE.googleMaps || "#"}
+              href="https://maps.google.com/?q=Lotus+Plaza+Sector+104+Noida"
               target="_blank"
               rel="noreferrer"
               className="text-[13px] font-semibold text-[#F5D89C] hover:text-[#FFF7EC] transition-colors duration-500"
               style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}
             >
-              {footer?.mapLinkText}
+              Open in Maps →
             </a>
 
-            {footer?.newsletterTitle && <form onSubmit={subscribe} className="mt-8 border-t border-arabian-white/15 pt-6">
-              <label className="text-[13px] font-semibold text-[#FFF7EC] block mb-3" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>{footer.newsletterTitle}</label>
-              {footer.newsletterText && <p className="fine text-xs text-arabian-white/60 mb-3">{footer.newsletterText}</p>}
+            <form onSubmit={subscribe} className="mt-8 border-t border-arabian-white/15 pt-6">
+              <label className="text-[13px] font-semibold text-[#FFF7EC] block mb-3" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Newsletter</label>
               <div className="flex">
                 <input
                   data-testid="footer-newsletter-input"
@@ -140,22 +153,25 @@ export default function Footer() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder={footer.newsletterPlaceholder || ""}
+                  placeholder="Your email"
                   className="flex-1 bg-transparent border-b border-arabian-white/30 py-2 fine text-sm text-arabian-white placeholder:text-arabian-white/40 focus:outline-none focus:border-coronation-gold"
                 />
                 <button data-testid="footer-newsletter-btn" disabled={subscribing} type="submit" className="overline text-coronation-gold ml-4 hover:text-arabian-white transition-colors duration-500 disabled:opacity-50">
-                  {subscribing ? "..." : footer.newsletterButtonText}
+                  {subscribing ? "…" : "Join"}
                 </button>
               </div>
-            </form>}
+            </form>
           </div>
         </div>
       </div>
 
       <div className="border-t border-arabian-white/15">
         <div className="container-editorial flex flex-col md:flex-row items-center justify-between py-6 gap-2 fine text-xs text-arabian-white/50">
-          <p>{footer?.copyrightText || SITE.copyright}</p>
-          {SITE.parentBrandUrl && footer?.parentBrandText && <p><a data-testid="footer-parent-link" href={SITE.parentBrandUrl} target="_blank" rel="noreferrer" className="text-coronation-gold hover:text-arabian-white transition-colors duration-500">{footer.parentBrandText}</a></p>}
+          <p>{footer?.copyrightText || `© ${new Date().getFullYear()} Artham Aesthetique. All rights reserved.`}</p>
+          <p>
+            Part of the{" "}
+            <a data-testid="footer-parent-link" href={SITE.parentBrandUrl} target="_blank" rel="noreferrer" className="text-coronation-gold hover:text-arabian-white transition-colors duration-500">Artham family</a>.
+          </p>
         </div>
       </div>
     </footer>

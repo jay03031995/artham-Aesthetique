@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
@@ -6,22 +6,34 @@ import useReveal from "../hooks/useReveal";
 
 export default function BlogIndex() {
   useReveal();
-  const [cat, setCat] = useState("");
-  const { posts, postsByCategory, seo } = useCmsContent();
-  const cats = Array.from(new Set(posts.map((post) => post.category).filter(Boolean)));
-  const list = cat ? postsByCategory(cat) : posts;
+  const [cat, setCat] = useState("All");
+  const { posts, postsByCategory } = useCmsContent();
+  const categories = useMemo(
+    () => [
+      "All",
+      ...Array.from(
+        new Set(
+          (posts || [])
+            .map((p) => p.category?.trim())
+            .filter(Boolean),
+        ),
+      ),
+    ],
+    [posts],
+  );
+  const list = postsByCategory(cat);
   const [featured, ...rest] = list;
 
   return (
     <>
-      <Seo title={seo?.blogTitle} description={seo?.blogDescription} />
+      <Seo title="Journal" description="Notes from the clinic — considered posts on skin, hair, ageing and wellness by Dr. Omaima Jawed." />
 
       {/* Hero */}
       <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24" data-testid="blog-hero">
         <div className="container-editorial">
-          {seo?.blogEyebrow && <p className="overline text-coronation-gold mb-4">{seo.blogEyebrow}</p>}
-          {seo?.blogTitle && <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-6">{seo.blogTitle}</h1>}
-          {seo?.blogDescription && <p className="fine text-lg text-armadillo/80 max-w-2xl">{seo.blogDescription}</p>}
+          <p className="overline text-coronation-gold mb-4">The Journal</p>
+          <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-6">Golden tips &amp; considered notes.</h1>
+          <p className="fine text-lg text-armadillo/80 max-w-2xl">Editorial writing from Dr. Omaima and the Artham team — honest, useful and unafraid to say 'no' to a trend.</p>
         </div>
       </section>
 
@@ -48,11 +60,11 @@ export default function BlogIndex() {
       <section className="bg-arabian-white py-24">
         <div className="container-editorial">
           <div className="flex flex-wrap gap-2 mb-12">
-            {cats.map((c) => (
+            {categories.map((c) => (
               <button
                 key={c}
                 data-testid={`blog-filter-${c}`}
-                onClick={() => setCat(cat === c ? "" : c)}
+                onClick={() => setCat(c)}
                 className={`fine text-xs px-4 py-2 border transition-all duration-500 ${cat === c ? "bg-burma-teak text-arabian-white border-burma-teak" : "border-coronation-gold/40 text-armadillo/80 hover:border-burma-teak"}`}
               >
                 {c}
@@ -70,7 +82,7 @@ export default function BlogIndex() {
                 <p className="fine text-sm text-armadillo/70 leading-relaxed">{p.excerpt}</p>
               </Link>
             ))}
-            {rest.length === 0 && seo?.blogEmptyText && <p className="fine text-armadillo/60 col-span-full">{seo.blogEmptyText}</p>}
+            {rest.length === 0 && <p className="fine text-armadillo/60 col-span-full">No posts in this category yet.</p>}
           </div>
         </div>
       </section>

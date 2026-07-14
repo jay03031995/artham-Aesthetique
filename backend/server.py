@@ -11,7 +11,6 @@ import os
 import logging
 import uuid
 import json
-import urllib.parse
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
@@ -26,7 +25,7 @@ EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
 # Sanity — appointments are mirrored here so staff manage them in the Studio
 # "Appointments" dashboard. Best-effort: a Sanity outage never blocks a booking.
-SANITY_PROJECT_ID = os.environ.get("SANITY_PROJECT_ID", "3goot0bo")
+SANITY_PROJECT_ID = os.environ.get("SANITY_PROJECT_ID", "k39wznoo")
 SANITY_DATASET = os.environ.get("SANITY_DATASET", "production")
 SANITY_TOKEN = os.environ.get("SANITY_TOKEN", "")
 
@@ -63,33 +62,6 @@ def _sync_appointment_to_sanity(booking: "Booking") -> None:
         logging.warning("Sanity appointment sync failed: %s", e)
 
 
-def _sync_contact_to_sanity(callback: "Callback") -> None:
-    if not SANITY_TOKEN:
-        return
-    try:
-        import requests
-
-        url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/{SANITY_DATASET}"
-        doc = {
-            "_id": f"contactSubmission-{callback.id}",
-            "_type": "contactSubmission",
-            "name": callback.name,
-            "phone": callback.phone,
-            "concern": callback.concern,
-            "status": callback.status or "new",
-            "source": "contact-page",
-            "createdAt": callback.created_at,
-        }
-        requests.post(
-            url,
-            headers={"Authorization": f"Bearer {SANITY_TOKEN}", "Content-Type": "application/json"},
-            json={"mutations": [{"createOrReplace": doc}]},
-            timeout=6,
-        )
-    except Exception as e:  # pragma: no cover - best effort
-        logging.warning("Sanity contact sync failed: %s", e)
-
-
 app = FastAPI(title="Artham Aesthetique API")
 api = APIRouter(prefix="/api")
 
@@ -105,7 +77,7 @@ class Booking(BaseModel):
     treatment_slug: str
     treatment_name: str
     category: str
-    doctor: Optional[str] = None
+    doctor: str = "Dr. Omaima Jawed"
     date: str
     time_slot: str
     name: str
@@ -120,7 +92,6 @@ class BookingCreate(BaseModel):
     treatment_slug: str
     treatment_name: str
     category: str
-    doctor: Optional[str] = None
     date: str
     time_slot: str
     name: str
@@ -194,26 +165,22 @@ async def subscribe_newsletter(payload: NewsletterCreate):
 async def create_callback(payload: CallbackCreate):
     cb = Callback(**payload.model_dump())
     await db.callbacks.insert_one(cb.model_dump())
-    _sync_contact_to_sanity(cb)
     return cb
 
 
-def _get_chat_system_prompt() -> str:
-    try:
-        import requests
+# ---------------- Chatbot ----------------
+CHAT_SYSTEM_PROMPT = """You are Aara, the warm, articulate concierge for Artham Aesthetique — a luxury dermatology and aesthetics clinic led by Dr. Omaima Jawed, located at Lotus Plaza, Sector 104, Noida.
 
-        query = '*[_type == "chatbotSettings"][0].systemPrompt'
-        url = (
-            f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/query/"
-            f"{SANITY_DATASET}?query={urllib.parse.quote(query)}"
-        )
-        res = requests.get(url, timeout=5)
-        res.raise_for_status()
-        prompt = (res.json() or {}).get("result")
-        return prompt or ""
-    except Exception as e:  # pragma: no cover - best effort
-        logging.warning("Sanity chatbot prompt fetch failed: %s", e)
-        return ""
+Your tone: calm, editorial, unhurried — like a trusted friend who is also a knowledgeable clinic host. Keep replies short (2-4 short paragraphs max), use plain language, no medical jargon walls, no emojis.
+
+You help guests with four things only:
+1) Booking an appointment — always end by inviting them to open the 3-step booking flow (mention: 'you can tap Book Appointment anytime, or I can text you the link on WhatsApp: +91 98119 97993').
+2) Treatment questions — explain in warm, human terms. Artham offers: Skin (HydraFacial, Chemical Peels, Acne, Micro Needling, Vampire/PRP, 4D ClearLift, PDRN Boosters), Anti-Ageing (Dermal Fillers, Mesobotox, HIFU, Morpheus8), Laser Hair Removal (Men & Women), Hair (Transplant, Hair Loss, Hair Patch), Body Contouring (CoolSculpting, Med Contour, Weight Loss), and Bridal packages.
+3) Pricing enquiries — pricing is personalised after consultation; offer to arrange a free 15-minute consult with Dr. Omaima.
+4) Human handoff — if unsure or asked, share WhatsApp +91 98119 97993 and clinic hours Mon–Sat 10am–8pm.
+
+Never make medical claims. Never guarantee results. Never share prices as fixed numbers — always frame as 'starts from a consultation'. Never say 'delve', 'unlock', 'elevate your journey', or other AI clichés. Sound human.
+"""
 
 
 @api.post("/chat")
@@ -239,7 +206,7 @@ async def chat_endpoint(payload: ChatIn):
     chat = LlmChat(
         api_key=EMERGENT_LLM_KEY,
         session_id=session_id,
-        system_message=_get_chat_system_prompt(),
+        system_message=CHAT_SYSTEM_PROMPT,
     ).with_model("anthropic", "claude-sonnet-4-5-20250929")
 
     async def event_generator():

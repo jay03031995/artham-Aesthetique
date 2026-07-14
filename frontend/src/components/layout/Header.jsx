@@ -2,6 +2,74 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, Instagram, Youtube, Facebook, ArrowRight } from "lucide-react";
 import { useCmsContent } from "../../lib/cmsContent";
+import { ALL_SERVICES } from "../../data/treatments";
+
+// Group services into Dermapuritys-style mega menu columns.
+// (Internal category URLs stay /category/{slug}.)
+const bySlugs = (slugs) => slugs.map((s) => ALL_SERVICES.find((x) => x.slug === s)).filter(Boolean);
+
+const MEGA = [
+  {
+    heading: "Skin",
+    catLink: "/category/skin",
+    items: bySlugs([
+      "hydrafacial-treatment",
+      "derma-genesis-facial",
+      "chemical-peel",
+      "micro-needling",
+      "vampire-facial-prp",
+      "acne-treatment",
+      "hello-bright-zo-obagi",
+    ]),
+  },
+  {
+    heading: "Hair",
+    catLink: "/category/hair",
+    items: bySlugs([
+      "advanced-hair-transplant",
+      "hair-loss-treatment",
+      "hair-patch-treatment",
+    ]),
+  },
+  {
+    heading: "Body & Bridal",
+    catLink: "/category/body",
+    items: bySlugs([
+      "coolsculpting",
+      "med-contour",
+      "body-shaping-figure-correction",
+      "face-lifting",
+      "jawline-definition",
+      "wedding-package",
+      "weight-loss-treatment",
+    ]),
+  },
+  {
+    heading: "Laser & Advanced",
+    catLink: "/category/anti-ageing",
+    items: bySlugs([
+      "laser-hair-removal",
+      "laser-hair-removal-women",
+      "laser-hair-removal-men",
+      "4d-clearlift",
+      "hifu",
+      "dermal-fillers",
+      "mesobotox",
+      "morpheus",
+      "opus-plasma",
+    ]),
+  },
+];
+
+const CONCERN_LINKS = [
+  { label: "Acne & Scars", href: "/services/acne-treatment" },
+  { label: "Pigmentation", href: "/services/hello-bright-zo-obagi" },
+  { label: "Hair Loss", href: "/services/hair-loss-treatment" },
+  { label: "Anti-Ageing", href: "/services/dermal-fillers" },
+  { label: "Bridal Runway", href: "/services/wedding-package" },
+  { label: "Body Contour", href: "/services/coolsculpting" },
+  { label: "Dullness & Glow", href: "/services/hydrafacial-treatment" },
+];
 
 export default function Header({ onOpenBooking }) {
   const { site: SITE, categories, megaGroups, nav } = useCmsContent();
@@ -42,24 +110,34 @@ export default function Header({ onOpenBooking }) {
         items: (cat.services || []).slice(0, 9),
       }))
     : [];
-  const menuGroups = cmsMega?.length ? cmsMega : categoryMega;
-  const featuredService = menuGroups.flatMap((group) => group.items || []).find((item) => item.featured) || menuGroups[0]?.items?.[0];
-  const navItems = nav || [];
-  const headerCta = SITE.headerCta?.label || "";
+  const menuGroups = cmsMega?.length ? cmsMega : (categoryMega.length ? categoryMega : MEGA);
+  const featuredService = menuGroups.flatMap((group) => group.items || []).find((item) => item.slug === "hydrafacial-treatment") || menuGroups[0]?.items?.[0];
+  const rawNavItems = nav?.length ? nav : [
+    { label: "Treatments", href: "#treatments" },
+    { label: "Doctor", href: "/doctors/dr-omaima-jawed" },
+    { label: "Journal", href: "/blog" },
+    { label: "About", href: "/about" },
+    { label: "Contact", href: "/contact" },
+  ];
+  const navItems = rawNavItems.filter((item) => {
+    const label = (item.label || "").trim().toLowerCase();
+    const href = (item.href || "").trim().toLowerCase();
+    return label !== "home" && href !== "/" && href !== "#home";
+  });
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40" data-testid="site-header">
       {/* Announcement bar — dermaheal style */}
       <div className="bg-[#3D2F23] text-[#F5D89C] text-center" data-testid="announce-bar">
         <div className="container-editorial flex items-center justify-center gap-3 sm:gap-6 h-[34px] text-[10px] sm:text-[11px] tracking-[0.12em] uppercase">
-          <span className="truncate">{SITE.tagline}</span>
+          <span className="truncate">Book a consultation with an MD Dermatologist</span>
           <span className="hidden sm:inline-block w-1 h-1 rounded-full bg-[#F5D89C]/50 shrink-0" aria-hidden="true" />
           <button
             data-testid="announce-cta"
             onClick={onOpenBooking}
             className="hidden sm:inline-flex items-center gap-1.5 border-b border-[#F5D89C]/40 pb-px hover:text-[#FFF7EC] hover:border-[#FFF7EC] transition-colors shrink-0"
           >
-            {headerCta} <ArrowRight size={11} />
+            Book this week <ArrowRight size={11} />
           </button>
         </div>
       </div>
@@ -72,20 +150,20 @@ export default function Header({ onOpenBooking }) {
       >
         <div className="container-editorial flex items-center justify-between h-[76px] lg:h-[80px]">
           {/* Logo — gold transparent lotus, rendered as-is (no wrapper) */}
-          <Link to="/" data-testid="header-logo" aria-label={SITE.title || ""} className="flex items-center gap-3 group shrink-0">
+          <Link to="/" data-testid="header-logo" aria-label="Artham Aesthetique home" className="flex items-center gap-3 group shrink-0">
             <img
               src={SITE.logoUrl}
-              alt={SITE.title || ""}
+              alt="Artham Aesthetique lotus logo"
               className="h-12 w-12 lg:h-14 lg:w-14 object-contain transition-transform duration-500 group-hover:scale-105"
             />
-            {SITE.title && <div className="leading-tight hidden sm:block">
-              <div className="font-display text-xl lg:text-2xl text-[#3D2F23]" style={{ letterSpacing: "0" }}>{SITE.title}</div>
-              {SITE.tagline && <div className="text-[11px] text-[#8A6D3B] font-semibold" style={{ fontFamily: "'Raleway', sans-serif" }}>{SITE.tagline}</div>}
-            </div>}
+            <div className="leading-tight hidden sm:block">
+              <div className="font-display text-xl lg:text-2xl text-[#3D2F23]" style={{ letterSpacing: "0" }}>Artham</div>
+              <div className="text-[11px] text-[#8A6D3B] font-semibold" style={{ fontFamily: "'Raleway', sans-serif" }}>Aesthetique</div>
+            </div>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-8 flex-nowrap overflow-x-auto">
             {navItems.map((item) => {
               const isTreatments = item.label?.toLowerCase().includes("treatment") || item.href === "#treatments";
               if (isTreatments) {
@@ -136,14 +214,14 @@ export default function Header({ onOpenBooking }) {
             >
               {SITE.phone}
             </a>
-            {headerCta && <button
+            <button
               data-testid="header-book-btn"
               onClick={onOpenBooking}
-              className="btn-primary hidden md:inline-flex"
+              className="btn-primary hidden md:inline-flex whitespace-nowrap shrink-0"
               style={{ padding: "10px 22px", minHeight: "44px" }}
             >
-              {headerCta}
-            </button>}
+              Book Appointment
+            </button>
             <button
               data-testid="mobile-menu-toggle"
               className="lg:hidden text-[#3D2F23] p-2"
@@ -197,23 +275,42 @@ export default function Header({ onOpenBooking }) {
                   </ul>
                 </div>
               ))}
-              {featuredService && <div className="col-span-5 pt-6 mt-4 border-t border-[#b8894a]/30">
+              {/* By Concern */}
+              <div>
+                <p className="text-[13px] font-semibold text-[#8A6D3B] mb-4" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>By Concern</p>
+                <ul className="space-y-2.5">
+                  {CONCERN_LINKS.map((c) => (
+                    <li key={c.label}>
+                      <Link
+                        data-testid={`mega-concern-${c.label.replace(/\s|&/g,"").toLowerCase()}`}
+                        to={c.href}
+                        className="text-[15px] text-[#3D2F23] hover:text-[#7A3E1D] hover:underline underline-offset-4 transition-colors"
+                        style={{ fontFamily: "'Poppins', sans-serif" }}
+                      >
+                        {c.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              {/* Featured card */}
+              <div className="col-span-5 pt-6 mt-4 border-t border-[#b8894a]/30">
                 <Link
-                  to={`/services/${featuredService.slug}`}
-                  data-testid={`mega-featured-${featuredService.slug}`}
+                  to={featuredService ? `/services/${featuredService.slug}` : "/category/skin"}
+                  data-testid={featuredService ? `mega-featured-${featuredService.slug}` : "mega-featured"}
                   className="flex items-center gap-6 group"
                 >
                   <div className="w-24 h-24 rounded-lg overflow-hidden shrink-0">
-                    {featuredService.image && <img src={featuredService.image} alt={featuredService.name || ""} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />}
+                    <img src={featuredService?.image || SITE.clinicPhotoUrl} alt={featuredService?.name || "Featured treatment"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                   </div>
                   <div className="flex-1">
-                    {SITE.footerCta?.label && <p className="text-[12px] font-semibold text-[#8A6D3B] mb-1" style={{ fontFamily: "'Raleway', sans-serif" }}>{SITE.footerCta.label}</p>}
-                    <h4 className="font-display text-xl text-[#3D2F23] mb-1" style={{ fontWeight: 600 }}>{featuredService.name}</h4>
-                    {featuredService.short && <p className="text-sm text-[#5C4A38]">{featuredService.short}</p>}
+                    <p className="text-[12px] font-semibold text-[#8A6D3B] mb-1" style={{ fontFamily: "'Raleway', sans-serif" }}>Most Loved</p>
+                    <h4 className="font-display text-xl text-[#3D2F23] mb-1" style={{ fontWeight: 600 }}>{featuredService?.name || "Featured Treatment"}</h4>
+                    <p className="text-sm text-[#5C4A38]">{featuredService?.short || "Explore our doctor-led treatment protocols."}</p>
                   </div>
-                  {headerCta && <span className="text-sm font-semibold text-[#7A3E1D] group-hover:underline">{headerCta} →</span>}
+                  <span className="text-sm font-semibold text-[#7A3E1D] group-hover:underline">Book now →</span>
                 </Link>
-              </div>}
+              </div>
             </div>
           </div>
         </div>
@@ -229,7 +326,7 @@ export default function Header({ onOpenBooking }) {
         <div className="flex items-center justify-between h-[70px] container-editorial border-b border-[#b8894a]/40">
           <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
             <img src={SITE.logoUrl} alt="" className="h-11 w-11 object-contain" />
-            <span className="font-display text-lg text-[#3D2F23]">{SITE.title}</span>
+            <span className="font-display text-lg text-[#3D2F23]">Artham</span>
           </Link>
           <button data-testid="mobile-drawer-close" onClick={() => setMobileOpen(false)} className="text-[#3D2F23] p-2" aria-label="Close menu"><X size={24} /></button>
         </div>
@@ -266,11 +363,22 @@ export default function Header({ onOpenBooking }) {
                       </ul>
                     </details>
                   ))}
+                  <details className="group">
+                    <summary className="list-none py-2 flex items-center justify-between cursor-pointer text-[14px] text-[#3D2F23]">
+                      <span>By Concern</span>
+                      <ChevronDown size={14} className="group-open:rotate-180 transition-transform" />
+                    </summary>
+                    <ul className="pl-2 pb-2 space-y-2">
+                      {CONCERN_LINKS.map((c) => (
+                        <li key={c.label}><Link to={c.href} className="text-[14px] text-[#5C4A38]">{c.label}</Link></li>
+                      ))}
+                    </ul>
+                  </details>
                 </div>
               )}
             </div>
           </nav>
-          {headerCta && <button data-testid="mnav-book" onClick={() => { setMobileOpen(false); onOpenBooking(); }} className="btn-primary w-full mt-6">{headerCta}</button>}
+          <button data-testid="mnav-book" onClick={() => { setMobileOpen(false); onOpenBooking(); }} className="btn-primary w-full mt-6">Book Appointment</button>
           <div className="mt-8 text-[13px] text-[#5C4A38] leading-relaxed">
             <p className="font-semibold text-[#3D2F23]">{SITE.phone}</p>
             <p>{SITE.hours}</p>

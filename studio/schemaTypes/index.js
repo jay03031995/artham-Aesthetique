@@ -9,14 +9,6 @@ import {offerType} from './offerType'
 import {testimonialType} from './testimonialType'
 import {faqType} from './faqType'
 import {appointmentType} from './appointmentType'
-import {contactSubmissionType} from './contactSubmissionType'
-import {
-  bookingSettingsType,
-  chatbotSettingsType,
-  mobileBarSettingsType,
-  policyPageType,
-  careersPageType,
-} from './utilityTypes'
 import {
   homePageType,
   aboutPageType,
@@ -38,12 +30,6 @@ export const schemaTypes = [
   testimonialType,
   faqType,
   appointmentType,
-  contactSubmissionType,
-  bookingSettingsType,
-  chatbotSettingsType,
-  mobileBarSettingsType,
-  policyPageType,
-  careersPageType,
   homePageType,
   aboutPageType,
   contactPageType,
