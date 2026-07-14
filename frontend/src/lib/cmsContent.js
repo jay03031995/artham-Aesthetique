@@ -47,8 +47,11 @@ const CMS_QUERY = `{
     "slug": slug.current,
     "image": coalesce(image.url, image.asset.asset->url),
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, benefits, duration, sessions, priceFrom, pricing, doctorNote, faqs,
-      quickInfo, howItWorks, symptoms, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
+      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, duration, sessions, priceFrom, pricing, doctorNote, faqs,
+      quickInfo, howItWorks,
+      "symptoms": symptoms[]{title, description, "image": coalesce(image.url, image.asset.asset->url)},
+      "benefits": benefits[]{title, description, "icon": coalesce(icon.url, icon.asset.asset->url)},
+      relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
       "realResults": realResults[]->{title, patientAge, gender, description, sessionsInfo, note, "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url), "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)},
       "name": title,
       "slug": slug.current,
@@ -165,10 +168,14 @@ const normalizeService = (service, category) => {
     whoFor: service.whoFor || [],
     benefits: (service.benefits || []).map((b) =>
       typeof b === "string"
-        ? b
-        : b.title || b.description || b.text || ""
-    ).filter(Boolean),
-    symptoms: service.symptoms || [],
+        ? { title: b, description: "", icon: "" }
+        : { title: b.title || b.text || "", description: b.description || "", icon: b.icon || "" }
+    ).filter((b) => b.title),
+    symptoms: (service.symptoms || []).map((s) =>
+      typeof s === "string"
+        ? { title: s, description: "", image: "" }
+        : { title: s.title || s.text || "", description: s.description || "", image: s.image || "" }
+    ).filter((s) => s.title),
     howItWorks: normalizeSteps(service.howItWorks),
     faqs: normalizeFaqs(service.faqs),
     quickInfoRows: quickInfoRows(service),
