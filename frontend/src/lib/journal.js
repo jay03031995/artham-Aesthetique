@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { POSTS } from "../data/blog";
 
 /* ------------------------------------------------------------------ *
  * Wikipedia-style Journal engine (client-side).
@@ -48,7 +47,7 @@ export function computeReadingTime(post) {
 }
 
 /** Build link targets (title + aliases + keywords → slug), longest phrase first. */
-export function buildLinkTargets(posts = POSTS) {
+export function buildLinkTargets(posts = []) {
   const seen = new Set();
   const targets = [];
   for (const p of posts) {
@@ -67,7 +66,7 @@ export function buildLinkTargets(posts = POSTS) {
 const _outCache = new Map();
 
 /** Which post slugs this post auto-links to (deterministic; drives backlinks). */
-export function getOutboundSlugs(post, targets = buildLinkTargets()) {
+export function getOutboundSlugs(post, targets = []) {
   if (_outCache.has(post.slug)) return _outCache.get(post.slug);
   const text = bodyText(post);
   const linked = new Set();
@@ -82,7 +81,7 @@ export function getOutboundSlugs(post, targets = buildLinkTargets()) {
 }
 
 /** "Linked from" — every post whose auto-links point at this one. */
-export function getBacklinks(post, posts = POSTS) {
+export function getBacklinks(post, posts = []) {
   const targets = buildLinkTargets(posts);
   return posts.filter(
     (o) => o.slug !== post.slug && getOutboundSlugs(o, targets).includes(post.slug),
@@ -99,7 +98,7 @@ function tokens(post) {
 }
 
 /** "See also" — related posts by token overlap + link graph + category. */
-export function getSeeAlso(post, posts = POSTS, limit = 4) {
+export function getSeeAlso(post, posts = [], limit = 4) {
   const targets = buildLinkTargets(posts);
   const myOut = new Set(getOutboundSlugs(post, targets));
   const myTokens = tokens(post);

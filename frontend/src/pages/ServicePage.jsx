@@ -8,7 +8,7 @@ import useReveal from "../hooks/useReveal";
 export default function ServicePage({ onOpenBooking }) {
   useReveal();
   const { slug } = useParams();
-  const { site: SITE, findService, findCategory, related: getRelated } = useCmsContent();
+  const { site: SITE, doctors, findService, findCategory, related: getRelated } = useCmsContent();
   const s = findService(slug);
   const [openFaq, setOpenFaq] = useState(null);
   if (!s) return <Navigate to="/" replace />;
@@ -23,15 +23,15 @@ export default function ServicePage({ onOpenBooking }) {
     name: s.name,
     description: s.what,
     bodyLocation: s.category,
-    performerType: "Dermatologist",
-    performer: { "@type": "Physician", name: "Dr. Omaima Jawed" },
+    performerType: doctors?.[0]?.designation,
+    performer: { "@type": "Physician", name: doctors?.[0]?.name },
   };
 
   return (
     <>
       <Seo
-        title={`${s.name} in Noida`}
-        description={s.short}
+        title={s.seo?.title || s.name}
+        description={s.seo?.description || s.short}
         jsonLd={jsonLd}
         ogImage={s.image}
       />
@@ -40,7 +40,7 @@ export default function ServicePage({ onOpenBooking }) {
       <section className="relative bg-[#f5e6d0] pt-16 pb-14 lg:pt-24 lg:pb-20" data-testid="service-hero">
         <div className="container-editorial">
           <nav className="text-[13px] text-[#5C4A38] flex items-center gap-2 mb-8 flex-wrap" aria-label="Breadcrumb">
-            <Link to="/" className="hover:text-[#7A3E1D]">Home</Link>
+            <Link to="/" className="hover:text-[#7A3E1D]">{SITE.title}</Link>
             <ChevronRight size={12} />
             <Link to={`/category/${cat.slug}`} className="hover:text-[#7A3E1D]">{cat.name}</Link>
             <ChevronRight size={12} />
@@ -48,50 +48,48 @@ export default function ServicePage({ onOpenBooking }) {
           </nav>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="overline mb-3">{cat.name}</p>
-              <h1 className="font-display leading-[1.05] text-[#3D2F23] mb-4" style={{ fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)" }}>{s.name}</h1>
+              {cat.name && <p className="overline mb-3">{cat.name}</p>}
+              <h1 className="font-display leading-[1.05] text-[#3D2F23] mb-4" style={{ fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)" }}>{s.heroTitle || s.name}</h1>
               <p className="text-body-lg text-[#5C4A38] mb-6">{s.hero}</p>
 
               {/* Quick facts row */}
-              <div className="grid grid-cols-3 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
-                <div>
+              {s.downtime?.length > 0 && <div className="grid grid-cols-3 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
+                {s.duration && <div>
                   <div className="flex items-center gap-2 text-[#7A5A2E]"><Clock size={14} /><span className="overline text-[10px] mb-0">Duration</span></div>
                   <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.duration}</p>
-                </div>
-                <div>
+                </div>}
+                {s.sessions && <div>
                   <div className="flex items-center gap-2 text-[#7A5A2E]"><Repeat size={14} /><span className="overline text-[10px] mb-0">Sessions</span></div>
                   <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.sessions}</p>
-                </div>
-                <div>
-                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Sparkles size={14} /><span className="overline text-[10px] mb-0">Downtime</span></div>
-                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">Minimal</p>
-                </div>
-              </div>
+                </div>}
+                {s.downtime[0]?.value && <div>
+                  <div className="flex items-center gap-2 text-[#7A5A2E]"><Sparkles size={14} /><span className="overline text-[10px] mb-0">{s.downtime[0].label}</span></div>
+                  <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{s.downtime[0].value}</p>
+                </div>}
+              </div>}
 
               <div className="flex flex-wrap gap-3">
-                <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={15} /> Book {s.name}</button>
-                <a data-testid="svc-wa-btn" href={cmsWhatsAppLink(SITE, `Hello, I'd like to know more about ${s.name}.`)} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
+                {s.ctaText && <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={15} /> {s.ctaText}</button>}
+                {SITE.whatsapp && <a data-testid="svc-wa-btn" href={cmsWhatsAppLink(SITE, s.whatsappMessage || "")} target="_blank" rel="noreferrer" className="btn-secondary flex items-center gap-2"><MessageCircle size={15} /> {s.whatsappLabel}</a>}
               </div>
             </div>
             <div className="aspect-[4/5] rounded-lg overflow-hidden">
-              <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
+              {s.image && <img src={s.image} alt={s.name} className="w-full h-full object-cover" />}
             </div>
           </div>
         </div>
       </section>
 
       {/* WHAT IS */}
-      <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-what">
+      {s.what && <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-what">
         <div className="container-editorial grid lg:grid-cols-5 gap-16">
           <div className="lg:col-span-2 reveal">
-            <p className="overline text-coronation-gold mb-4">What is {s.name}</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">A quiet primer — <em className="italic font-light">before you book.</em></h2>
+            {s.overviewHeading && <p className="overline text-coronation-gold mb-4">{s.overviewHeading}</p>}
           </div>
           <div className="lg:col-span-3 reveal" style={{ transitionDelay: "120ms" }}>
             <p className="fine text-armadillo/85 leading-[1.9] mb-8">{s.what}</p>
             {s.whoFor.length > 0 && (
               <>
-                <p className="overline text-armadillo/60 mb-4">Who it's for</p>
                 <div className="flex flex-wrap gap-2">
                   {s.whoFor.map((w) => (
                     <span key={w} className="fine text-sm px-4 py-1.5 border border-coronation-gold/50 text-armadillo/80">{w}</span>
@@ -101,7 +99,7 @@ export default function ServicePage({ onOpenBooking }) {
             )}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* SYMPTOMS */}
       {s.symptoms?.length > 0 && (
@@ -129,11 +127,11 @@ export default function ServicePage({ onOpenBooking }) {
       )}
 
       {/* HOW IT WORKS */}
-      <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-how">
+      {s.howItWorks?.length > 0 && <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-how">
         <div className="container-editorial">
           <div className="max-w-xl mb-14 reveal">
-            <p className="overline text-coronation-gold mb-4">How it works</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo">A calm, mapped protocol.</h2>
+            {s.processEyebrow && <p className="overline text-coronation-gold mb-4">{s.processEyebrow}</p>}
+            {s.processTitle && <h2 className="font-display text-3xl md:text-4xl text-armadillo">{s.processTitle}</h2>}
           </div>
           <div className="grid md:grid-cols-3 gap-10 lg:gap-14 relative">
             {s.howItWorks.map((step, i) => (
@@ -148,14 +146,14 @@ export default function ServicePage({ onOpenBooking }) {
             ))}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* BENEFITS + DOWNTIME TABLE */}
-      <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-benefits">
+      {(s.benefits?.length > 0 || s.downtime?.length > 0) && <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-benefits">
         <div className="container-editorial grid lg:grid-cols-2 gap-16">
           <div className="reveal">
-            <p className="overline text-coronation-gold mb-4">Benefits</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Small changes, meaningfully.</h2>
+            {s.benefitsEyebrow && <p className="overline text-coronation-gold mb-4">{s.benefitsEyebrow}</p>}
+            {s.benefitsTitle && <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">{s.benefitsTitle}</h2>}
             <div className="grid gap-4 sm:grid-cols-2">
               {(s.benefits || []).map((b, i) => (
                 <div key={`${b.title || b}-${i}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5 flex gap-4 items-start">
@@ -175,8 +173,8 @@ export default function ServicePage({ onOpenBooking }) {
             </div>
           </div>
           <div className="reveal" style={{ transitionDelay: "120ms" }}>
-            <p className="overline text-coronation-gold mb-4">Expectations</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Time, downtime, and results.</h2>
+            {s.expectationsEyebrow && <p className="overline text-coronation-gold mb-4">{s.expectationsEyebrow}</p>}
+            {s.expectationsTitle && <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">{s.expectationsTitle}</h2>}
             <dl className="divide-y divide-coronation-gold/30 border-y border-coronation-gold/30">
               {s.downtime.map((row) => (
                 <div key={row.label} className="flex justify-between py-4">
@@ -187,29 +185,29 @@ export default function ServicePage({ onOpenBooking }) {
             </dl>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* DOCTOR'S NOTE */}
-      <section className="bg-armadillo text-arabian-white py-24 lg:py-28" data-testid="svc-doctor-note">
+      {s.doctorNote && <section className="bg-armadillo text-arabian-white py-24 lg:py-28" data-testid="svc-doctor-note">
         <div className="container-editorial max-w-3xl reveal">
-          <p className="overline text-coronation-gold mb-6">A note from Dr. Omaima</p>
+          {s.doctorNoteEyebrow && <p className="overline text-coronation-gold mb-6">{s.doctorNoteEyebrow}</p>}
           <blockquote className="font-display text-2xl md:text-4xl italic leading-snug mb-8">"{s.doctorNote}"</blockquote>
           <div className="flex items-center gap-4">
             <div className="w-12 h-px bg-coronation-gold" />
             <div>
-              <div className="font-display">Dr. Omaima Jawed</div>
-              <div className="overline text-coronation-gold text-[10px]">Dermatologist · Artham Aesthetique</div>
+              <div className="font-display">{doctors?.[0]?.name}</div>
+              <div className="overline text-coronation-gold text-[10px]">{doctors?.[0]?.designation}</div>
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* FAQ */}
-      <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-faqs">
+      {s.faqs?.length > 0 && <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-faqs">
         <div className="container-editorial grid lg:grid-cols-5 gap-16">
           <div className="lg:col-span-2 reveal">
-            <p className="overline text-coronation-gold mb-4">FAQs</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo">What patients ask, honestly.</h2>
+            {s.faqEyebrow && <p className="overline text-coronation-gold mb-4">{s.faqEyebrow}</p>}
+            {s.faqTitle && <h2 className="font-display text-3xl md:text-4xl text-armadillo">{s.faqTitle}</h2>}
           </div>
           <div className="lg:col-span-3 divide-y divide-coronation-gold/30 border-y border-coronation-gold/30 reveal" style={{ transitionDelay: "120ms" }}>
             {(s.faqs || []).map((f, i) => {
@@ -250,7 +248,7 @@ export default function ServicePage({ onOpenBooking }) {
             }),
           }}
         />
-      </section>
+      </section>}
 
       {/* RELATED */}
       {related.length > 0 && (
@@ -258,10 +256,10 @@ export default function ServicePage({ onOpenBooking }) {
           <div className="container-editorial">
             <div className="flex items-end justify-between mb-12 gap-6 flex-wrap">
               <div>
-                <p className="overline text-coronation-gold mb-4">Related</p>
-                <h2 className="font-display text-3xl md:text-4xl text-armadillo">You may also consider</h2>
+                {s.relatedEyebrow && <p className="overline text-coronation-gold mb-4">{s.relatedEyebrow}</p>}
+                {s.relatedTitle && <h2 className="font-display text-3xl md:text-4xl text-armadillo">{s.relatedTitle}</h2>}
               </div>
-              <Link to={`/category/${cat.slug}`} className="link-gold overline">All {cat.name} →</Link>
+              {s.relatedLinkText && <Link to={`/category/${cat.slug}`} className="link-gold overline">{s.relatedLinkText}</Link>}
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {related.map((r) => (
@@ -286,7 +284,7 @@ export default function ServicePage({ onOpenBooking }) {
       {/* STICKY MOBILE BOTTOM CTA (over sticky mobile bar) */}
       <div className="lg:hidden fixed bottom-16 left-0 right-0 z-20 pointer-events-none">
         <div className="container-editorial pb-2 pointer-events-auto">
-          <button data-testid="svc-sticky-book" onClick={bookThis} className="btn-primary w-full shadow-lg">Book {s.name}</button>
+          {s.ctaText && <button data-testid="svc-sticky-book" onClick={bookThis} className="btn-primary w-full shadow-lg">{s.ctaText}</button>}
         </div>
       </div>
     </>

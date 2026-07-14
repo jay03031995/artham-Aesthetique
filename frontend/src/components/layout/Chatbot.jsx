@@ -6,14 +6,13 @@ import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 const uuid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
 
 export default function Chatbot({ onOpenBooking }) {
-  const { site: SITE } = useCmsContent();
+  const { site: SITE, chatbot } = useCmsContent();
   const [open, setOpen] = useState(false);
   const [sessionId] = useState(() => uuid());
   const [messages, setMessages] = useState([
     {
       role: "assistant",
-      content:
-        "Hello — I'm Aara, your concierge at Artham Aesthetique. I can help you book a consultation, share treatment notes, or connect you with our team on WhatsApp. What would you like to explore?",
+      content: chatbot?.initialMessage || "",
     },
   ]);
   const [input, setInput] = useState("");
@@ -45,19 +44,26 @@ export default function Chatbot({ onOpenBooking }) {
       (err) => {
         setMessages((prev) => [
           ...prev.slice(0, -1),
-          { role: "assistant", content: `Sorry, I'm unable to respond right now. Please WhatsApp us on ${SITE.phone} — we usually reply within minutes.` },
+          { role: "assistant", content: chatbot?.fallbackMessage || "" },
         ]);
         setBusy(false);
       }
     );
   };
 
-  const quick = [
-    { label: "Book a consult", action: () => { setOpen(false); onOpenBooking(); } },
-    { label: "About Dr. Omaima", action: () => send("Tell me about Dr. Omaima Jawed and her approach.") },
-    { label: "Which facial suits me?", action: () => send("Which facial would you suggest for dull, dehydrated skin?") },
-    { label: "WhatsApp us", action: () => window.open(cmsWhatsAppLink(SITE), "_blank") },
-  ];
+  const quick = (chatbot?.quickReplies || []).map((reply) => ({
+    label: reply.label,
+    action: () => {
+      if (reply.action === "open-booking") {
+        setOpen(false);
+        onOpenBooking();
+      } else if (reply.action === "open-whatsapp") {
+        window.open(cmsWhatsAppLink(SITE, reply.message || ""), "_blank");
+      } else {
+        send(reply.message || reply.label);
+      }
+    },
+  }));
 
   return (
     <>
@@ -86,8 +92,8 @@ export default function Chatbot({ onOpenBooking }) {
               <img src={SITE.logoUrl} alt="" className="w-full h-full object-contain" />
             </div>
             <div>
-              <div className="font-display text-base leading-tight">Aara · Artham Concierge</div>
-              <div className="overline text-coronation-gold text-[9px]">Usually replies instantly</div>
+              <div className="font-display text-base leading-tight">{chatbot?.assistantName}</div>
+              {chatbot?.statusText && <div className="overline text-coronation-gold text-[9px]">{chatbot.statusText}</div>}
             </div>
           </div>
           <button data-testid="chatbot-close" onClick={() => setOpen(false)} aria-label="Close chat"><X size={18} /></button>
@@ -130,7 +136,7 @@ export default function Chatbot({ onOpenBooking }) {
             data-testid="chatbot-input"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Ask me anything…"
+            placeholder={chatbot?.inputPlaceholder || ""}
             className="flex-1 bg-transparent border-b border-armadillo/20 py-2 fine text-sm text-armadillo placeholder:text-armadillo/40 focus:outline-none focus:border-burma-teak"
           />
           <button data-testid="chatbot-send" type="submit" disabled={busy} className="text-burma-teak hover:text-armadillo transition-colors duration-500 disabled:opacity-40">

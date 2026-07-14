@@ -1,28 +1,47 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { SITE as FALLBACK_SITE } from "../data/site";
-import { CATEGORIES as FALLBACK_CATEGORIES, ALL_SERVICES as FALLBACK_SERVICES } from "../data/treatments";
-import { POSTS as FALLBACK_POSTS } from "../data/blog";
 
 const PROJECT_ID = process.env.REACT_APP_SANITY_PROJECT_ID || "3goot0bo";
 const DATASET = process.env.REACT_APP_SANITY_DATASET || "production";
 const API_VERSION = process.env.REACT_APP_SANITY_API_VERSION || "2026-07-13";
-const USE_CDN = process.env.REACT_APP_SANITY_USE_CDN !== "false";
+const USE_CDN = process.env.REACT_APP_SANITY_USE_CDN === "true";
 const CMS_ENABLED = process.env.REACT_APP_SANITY_ENABLED !== "false";
-const REFRESH_MS = Number(process.env.REACT_APP_SANITY_REFRESH_MS || 60000);
+const REFRESH_MS = Number(process.env.REACT_APP_SANITY_REFRESH_MS || 15000);
 
 const endpoint = `https://${PROJECT_ID}.api${USE_CDN ? "cdn" : ""}.sanity.io/v${API_VERSION}/data/query/${DATASET}`;
+
+const img = (field) => `coalesce(${field}.url, ${field}.asset->url)`;
+
+const EMPTY_SITE = {
+  title: "",
+  name: "",
+  tagline: "",
+  wordmarkDeva: "",
+  phone: "",
+  phoneDigits: "",
+  hours: "",
+  address: { line1: "", line2: "", line3: "" },
+  social: {},
+  logoUrl: "",
+  footerLogoUrl: "",
+  doctorPortraitUrl: "",
+  heroImageUrl: "",
+  clinicPhotoUrl: "",
+  heroVideoUrl: "",
+  parentBrandUrl: "",
+};
 
 const CMS_QUERY = `{
   "site": *[_type == "siteSettings"][0]{
     title, tagline, wordmarkDeva, phone, phoneDigits, hours, address, parentBrandUrl,
-    "logoUrl": coalesce(logo.url, logo.asset.asset->url),
-    "footerLogoUrl": coalesce(footerLogo.url, footerLogo.asset.asset->url),
-    "doctorPortraitUrl": coalesce(doctorPortrait.url, doctorPortrait.asset.asset->url),
-    "heroImageUrl": coalesce(heroImage.url, heroImage.asset.asset->url),
-    "clinicPhotoUrl": coalesce(clinicPhoto.url, clinicPhoto.asset.asset->url, heroImage.url, heroImage.asset.asset->url),
+    headerCta, footerCta, emails, workingHours, googleMaps, whatsapp, copyright, analytics, verificationCodes,
+    "logoUrl": ${img("logo")},
+    "footerLogoUrl": ${img("footerLogo")},
+    "doctorPortraitUrl": ${img("doctorPortrait")},
+    "heroImageUrl": ${img("heroImage")},
+    "clinicPhotoUrl": coalesce(${img("clinicPhoto")}, ${img("heroImage")}),
     heroVideoUrl,
     social,
-    nav,
+    "nav": nav[]{label, href},
     "megaGroups": megaGroups[]{
       heading,
       "catLink": select(defined(category->slug.current) => "/category/" + category->slug.current, "#"),
@@ -30,7 +49,7 @@ const CMS_QUERY = `{
         title, short, duration, sessions,
         "name": title,
         "slug": slug.current,
-        "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url)
+        "image": coalesce(${img("cardImage")}, ${img("image")}, ${img("heroImage")})
       }
     }
   },
@@ -42,51 +61,79 @@ const CMS_QUERY = `{
     }
   },
   "categories": *[_type == "category"]|order(order asc, title asc){
-    _id, title, intro, order,
+    _id, title, intro, order, seo, breadcrumbHomeLabel, breadcrumbTreatmentsLabel, countLabel, ctaEyebrow, ctaTitle, ctaText, ctaButtonText,
     "name": title,
     "slug": slug.current,
-    "image": coalesce(image.url, image.asset.asset->url),
+    "image": ${img("image")},
+    "icon": ${img("icon")},
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, hero, what, whoFor, duration, sessions, priceFrom, pricing, doctorNote, faqs,
-      quickInfo, howItWorks,
-      "symptoms": symptoms[]{title, description, "image": coalesce(image.url, image.asset.asset->url)},
-      "benefits": benefits[]{title, description, "image": coalesce(image.url, image.asset.asset->url)},
-      relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
+      _id, title, short, heroTitle, hero, description, ctaText, ctaLink, whatsappLabel, whatsappMessage,
+      what, overviewHeading, whoFor, duration, sessions, downtime, priceFrom, pricing,
+      processEyebrow, processTitle, benefitsEyebrow, benefitsTitle, expectationsEyebrow, expectationsTitle,
+      doctorNoteEyebrow, doctorNote, faqEyebrow, faqTitle, relatedEyebrow, relatedTitle, relatedLinkText, faqs, seo,
+      quickInfo, howItWorks[]{title, body, "image": ${img("image")}},
+      "symptoms": symptoms[]{title, description, "image": ${img("image")}},
+      "benefits": benefits[]{title, description, "image": ${img("image")}},
+      relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(${img("cardImage")}, ${img("image")}, ${img("heroImage")})},
       "name": title,
       "slug": slug.current,
-      "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url),
-      "heroImage": coalesce(heroImage.url, heroImage.asset.asset->url, image.url, image.asset.asset->url),
+      "image": coalesce(${img("cardImage")}, ${img("image")}, ${img("heroImage")}),
+      "heroImage": coalesce(${img("heroImage")}, ${img("image")}),
+      "heroBackgroundImage": ${img("heroBackgroundImage")},
       "category": ^.title,
       "categorySlug": ^.slug.current,
       "results": *[_type == "beforeAfter" && references(^._id)]|order(order asc){
         title, patientAge, gender, description, sessionsInfo, note,
-        "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url),
-        "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)
+        "beforeImage": ${img("beforeImage")},
+        "afterImage": ${img("afterImage")}
       }
     }
   },
   "posts": *[_type == "post"]|order(date desc){
-    title, category, excerpt, date, updated, keywords, aliases, lead, sections, keyFacts, faq, references, furtherReading,
+    title, category, excerpt, date, updated, keywords, aliases, lead, sections, keyFacts, faq, references, furtherReading, author, tags, seo,
     "slug": slug.current,
-    "coverImage": coalesce(cover.url, cover.asset.asset->url),
+    "coverImage": ${img("cover")},
     "relatedSlugs": relatedTreatments[]->slug.current,
     "readingTimeMin": round(length(pt::text(sections[].blocks[].text)) / 900)
   },
   "doctors": *[_type == "doctor"]|order(_createdAt asc){
     name, title, designation, qualifications, experience, languages, achievements, bio, education, memberships, expertise, philosophy, consultationCta,
     "slug": slug.current,
-    "portrait": coalesce(portrait.url, portrait.asset.asset->url),
-    "signatureServices": signatureTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)}
+    "portrait": ${img("portrait")},
+    "signatureServices": signatureTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(${img("cardImage")}, ${img("image")}, ${img("heroImage")})}
   },
-  "testimonials": *[_type == "testimonial" && featured == true]|order(order asc, _createdAt desc){
+  "testimonials": *[_type == "testimonial"]|order(order asc, _createdAt desc){
     name, area, rating, quote, review,
-    "image": coalesce(image.url, image.asset.asset->url)
+    featured,
+    "image": ${img("image")},
+    "treatment": treatment->{"slug": slug.current, "name": title}
   },
-  "home": *[_type == "homePage"][0],
-  "about": *[_type == "aboutPage"][0],
-  "contact": *[_type == "contactPage"][0],
+  "home": *[_type == "homePage"][0]{
+    ..., "heroImageUrl": ${img("heroImage")},
+    "featuredTreatments": featuredTreatments[]->{"slug": slug.current, "name": title, short, duration, sessions, "image": coalesce(${img("cardImage")}, ${img("image")}, ${img("heroImage")})},
+    "doctor": doctor->{name, title, designation, qualifications, philosophy, bio, consultationCta, "slug": slug.current, "portrait": ${img("portrait")}},
+    "testimonials": testimonials[]->{name, area, rating, quote, review, "image": ${img("image")}},
+    "realResults": realResults[]->{title, description, sessionsInfo, "beforeImage": ${img("beforeImage")}, "afterImage": ${img("afterImage")}}
+  },
+  "about": *[_type == "aboutPage"][0]{..., "heroImageUrl": ${img("heroImage")}, "galleryUrls": gallery[]{"url": coalesce(url, asset->url), alt}},
+  "contact": *[_type == "contactPage"][0]{..., "heroImageUrl": ${img("heroImage")}},
   "footer": *[_type == "footerSettings"][0],
-  "seo": *[_type == "seoSettings"][0]
+  "seo": *[_type == "seoSettings"][0]{
+    ..., "defaultOpenGraphImageUrl": ${img("defaultOpenGraphImage")}, "faviconUrl": ${img("favicon")}, "appleTouchIconUrl": ${img("appleTouchIcon")}
+  },
+  "faqs": *[_type == "faq"]|order(order asc, _createdAt asc){q, a},
+  "offers": *[_type == "offer" && active != false]|order(validTill asc, _createdAt desc){
+    title, blurb, terms, validTill, "slug": slug.current, "image": ${img("image")}
+  },
+  "policies": *[_type == "policyPage"]|order(title asc){
+    title, intro, eyebrow, sections, updatedText, contactLink, seo, "slug": slug.current
+  },
+  "careers": *[_type == "careersPage"][0]{..., seo},
+  "booking": *[_type == "bookingSettings"][0],
+  "chatbot": *[_type == "chatbotSettings"][0],
+  "mobileBar": *[_type == "mobileBarSettings"][0]{
+    "items": items[]|order(order asc){label, icon, action, href, highlight, order}
+  }
 }`;
 
 const CMSContext = createContext(null);
@@ -95,17 +142,11 @@ const compact = (obj) =>
   Object.fromEntries(Object.entries(obj || {}).filter(([, value]) => value !== undefined && value !== null && value !== ""));
 
 const mergeSite = (site = {}) => ({
-  ...FALLBACK_SITE,
+  ...EMPTY_SITE,
   ...compact(site),
-  name: site.title || FALLBACK_SITE.name,
-  logoUrl: site.logoUrl || FALLBACK_SITE.logoUrl,
-  footerLogoUrl: site.footerLogoUrl || FALLBACK_SITE.footerLogoUrl,
-  doctorPortraitUrl: site.doctorPortraitUrl || FALLBACK_SITE.doctorPortraitUrl,
-  heroImageUrl: site.heroImageUrl || FALLBACK_SITE.heroImageUrl,
-  clinicPhotoUrl: site.clinicPhotoUrl || FALLBACK_SITE.clinicPhotoUrl,
-  heroVideoUrl: site.heroVideoUrl || FALLBACK_SITE.heroVideoUrl,
-  address: { ...FALLBACK_SITE.address, ...(site.address || {}) },
-  social: { ...FALLBACK_SITE.social, ...(site.social || {}) },
+  name: site.title || "",
+  address: { ...EMPTY_SITE.address, ...(site.address || {}) },
+  social: { ...(site.social || {}) },
 });
 
 const normalizeSteps = (steps = []) =>
@@ -144,7 +185,7 @@ const normalizeService = (service, category) => {
     categorySlug: service.categorySlug || category?.slug,
     short: service.short || service.shortDescription || "",
     hero: service.hero || service.heroSubtitle || service.short || "",
-    image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
+    image: service.image || service.heroImage || category?.image || "",
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
     benefits: (service.benefits || []).map((b) =>
@@ -166,14 +207,12 @@ const normalizeService = (service, category) => {
 
 const normalizeCategories = (categories = []) => {
   const sane = categories.filter((cat) => cat.slug && cat.name);
-  if (!sane.length) return FALLBACK_CATEGORIES;
+  if (!sane.length) return [];
   return sane.map((cat) => {
-    const base = FALLBACK_CATEGORIES.find((fallback) => fallback.slug === cat.slug) || {};
     const merged = {
-      ...base,
       ...cat,
-      image: cat.image || base.image || FALLBACK_SITE.heroImageUrl,
-      intro: cat.intro || base.intro || "",
+      image: cat.image || "",
+      intro: cat.intro || "",
     };
     merged.services = (cat.services || []).map((service) => normalizeService(service, merged));
     return merged;
@@ -184,7 +223,7 @@ const normalizePosts = (posts = []) =>
   posts.length
     ? posts.map((post) => ({
         ...post,
-        coverImage: post.coverImage || FALLBACK_SITE.clinicPhotoUrl,
+        coverImage: post.coverImage || "",
         readingTimeMin: post.readingTimeMin || 5,
         sections: (post.sections || []).map((section) => ({
           ...section,
@@ -194,7 +233,7 @@ const normalizePosts = (posts = []) =>
           })),
         })),
       }))
-    : FALLBACK_POSTS;
+    : [];
 
 const composeContent = (result = {}) => {
   const site = mergeSite(result.site);
@@ -212,6 +251,13 @@ const composeContent = (result = {}) => {
     contact: result.contact || {},
     footer: result.footer || {},
     seo: result.seo || {},
+    faqs: result.faqs || [],
+    offers: result.offers || [],
+    policies: result.policies || [],
+    careers: result.careers || {},
+    booking: result.booking || {},
+    chatbot: result.chatbot || {},
+    mobileBar: result.mobileBar || {},
     megaGroups: result.site?.megaGroups || [],
     nav: result.navigation?.items || result.site?.nav || [],
     loadedFromCms: Boolean(result.site || result.categories?.length || result.posts?.length),
@@ -222,7 +268,10 @@ const fallbackContent = composeContent({});
 
 async function fetchCmsContent({ signal } = {}) {
   if (!CMS_ENABLED) return fallbackContent;
-  const res = await fetch(`${endpoint}?query=${encodeURIComponent(CMS_QUERY)}`, { signal });
+  const res = await fetch(`${endpoint}?query=${encodeURIComponent(CMS_QUERY)}&ts=${Date.now()}`, {
+    signal,
+    cache: "no-store",
+  });
   if (!res.ok) throw new Error(`Sanity request failed (${res.status})`);
   const json = await res.json();
   return composeContent(json.result || {});
@@ -267,14 +316,14 @@ export function CMSContentProvider({ children }) {
 export function useCmsContent() {
   return useContext(CMSContext) || {
     ...fallbackContent,
-    findService: (slug) => FALLBACK_SERVICES.find((service) => service.slug === slug),
-    findCategory: (slug) => FALLBACK_CATEGORIES.find((category) => category.slug === slug),
-    findPost: (slug) => FALLBACK_POSTS.find((post) => post.slug === slug),
-    postsByCategory: (category) => (category && category !== "All" ? FALLBACK_POSTS.filter((post) => post.category === category) : FALLBACK_POSTS),
+    findService: () => null,
+    findCategory: () => null,
+    findPost: () => null,
+    postsByCategory: () => [],
     related: (categorySlug, currentSlug, max = 4) =>
-      FALLBACK_SERVICES.filter((service) => service.categorySlug === categorySlug && service.slug !== currentSlug).slice(0, max),
+      fallbackContent.allServices.filter((service) => service.categorySlug === categorySlug && service.slug !== currentSlug).slice(0, max),
   };
 }
 
-export const cmsWhatsAppLink = (site, msg = "Hello Artham Aesthetique, I would like to book a consultation.") =>
-  `https://wa.me/${site.phoneDigits || FALLBACK_SITE.phoneDigits}?text=${encodeURIComponent(msg)}`;
+export const cmsWhatsAppLink = (site, msg = "") =>
+  `https://wa.me/${site.whatsapp || site.phoneDigits || ""}?text=${encodeURIComponent(msg)}`;

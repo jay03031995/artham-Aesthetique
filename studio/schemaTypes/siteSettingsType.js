@@ -17,7 +17,11 @@ export const siteSettingsType = defineType({
     defineField({name: 'wordmarkDeva', title: 'Devanagari wordmark', type: 'string', group: 'brand'}),
     defineField({name: 'phone', title: 'Phone (display)', type: 'string', group: 'contact'}),
     defineField({name: 'phoneDigits', title: 'Phone (digits only)', type: 'string', group: 'contact'}),
+    defineField({name: 'whatsapp', title: 'WhatsApp number (digits only)', type: 'string', group: 'contact'}),
+    defineField({name: 'emails', title: 'Emails', type: 'array', of: [{type: 'string'}], group: 'contact'}),
     defineField({name: 'hours', title: 'Hours', type: 'string', group: 'contact'}),
+    defineField({name: 'workingHours', title: 'Working hours', type: 'array', of: [{type: 'keyFact'}], group: 'contact'}),
+    defineField({name: 'googleMaps', title: 'Google Maps URL', type: 'url', group: 'contact'}),
     defineField({
       name: 'address',
       title: 'Address',
@@ -36,6 +40,9 @@ export const siteSettingsType = defineType({
     defineField({name: 'clinicPhoto', title: 'Clinic photo', type: 'mediaImage', group: 'media'}),
     defineField({name: 'heroVideoUrl', title: 'Hero video URL', type: 'string', group: 'media'}),
     defineField({name: 'parentBrandUrl', title: 'Parent brand URL', type: 'url', group: 'brand'}),
+    defineField({name: 'headerCta', title: 'Header CTA', type: 'link', group: 'menu'}),
+    defineField({name: 'footerCta', title: 'Footer CTA', type: 'link', group: 'menu'}),
+    defineField({name: 'copyright', title: 'Copyright', type: 'string', group: 'brand'}),
     defineField({
       name: 'nav',
       title: 'Primary nav items',
@@ -84,6 +91,27 @@ export const siteSettingsType = defineType({
       fields: ['instagram', 'facebook', 'x', 'linkedin', 'youtube', 'whatsapp'].map((s) =>
         defineField({name: s, title: s[0].toUpperCase() + s.slice(1), type: 'url'}),
       ),
+    }),
+    defineField({
+      name: 'analytics',
+      title: 'Analytics',
+      type: 'object',
+      group: 'brand',
+      fields: [
+        defineField({name: 'googleAnalyticsId', title: 'Google Analytics ID', type: 'string'}),
+        defineField({name: 'metaPixelId', title: 'Meta Pixel ID', type: 'string'}),
+      ],
+    }),
+    defineField({
+      name: 'verificationCodes',
+      title: 'Verification codes',
+      type: 'object',
+      group: 'brand',
+      fields: [
+        defineField({name: 'google', title: 'Google site verification', type: 'string'}),
+        defineField({name: 'bing', title: 'Bing site verification', type: 'string'}),
+        defineField({name: 'facebook', title: 'Facebook domain verification', type: 'string'}),
+      ],
     }),
   ],
   preview: {prepare: () => ({title: 'Site Settings & Menu'})},

@@ -4,12 +4,6 @@ import { api } from "../../lib/api";
 import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 import { toast } from "sonner";
 
-const timeSlots = [
-  "10:00", "10:45", "11:30", "12:15",
-  "14:00", "14:45", "15:30", "16:15",
-  "17:00", "17:45", "18:30", "19:15",
-];
-
 const nextDates = () => {
   const arr = [];
   const today = new Date();
@@ -28,7 +22,7 @@ const fmtDate = (d) => d.toISOString().slice(0, 10);
 const displayDate = (d) => d.toLocaleDateString("en-IN", { weekday: "short", day: "numeric", month: "short" });
 
 export default function BookingFlow({ open, onClose, initialSlug }) {
-  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, findService } = useCmsContent();
+  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, doctors, booking, findService } = useCmsContent();
   const [step, setStep] = useState(1);
   const [query, setQuery] = useState("");
   const [treatmentSlug, setTreatmentSlug] = useState(initialSlug || "");
@@ -38,6 +32,13 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
   const [submitting, setSubmitting] = useState(false);
   const [confirmedId, setConfirmedId] = useState(null);
   const dates = useMemo(nextDates, []);
+  const timeSlots = booking?.timeSlots || [];
+  const doctorName = doctors?.[0]?.name || "";
+  const stepTitles = {
+    1: booking?.chooseTreatmentTitle,
+    2: booking?.chooseTimeTitle,
+    3: booking?.detailsTitle,
+  };
 
   useEffect(() => {
     if (open) {
@@ -64,7 +65,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
 
   const submit = async () => {
     if (!treatment || !date || !time || !form.name || !form.phone) {
-      toast.error("Please fill in your name, phone, date and time.");
+      toast.error(booking?.requiredError || "");
       return;
     }
     setSubmitting(true);
@@ -73,14 +74,15 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
         treatment_slug: treatment.slug,
         treatment_name: treatment.name,
         category: treatment.category,
+        doctor: doctorName,
         date, time_slot: time,
         name: form.name, phone: form.phone,
         email: form.email || null, note: form.note || null,
       });
       setConfirmedId(res.data.id);
-      toast.success("Booking received. We'll confirm on WhatsApp shortly.");
+      toast.success(booking?.successToast || "");
     } catch (e) {
-      toast.error("Could not save booking. Please WhatsApp us.");
+      toast.error(booking?.errorToast || "");
     } finally {
       setSubmitting(false);
     }
@@ -108,9 +110,9 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
               </button>
             )}
             <div>
-              <p className="overline text-coronation-gold text-[10px]">Book Appointment</p>
+              {booking?.eyebrow && <p className="overline text-coronation-gold text-[10px]">{booking.eyebrow}</p>}
               <h3 className="font-display text-xl text-armadillo leading-tight">
-                {confirmedId ? "You're booked" : step === 1 ? "Choose your treatment" : step === 2 ? "Pick a date & time" : "Your details"}
+                {confirmedId ? booking?.confirmedTitle : stepTitles[step]}
               </h3>
             </div>
           </div>
@@ -124,7 +126,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
           <div className="flex items-center gap-2 px-6 py-4 border-b border-coronation-gold/20">
             {[1, 2, 3].map((n) => (
               <div key={n} className="flex-1 flex items-center gap-2">
-                <span className={`overline text-[10px] ${step >= n ? "text-coronation-gold" : "text-armadillo/40"}`}>Step {n}</span>
+                <span className={`overline text-[10px] ${step >= n ? "text-coronation-gold" : "text-armadillo/40"}`}>{booking?.stepLabels?.[n - 1]}</span>
                 <div className={`flex-1 h-px ${step > n ? "bg-coronation-gold" : "bg-coronation-gold/25"}`} />
               </div>
             ))}
@@ -140,20 +142,20 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
               </div>
               <h4 className="font-display text-3xl text-armadillo mb-3">Thank you, {form.name.split(" ")[0]}.</h4>
               <p className="fine text-armadillo/75 max-w-lg mx-auto mb-2">
-                We've received your request for <strong>{treatment.name}</strong> with Dr. Omaima Jawed on <strong>{displayDate(new Date(date))}</strong> at <strong>{time}</strong>.
+                {(booking?.confirmationText || "").replace("{treatment}", treatment.name).replace("{doctor}", doctorName).replace("{date}", displayDate(new Date(date))).replace("{time}", time)}
               </p>
               <p className="fine text-armadillo/75 max-w-lg mx-auto mb-8">
-                Our team will confirm the slot on WhatsApp within 30 minutes.
+                {booking?.confirmationFollowup}
               </p>
-              <p className="overline text-[10px] text-armadillo/50 mb-6">Reference · {confirmedId.slice(0, 8).toUpperCase()}</p>
+              <p className="overline text-[10px] text-armadillo/50 mb-6">{booking?.referenceLabel} · {confirmedId.slice(0, 8).toUpperCase()}</p>
               <div className="flex flex-wrap gap-3 justify-center">
                 <a
                   data-testid="booking-wa-confirm"
-                  href={cmsWhatsAppLink(SITE, `Hello Artham! I just booked ${treatment.name} for ${displayDate(new Date(date))} at ${time}. Reference: ${confirmedId.slice(0,8).toUpperCase()}`)}
+                  href={cmsWhatsAppLink(SITE, (booking?.whatsappMessage || "").replace("{treatment}", treatment.name).replace("{date}", displayDate(new Date(date))).replace("{time}", time).replace("{reference}", confirmedId.slice(0,8).toUpperCase()))}
                   target="_blank" rel="noreferrer"
                   className="btn-primary"
-                >WhatsApp us</a>
-                <button data-testid="booking-close-confirm" onClick={close} className="btn-secondary">Close</button>
+                >{booking?.whatsappLabel}</a>
+                <button data-testid="booking-close-confirm" onClick={close} className="btn-secondary">{booking?.closeLabel}</button>
               </div>
             </div>
           ) : step === 1 ? (
@@ -164,7 +166,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
                   data-testid="booking-search"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
-                  placeholder="Search treatments — e.g. HydraFacial, PRP, laser…"
+                  placeholder={booking?.searchPlaceholder || ""}
                   className="w-full pl-10 pr-4 py-3 bg-summer-peach border border-coronation-gold/30 focus:border-burma-teak fine text-sm text-armadillo placeholder:text-armadillo/40 outline-none transition-all duration-500"
                 />
               </div>
@@ -182,7 +184,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
                       <p className="fine text-xs text-armadillo/60">{s.category} · {s.short}</p>
                     </button>
                   ))}
-                  {filtered.length === 0 && <p className="fine text-sm text-armadillo/60 text-center py-6">Nothing matched. Try a different word.</p>}
+                  {filtered.length === 0 && <p className="fine text-sm text-armadillo/60 text-center py-6">{booking?.emptySearchText}</p>}
                 </div>
               ) : (
                 <div className="space-y-6 max-h-[45vh] overflow-y-auto">
@@ -209,12 +211,12 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
           ) : step === 2 ? (
             <>
               <div className="bg-summer-peach border border-coronation-gold/25 px-4 py-3 mb-6">
-                <p className="overline text-[10px] text-coronation-gold">Treatment</p>
+                <p className="overline text-[10px] text-coronation-gold">{booking?.treatmentLabel}</p>
                 <p className="font-display text-armadillo text-lg">{treatment?.name}</p>
-                <p className="fine text-xs text-armadillo/60">With Dr. Omaima Jawed</p>
+                <p className="fine text-xs text-armadillo/60">{booking?.doctorPrefix} {doctorName}</p>
               </div>
 
-              <p className="overline text-coronation-gold mb-3">Choose a date</p>
+              <p className="overline text-coronation-gold mb-3">{booking?.dateLabel}</p>
               <div className="grid grid-cols-4 sm:grid-cols-7 gap-2 mb-6">
                 {dates.map((d) => {
                   const ds = fmtDate(d);
@@ -234,7 +236,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
                 })}
               </div>
 
-              <p className="overline text-coronation-gold mb-3">Choose a time</p>
+              <p className="overline text-coronation-gold mb-3">{booking?.timeLabel}</p>
               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 mb-8">
                 {timeSlots.map((t) => (
                   <button
@@ -254,41 +256,41 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
                   disabled={!date || !time}
                   onClick={goNext}
                   className="btn-primary disabled:opacity-40 disabled:cursor-not-allowed"
-                >Continue</button>
+                >{booking?.continueLabel}</button>
               </div>
             </>
           ) : (
             <>
               <div className="bg-summer-peach border border-coronation-gold/25 px-4 py-3 mb-6">
-                <p className="overline text-[10px] text-coronation-gold">Summary</p>
+                <p className="overline text-[10px] text-coronation-gold">{booking?.summaryLabel}</p>
                 <p className="font-display text-armadillo text-lg">{treatment?.name}</p>
-                <p className="fine text-xs text-armadillo/70">{displayDate(new Date(date))} · {time} · Dr. Omaima Jawed</p>
+                <p className="fine text-xs text-armadillo/70">{displayDate(new Date(date))} · {time} · {doctorName}</p>
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">Full name</label>
+                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">{booking?.nameLabel}</label>
                   <input data-testid="booking-name" value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} className="w-full bg-transparent border-b border-armadillo/30 py-2 fine text-armadillo focus:outline-none focus:border-burma-teak" />
                 </div>
                 <div>
-                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">Phone (WhatsApp)</label>
+                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">{booking?.phoneLabel}</label>
                   <input data-testid="booking-phone" value={form.phone} onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))} className="w-full bg-transparent border-b border-armadillo/30 py-2 fine text-armadillo focus:outline-none focus:border-burma-teak" />
                 </div>
                 <div>
-                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">Email (optional)</label>
+                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">{booking?.emailLabel}</label>
                   <input data-testid="booking-email" type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} className="w-full bg-transparent border-b border-armadillo/30 py-2 fine text-armadillo focus:outline-none focus:border-burma-teak" />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">Note (optional)</label>
+                  <label className="overline text-[10px] text-armadillo/70 mb-1 block">{booking?.noteLabel}</label>
                   <textarea data-testid="booking-note" rows={2} value={form.note} onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))} className="w-full bg-transparent border-b border-armadillo/30 py-2 fine text-armadillo focus:outline-none focus:border-burma-teak resize-none" />
                 </div>
               </div>
 
-              <p className="fine text-xs text-armadillo/60 mb-6">By booking, you agree to our cancellation policy. We'll confirm on WhatsApp within 30 minutes.</p>
+              {booking?.termsText && <p className="fine text-xs text-armadillo/60 mb-6">{booking.termsText}</p>}
 
               <div className="flex justify-end">
                 <button data-testid="booking-submit" onClick={submit} disabled={submitting} className="btn-primary disabled:opacity-50">
-                  {submitting ? "Sending…" : "Confirm Booking"}
+                  {submitting ? booking?.submittingLabel : booking?.submitLabel}
                 </button>
               </div>
             </>

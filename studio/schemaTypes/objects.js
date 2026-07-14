@@ -42,7 +42,7 @@ export const link = defineType({
   type: 'object',
   fields: [
     defineField({name: 'label', title: 'Label', type: 'string'}),
-    defineField({name: 'url', title: 'URL', type: 'url'}),
+    defineField({name: 'url', title: 'URL / path', type: 'string'}),
   ],
   preview: {select: {title: 'label', subtitle: 'url'}},
 })
@@ -110,6 +110,17 @@ export const tableRow = defineType({
     select: {cells: 'cells'},
     prepare: ({cells}) => ({title: (cells || []).join(' · ')}),
   },
+})
+
+export const textSection = defineType({
+  name: 'textSection',
+  title: 'Text section',
+  type: 'object',
+  fields: [
+    defineField({name: 'heading', title: 'Heading', type: 'string'}),
+    defineField({name: 'body', title: 'Body', type: 'text', rows: 4}),
+  ],
+  preview: {select: {title: 'heading', subtitle: 'body'}},
 })
 
 // One block of a Wikipedia-style journal section.
@@ -194,6 +205,7 @@ export const objectTypes = [
   quickInfo,
   iconText,
   keyFact,
+  textSection,
   tableRow,
   journalBlock,
   journalSection,
