@@ -110,7 +110,7 @@ export default function ContactPage() {
                   value={form.name}
                   onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
                   className="input-box"
-                  placeholder="Sanjana Singh"
+                  placeholder="S Singh"
                 />
                 {errors.name && <p className="text-[13px] text-[#B12A0F] mt-1">{errors.name}</p>}
               </div>
