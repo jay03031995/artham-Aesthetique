@@ -33,10 +33,10 @@ export const appointmentType = defineType({
   ],
   orderings: [{title: 'Newest', name: 'createdAtDesc', by: [{field: 'createdAt', direction: 'desc'}]}],
   preview: {
-    select: {title: 'name', phone: 'phone', treatment: 'treatmentName', status: 'status', date: 'preferredDate'},
-    prepare: ({title, phone, treatment, status, date}) => ({
+    select: {title: 'name', phone: 'phone', treatment: 'treatmentName', status: 'status', date: 'preferredDate', source: 'source'},
+    prepare: ({title, phone, treatment, status, date, source}) => ({
       title: `${title || '—'} · ${phone || ''}`,
-      subtitle: `${(status || 'new').toUpperCase()} · ${treatment || 'consult'} · ${date || ''}`,
+      subtitle: `${(status || 'new').toUpperCase()} · ${treatment || 'consult'} · ${source || 'website'}${date ? ` · ${date}` : ''}`,
     }),
   },
 })

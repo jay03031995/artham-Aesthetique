@@ -4,7 +4,7 @@ Headless CMS for the whole site: **Site Settings & Menu, Categories, Treatments,
 Before/After Results, Doctors, Journal (Wikipedia-style articles), Offers,
 Testimonials, FAQs**, and an **Appointments dashboard**.
 
-- **Project ID:** `k39wznoo`
+- **Project ID:** `3goot0bo`
 - **Dataset:** `production`
 - **Studio config:** `sanity.config.js` (custom desk structure with grouped sections + an Appointments board)
 - **Schemas:** `schemas/index.js`
@@ -29,9 +29,9 @@ npm run deploy         # pick a subdomain → <name>.sanity.studio
 ## Environment
 `studio/.env` (gitignored) holds:
 ```
-SANITY_STUDIO_PROJECT_ID=k39wznoo
+SANITY_STUDIO_PROJECT_ID=3goot0bo
 SANITY_STUDIO_DATASET=production
-SANITY_TOKEN=<read+write token>     # only used by the seed script
+SANITY_TOKEN=<read+write token>     # used by seed scripts and backend form sync
 ```
 ⚠️ The token currently in `.env` was pasted in chat — **roll it** in
 Sanity → Manage → API → Tokens and replace it here.
@@ -55,11 +55,13 @@ Images are stored as source **URLs** (`image.url`); replace with uploaded assets
 (`image.asset`) in the Studio when real clinic photos are ready.
 
 ## Appointments dashboard
-The FastAPI backend (`backend/server.py`) mirrors every booking into a Sanity
-`appointment` document (`_sync_appointment_to_sanity`, best-effort — a Sanity
-outage never blocks a booking). Staff manage them in **Studio → 📅 Appointments**
-(New / Confirmed / Completed / Cancelled). Backend needs `SANITY_TOKEN` in
-`backend/.env`.
+The FastAPI backend (`backend/server.py`) mirrors booking modal submissions and
+contact callback requests into Sanity `appointment` documents. Staff manage them
+in **Studio → 📅 Appointments** (New / Confirmed / Completed / Cancelled).
+
+Backend needs `SANITY_TOKEN` in `backend/.env`; use `backend/.env.example` as the
+template. Check `/api/sanity/status` after restarting the backend — it should show
+`token_configured: true` and project id `3goot0bo`.
 
 ## Next: point the website at Sanity (Phase 2 — TODO)
 The React frontend still reads from `frontend/src/data/*.js`. To make Sanity the

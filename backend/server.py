@@ -16,50 +16,82 @@ ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
 
 # Mongo
-mongo_url = os.environ["MONGO_URL"]
+mongo_url = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
 client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ["DB_NAME"]]
+db = client[os.environ.get("DB_NAME", "artham_aesthetique")]
 
 # Emergent LLM
 EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
-# Sanity — appointments are mirrored here so staff manage them in the Studio
-# "Appointments" dashboard. Best-effort: a Sanity outage never blocks a booking.
-SANITY_PROJECT_ID = os.environ.get("SANITY_PROJECT_ID", "k39wznoo")
-SANITY_DATASET = os.environ.get("SANITY_DATASET", "production")
-SANITY_TOKEN = os.environ.get("SANITY_TOKEN", "")
+# Sanity — leads are mirrored here so staff manage them in the Studio
+# "Appointments" dashboard. Best-effort: a Sanity outage never blocks a form.
+SANITY_PROJECT_ID = os.environ.get("SANITY_PROJECT_ID") or os.environ.get("SANITY_STUDIO_PROJECT_ID") or "3goot0bo"
+SANITY_DATASET = os.environ.get("SANITY_DATASET") or os.environ.get("SANITY_STUDIO_DATASET") or "production"
+SANITY_TOKEN = os.environ.get("SANITY_TOKEN") or os.environ.get("SANITY_WRITE_TOKEN") or ""
 
 
-def _sync_appointment_to_sanity(booking: "Booking") -> None:
+def _mutate_sanity(doc: dict, label: str) -> None:
     if not SANITY_TOKEN:
+        logging.warning("Sanity %s sync skipped: missing SANITY_TOKEN", label)
         return
     try:
         import requests
 
         url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/{SANITY_DATASET}"
-        doc = {
-            "_id": f"appointment-{booking.id}",
-            "_type": "appointment",
-            "name": booking.name,
-            "phone": booking.phone,
-            "email": booking.email,
-            "treatmentName": booking.treatment_name,
-            "category": booking.category,
-            "preferredDate": booking.date,
-            "preferredTime": booking.time_slot,
-            "note": booking.note,
-            "status": booking.status or "new",
-            "source": "website",
-            "createdAt": booking.created_at,
-        }
-        requests.post(
+        response = requests.post(
             url,
             headers={"Authorization": f"Bearer {SANITY_TOKEN}", "Content-Type": "application/json"},
             json={"mutations": [{"createOrReplace": doc}]},
             timeout=6,
         )
+        if response.status_code >= 400:
+            logging.warning("Sanity %s sync failed (%s): %s", label, response.status_code, response.text)
     except Exception as e:  # pragma: no cover - best effort
-        logging.warning("Sanity appointment sync failed: %s", e)
+        logging.warning("Sanity %s sync failed: %s", label, e)
+
+
+def _sanity_config_status() -> dict:
+    return {
+        "project_id": SANITY_PROJECT_ID,
+        "dataset": SANITY_DATASET,
+        "token_configured": bool(SANITY_TOKEN),
+        "mutate_url": f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/{SANITY_DATASET}",
+    }
+
+
+def _sync_appointment_to_sanity(booking: "Booking") -> None:
+    doc = {
+        "_id": f"appointment-{booking.id}",
+        "_type": "appointment",
+        "name": booking.name,
+        "phone": booking.phone,
+        "email": booking.email,
+        "treatmentName": booking.treatment_name,
+        "category": booking.category,
+        "preferredDate": booking.date,
+        "preferredTime": booking.time_slot,
+        "note": booking.note,
+        "status": booking.status or "new",
+        "source": "booking-modal",
+        "createdAt": booking.created_at,
+    }
+    _mutate_sanity(doc, "appointment")
+
+
+def _sync_callback_to_sanity(callback: "Callback") -> None:
+    doc = {
+        "_id": f"appointment-callback-{callback.id}",
+        "_type": "appointment",
+        "name": callback.name,
+        "phone": callback.phone,
+        "treatmentName": "Callback request",
+        "category": "Contact",
+        "note": callback.concern,
+        "status": callback.status or "new",
+        "source": "contact-page",
+        "createdAt": callback.created_at,
+    }
+    _mutate_sanity(doc, "callback")
 
 
 app = FastAPI(title="Artham Aesthetique API")
@@ -136,6 +168,11 @@ async def root():
     return {"ok": True, "service": "Artham Aesthetique"}
 
 
+@api.get("/sanity/status")
+async def sanity_status():
+    return _sanity_config_status()
+
+
 @api.post("/bookings", response_model=Booking)
 async def create_booking(payload: BookingCreate):
     booking = Booking(**payload.model_dump())
@@ -165,6 +202,7 @@ async def subscribe_newsletter(payload: NewsletterCreate):
 async def create_callback(payload: CallbackCreate):
     cb = Callback(**payload.model_dump())
     await db.callbacks.insert_one(cb.model_dump())
+    _sync_callback_to_sanity(cb)
     return cb
 
 
