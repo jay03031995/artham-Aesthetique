@@ -28,6 +28,38 @@ const keyed = (arr) => (arr || []).map((o) => ({ _key: key(), ...o }));
 const img = (url) => (url ? { url } : undefined);
 const catId = (slug) => `category-${slug}`;
 const ref = (id) => ({ _type: "reference", _ref: id });
+const asDateTime = (date) => (date && !date.includes("T") ? `${date}T00:00:00.000Z` : date);
+const categorySlugByName = new Map(CATEGORIES.map((c) => [c.name, c.slug]));
+const block = (text, style = "normal", extra = {}) => ({
+  _type: "block",
+  _key: key(),
+  style,
+  markDefs: [],
+  children: keyed([{ _type: "span", text: text || "", marks: [] }]),
+  ...extra,
+});
+const portableContentFromPost = (post) => {
+  const content = [];
+  (post.lead || []).forEach((para) => content.push(block(para)));
+  (post.sections || []).forEach((section) => {
+    if (section.heading) content.push(block(section.heading, section.level === 3 ? "h3" : "h2"));
+    (section.blocks || []).forEach((entry) => {
+      if (entry.type === "p" || entry.type === "quote") {
+        content.push(block(entry.text, entry.type === "quote" ? "blockquote" : "normal"));
+      }
+      if (entry.type === "ul" || entry.type === "ol") {
+        (entry.items || []).forEach((item) =>
+          content.push(block(item, "normal", { listItem: entry.type === "ol" ? "number" : "bullet", level: 1 }))
+        );
+      }
+      if (entry.type === "table") {
+        const rows = [entry.head, ...(entry.rows || [])].filter(Boolean).map((row) => row.join(" | "));
+        rows.forEach((row) => content.push(block(row)));
+      }
+    });
+  });
+  return content;
+};
 
 const docs = [];
 
@@ -116,45 +148,34 @@ docs.push({
   expertise: ["Medical dermatology", "Lasers", "Injectables", "Regenerative aesthetics"],
 });
 
+docs.push({
+  _id: "author-dr-omaima-jawed",
+  _type: "author",
+  name: "Dr. Omaima Jawed",
+  slug: { _type: "slug", current: "dr-omaima-jawed" },
+  designation: "Dermatologist",
+  portrait: img(SITE.doctorPortraitUrl),
+});
+
 /* ---------- Journal articles ---------- */
 POSTS.forEach((p) => {
+  const categorySlug = categorySlugByName.get(p.category);
   docs.push({
     _id: `post-${p.slug}`,
     _type: "post",
     title: p.title,
     slug: { _type: "slug", current: p.slug },
-    category: p.category,
+    category: categorySlug ? ref(catId(categorySlug)) : undefined,
     excerpt: p.excerpt,
     cover: img(p.coverImage),
-    date: p.date,
-    updated: p.updated,
-    keywords: p.keywords || [],
-    aliases: p.aliases || [],
-    lead: p.lead || [],
-    sections: keyed(
-      (p.sections || []).map((sec) => ({
-        _type: "journalSection",
-        heading: sec.heading,
-        level: sec.level || 2,
-        id: sec.id,
-        blocks: keyed(
-          (sec.blocks || []).map((b) => {
-            const base = { _type: "journalBlock", type: b.type };
-            if (b.type === "p" || b.type === "quote") base.text = b.text;
-            if (b.type === "ul" || b.type === "ol") base.items = b.items || [];
-            if (b.type === "table") {
-              base.head = b.head || [];
-              base.rows = keyed((b.rows || []).map((r) => ({ _type: "row", cells: r })));
-            }
-            return base;
-          })
-        ),
-      }))
-    ),
-    keyFacts: keyed((p.keyFacts || []).map((k) => ({ _type: "keyFact", label: k.label, value: k.value }))),
-    references: keyed((p.references || []).map((r) => ({ _type: "link", label: r.label || r.text || r.url, url: r.url }))),
-    faq: keyed((p.faq || []).map((f) => ({ _type: "qa", q: f.q, a: f.a }))),
-    furtherReading: keyed((p.furtherReading || []).map((r) => ({ _type: "link", label: r.label || r.url, url: r.url }))),
+    content: portableContentFromPost(p),
+    tags: p.tags || p.keywords || [],
+    author: ref("author-dr-omaima-jawed"),
+    publishedAt: asDateTime(p.date),
+    readingTime: p.readingTimeMin,
+    featured: Boolean(p.featured),
+    seoTitle: p.title,
+    seoDescription: p.excerpt,
   });
 });
 

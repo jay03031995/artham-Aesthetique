@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams, Navigate } from "react-router-dom";
 import { ChevronDown, ChevronRight, CalendarCheck, MessageCircle, Clock, Repeat, Sparkles } from "lucide-react";
 import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
+import ImageLightbox from "../components/ImageLightbox";
 
 export default function ServicePage({ onOpenBooking }) {
   useReveal();
@@ -11,6 +12,21 @@ export default function ServicePage({ onOpenBooking }) {
   const { site: SITE, findService, findCategory, related: getRelated } = useCmsContent();
   const s = findService(slug);
   const [openFaq, setOpenFaq] = useState(null);
+  const [lightboxIndex, setLightboxIndex] = useState(null);
+  const resultImages = useMemo(
+    () =>
+      (s?.results || [])
+        .map((item) => {
+        const title = item.title || item.treatmentName || s?.name || "Treatment result";
+        const images = [
+          item.beforeImage ? { src: item.beforeImage, alt: `${title} before`, label: "Before" } : null,
+          item.afterImage ? { src: item.afterImage, alt: `${title} after`, label: "After" } : null,
+        ].filter(Boolean);
+        return images.length ? { src: images[0].src, alt: title, caption: title, images } : null;
+      })
+        .filter(Boolean),
+    [s],
+  );
   if (!s) return <Navigate to="/" replace />;
   console.log("How It Works:", s.howItWorks);
 console.log("Length:", s.howItWorks?.length);
@@ -80,7 +96,7 @@ console.log(s.benefits);
                 ))}
               </div>
             </div>
-            <div className="aspect-[4/5] rounded-lg overflow-hidden">
+            <div className="h-[420px] rounded-3xl overflow-hidden">
               <img src={s.image} alt={s.name} className="w-full h-full object-cover" />
             </div>
           </div>
@@ -290,56 +306,103 @@ console.log(s.benefits);
       </section>
 
       {/* BEFORE / AFTER RESULTS */}
-      {s.results?.length > 0 && (
-        <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-results">
-          <div className="container-editorial">
-            <div className="flex items-end justify-between mb-12 gap-6 flex-wrap">
-              <div>
-                <p className="overline text-coronation-gold mb-4">Before & After</p>
-                <h2 className="font-display text-3xl md:text-4xl text-armadillo">Real patient results.</h2>
+     {s.results?.length > 0 && (
+  <section
+    className="bg-summer-peach py-24 lg:py-28"
+    data-testid="svc-results"
+  >
+    <div className="container-editorial">
+      {/* Heading */}
+      <div className="flex items-end justify-between mb-10 flex-wrap gap-4">
+        <div>
+          <p className="overline text-coronation-gold mb-3">
+            Before & After
+          </p>
+          <h2 className="font-display text-3xl md:text-4xl text-armadillo">
+            Real patient results.
+          </h2>
+        </div>
+
+        <Link to="/results" className="link-gold overline">
+          View all results →
+        </Link>
+      </div>
+
+      {/* Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {s.results.map((item, index) => {
+          const resultIndex = s.results
+            .slice(0, index)
+            .filter((result) => result.beforeImage || result.afterImage).length;
+          return (
+          <article
+            key={item._id || index}
+            className="rounded-2xl overflow-hidden border border-[#b8894a]/20 bg-white shadow-sm hover:shadow-lg transition-all duration-300"
+          >
+            <div className="grid grid-cols-2 gap-[2px]">
+              {item.beforeImage && (
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(resultIndex)}
+                  className="block w-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-coronation-gold"
+                  aria-label={`Open before image for ${item.title || item.treatmentName || s.name}`}
+                >
+                  <img
+                    src={item.beforeImage}
+                    alt="Before"
+                    className="block w-full h-52 object-cover"
+                  />
+                </button>
+              )}
+
+              {item.afterImage && (
+                <button
+                  type="button"
+                  onClick={() => setLightboxIndex(resultIndex)}
+                  className="block w-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-coronation-gold"
+                  aria-label={`Open after image for ${item.title || item.treatmentName || s.name}`}
+                >
+                  <img
+                    src={item.afterImage}
+                    alt="After"
+                    className="block w-full h-52 object-cover"
+                  />
+                </button>
+              )}
+            </div>
+
+            <div className="p-5">
+              <h3 className="font-display text-xl text-armadillo mb-2">
+                {item.title || item.treatmentName}
+              </h3>
+
+              {item.sessionsInfo && (
+                <p className="text-armadillo/70 text-sm mb-3">
+                  {item.sessionsInfo}
+                </p>
+              )}
+
+              <div className="flex justify-between text-sm text-armadillo/70">
+                {item.patientAge && (
+                  <span>
+                    <strong>Age:</strong> {item.patientAge}
+                  </span>
+                )}
+
+                {item.gender && (
+                  <span>
+                    <strong>Gender:</strong> {item.gender}
+                  </span>
+                )}
               </div>
-              <Link to="/results" className="link-gold overline">View all results →</Link>
             </div>
-            <div className="grid gap-6 lg:grid-cols-2">
-              {s.results.map((item, index) => (
-                <article key={item._id || index} className="rounded-3xl overflow-hidden border border-[#b8894a]/20 bg-white shadow-sm">
-                  <div className="grid gap-2 lg:grid-cols-2">
-                    {item.beforeImage && (
-                      <figure className="overflow-hidden bg-[#f7f0e4]">
-                        <img src={item.beforeImage} alt={`${item.title || "Before"} before`} loading="lazy" className="w-full h-full object-cover" />
-                      </figure>
-                    )}
-                    {item.afterImage && (
-                      <figure className="overflow-hidden bg-[#f7f0e4]">
-                        <img src={item.afterImage} alt={`${item.title || "After"} after`} loading="lazy" className="w-full h-full object-cover" />
-                      </figure>
-                    )}
-                  </div>
-                  <div className="p-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-coronation-gold mb-2">{item.category || item.treatmentName}</p>
-                    <h3 className="font-display text-xl text-armadillo mb-3">{item.title || item.treatmentName || "Treatment result"}</h3>
-                    {item.sessionsInfo && <p className="fine text-armadillo/75 mb-3">{item.sessionsInfo}</p>}
-                    <div className="grid gap-2 text-sm text-armadillo/75">
-                      {item.patientAge && (
-                        <div className="flex justify-between">
-                          <span>Age</span>
-                          <span>{item.patientAge}</span>
-                        </div>
-                      )}
-                      {item.gender && (
-                        <div className="flex justify-between">
-                          <span>Gender</span>
-                          <span>{item.gender}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </article>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+          </article>
+        );
+        })}
+      </div>
+    </div>
+  </section>
+)}
 
       {/* DOCTOR'S NOTE */}
       <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-doctor-note">
@@ -441,6 +504,13 @@ console.log(s.benefits);
           <button data-testid="svc-sticky-book" onClick={bookThis} className="btn-primary w-full shadow-lg">Book {s.name}</button>
         </div>
       </div>
+      <ImageLightbox
+        images={resultImages}
+        currentIndex={lightboxIndex || 0}
+        open={lightboxIndex !== null}
+        onClose={() => setLightboxIndex(null)}
+        onNavigate={setLightboxIndex}
+      />
     </>
   );
 }

@@ -30,7 +30,7 @@ const CMS_QUERY = `{
         title, short, duration, sessions,
         "name": title,
         "slug": slug.current,
-        "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url)
+        "image": coalesce(image.url, image.asset.asset->url)
       }
     }
   },
@@ -47,7 +47,7 @@ const CMS_QUERY = `{
     "slug": slug.current,
     "image": coalesce(image.url, image.asset.asset->url),
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, "benefits": benefits[]{
+      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, what, whoFor, "benefits": benefits[]{
   title,
   description,
   "icon": {
@@ -69,34 +69,60 @@ const CMS_QUERY = `{
       asset->url
     )
   }
-}, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
-      "realResults": realResults[]->{title, patientAge, gender, description, sessionsInfo, note, "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url), "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)},
+}, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(image.url, image.asset.asset->url)},
+      "realResults": realResults[]->{title, patientAge, gender, description, sessionsInfo, note, "treatmentSlug": coalesce(treatment->slug.current, linkedTreatments[0]->slug.current), "categorySlug": category->slug.current, "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url), "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)},
       "name": title,
       "slug": slug.current,
-      "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url, heroImage.url, heroImage.asset.asset->url),
-      "heroImage": coalesce(heroImage.url, heroImage.asset.asset->url, image.url, image.asset.asset->url),
+      "image": coalesce(image.url, image.asset.asset->url),
       "category": ^.title,
       "categorySlug": ^.slug.current,
       "results": *[_type == "beforeAfter" && references(^._id)]|order(order asc){
         title, patientAge, gender, description, sessionsInfo, note,
+        "treatmentSlug": coalesce(treatment->slug.current, linkedTreatments[0]->slug.current),
+        "categorySlug": category->slug.current,
         "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url),
         "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)
       }
     }
   },
-  "posts": *[_type == "post"]|order(date desc){
-    title, category, excerpt, date, updated, keywords, aliases, lead, sections, keyFacts, faq, references, furtherReading,
+  "posts": *[_type == "post"]|order(coalesce(publishedAt, date) desc){
+    title, excerpt, tags, featured, lead, sections, keyFacts, faq, references, furtherReading,
+    "content": content[]{
+      ...,
+      _type == "image" => {
+        ...,
+        "url": coalesce(url, asset->url)
+      }
+    },
+    "category": coalesce(category->title, category),
+    "categorySlug": category->slug.current,
+    "author": select(
+      defined(author->name) => {
+        "name": author->name,
+        "designation": coalesce(author->designation, author->title),
+        "portrait": coalesce(author->portrait.url, author->portrait.asset.asset->url)
+      },
+      defined(author) => {"name": author},
+      null
+    ),
+    "publishedAt": coalesce(publishedAt, date),
+    "date": coalesce(publishedAt, date),
+    "seoTitle": coalesce(seoTitle, seo.title),
+    "seoDescription": coalesce(seoDescription, seo.description),
+    readingTime,
     "slug": slug.current,
     "coverImage": coalesce(cover.url, cover.asset.asset->url),
-    "relatedSlugs": relatedTreatments[]->slug.current,
-    "readingTimeMin": round(length(pt::text(sections[].blocks[].text)) / 900)
+    "relatedBlogs": relatedBlogs[]->{title, excerpt, tags, "slug": slug.current, "coverImage": coalesce(cover.url, cover.asset.asset->url), "category": coalesce(category->title, category), "categorySlug": category->slug.current, "publishedAt": coalesce(publishedAt, date), readingTime},
+    "relatedSlugs": relatedBlogs[]->slug.current,
+    "readingTimeMin": coalesce(readingTime, round(length(pt::text(content)) / 900))
   },
   "results": *[_type == "beforeAfter"]|order(order asc){
     _id, title, patientAge, gender, description, sessionsInfo, note,
     "featured": coalesce(featured, false),
-    "treatmentSlug": treatment->slug,
+    "treatmentSlug": coalesce(treatment->slug.current, linkedTreatments[0]->slug.current),
     "treatmentName": treatment->title,
     "category": category->title,
+    "categorySlug": category->slug.current,
     "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url),
     "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)
   },
@@ -104,14 +130,42 @@ const CMS_QUERY = `{
     name, title, designation, qualifications, experience, languages, achievements, bio, education, memberships, expertise, philosophy, consultationCta,
     "slug": slug.current,
     "portrait": coalesce(portrait.url, portrait.asset.asset->url),
-    "signatureServices": signatureTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)}
+    "signatureServices": signatureTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(image.url, image.asset.asset->url)}
   },
   "testimonials": *[_type == "testimonial" && featured == true]|order(order asc, _createdAt desc){
     name, area, rating, quote, review,
     "image": coalesce(image.url, image.asset.asset->url)
   },
   "home": *[_type == "homePage"][0],
-  "about": *[_type == "aboutPage"][0],
+  "about": *[_type == "aboutPage"][0]{
+    title, eyebrow, heroTitle, heroDescription,
+    "heroImage": coalesce(heroImage.url, heroImage.asset.asset->url),
+    "heroImageAlt": heroImage.alt,
+    seoTitle, metaDescription,
+    storyEyebrow, storyTitle, storyBody,
+    mission, vision, timeline,
+    "clinicHighlights": clinicHighlights[]{
+      title, description,
+      "image": coalesce(image.url, image.asset.asset->url),
+      "imageAlt": image.alt
+    },
+    statistics,
+    "gallery": gallery[]{
+      "url": coalesce(url, asset.asset->url),
+      alt
+    },
+    videoUrl,
+    ctaTitle, ctaText, ctaLabel, ctaLink,
+    "seo": {
+      "title": coalesce(seo.title, seoTitle),
+      "description": coalesce(seo.description, metaDescription),
+      "keywords": seo.keywords,
+      "canonicalUrl": seo.canonicalUrl,
+      "openGraphImage": coalesce(seo.openGraphImage.url, seo.openGraphImage.asset.asset->url),
+      "schema": seo.schema,
+      "noIndex": seo.noIndex
+    }
+  },
   "contact": *[_type == "contactPage"][0],
   "footer": *[_type == "footerSettings"][0],
   "seo": *[_type == "seoSettings"][0]
@@ -176,12 +230,9 @@ const normalizeService = (service, category) => {
     overviewHeading: service.overviewHeading || "",
     ctaText: service.ctaText || "",
     ctaLink: service.ctaLink || "",
-    heroBackgroundImage: service.heroBackgroundImage || "",
-    featuredImage: service.featuredImage || "",
-    cardImage: service.cardImage || "",
     priceFrom: service.priceFrom || "",
     pricing: service.pricing || [],
-    image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
+    image: service.image || category?.image || FALLBACK_SITE.heroImageUrl,
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
     benefits: (service.benefits || [])
@@ -228,21 +279,148 @@ const normalizeCategories = (categories = []) => {
   });
 };
 
+const textFromPortable = (blocks = []) =>
+  (Array.isArray(blocks) ? blocks : [])
+    .flatMap((block) => (block?._type === "block" ? block.children || [] : []))
+    .map((child) => child?.text || "")
+    .join(" ")
+    .trim();
+
+const textFromLegacySections = (post = {}) =>
+  [
+    ...(post.lead || []),
+    ...(post.sections || []).flatMap((section) =>
+      (section.blocks || []).flatMap((block) => {
+        if (block.text) return block.text;
+        if (block.items) return block.items;
+        if (block.rows) return block.rows.flat();
+        return "";
+      }),
+    ),
+  ]
+    .join(" ")
+    .trim();
+
+const readingTimeForPost = (post = {}) => {
+  const explicit = Number(post.readingTimeMin || post.readingTime);
+  if (explicit > 0) return explicit;
+  const text = textFromPortable(post.content) || textFromLegacySections(post);
+  return Math.max(1, Math.ceil(text.split(/\s+/).filter(Boolean).length / 180)) || 5;
+};
+
+const normalizeAuthor = (author) => {
+  if (!author) return { name: "Artham Aesthetique" };
+  if (typeof author === "string") return { name: author };
+  return {
+    name: author.name || "Artham Aesthetique",
+    designation: author.designation || "",
+    portrait: author.portrait || "",
+  };
+};
+
+const normalizeRelatedBlogs = (relatedBlogs = []) =>
+  (relatedBlogs || [])
+    .filter((post) => post?.slug)
+    .map((post) => ({
+      ...post,
+      category: post.category || "Journal",
+      tags: post.tags || [],
+      coverImage: post.coverImage || FALLBACK_SITE.clinicPhotoUrl,
+      readingTimeMin: readingTimeForPost(post),
+    }));
+
 const normalizePosts = (posts = []) =>
   posts.length
-    ? posts.map((post) => ({
-        ...post,
-        coverImage: post.coverImage || FALLBACK_SITE.clinicPhotoUrl,
-        readingTimeMin: post.readingTimeMin || 5,
-        sections: (post.sections || []).map((section) => ({
-          ...section,
-          blocks: (section.blocks || []).map((block) => ({
-            ...block,
-            rows: (block.rows || []).map((row) => row.cells || row),
+    ? posts
+        .filter((post) => post?.slug && post?.title)
+        .map((post) => ({
+          ...post,
+          category: post.category || "Journal",
+          categorySlug: post.categorySlug || "",
+          tags: post.tags || [],
+          author: normalizeAuthor(post.author),
+          coverImage: post.coverImage || FALLBACK_SITE.clinicPhotoUrl,
+          date: post.publishedAt || post.date || "",
+          publishedAt: post.publishedAt || post.date || "",
+          seoTitle: post.seoTitle || post.title,
+          seoDescription: post.seoDescription || post.excerpt || "",
+          readingTimeMin: readingTimeForPost(post),
+          relatedBlogs: normalizeRelatedBlogs(post.relatedBlogs),
+          sections: (post.sections || []).map((section) => ({
+            ...section,
+            blocks: (section.blocks || []).map((block) => ({
+              ...block,
+              rows: (block.rows || []).map((row) => row.cells || row),
+            })),
           })),
-        })),
-      }))
+        }))
     : FALLBACK_POSTS;
+
+const slugValue = (slug) => (typeof slug === "string" ? slug : slug?.current || "");
+
+const normalizeResults = (results = []) =>
+  results.map((result) => ({
+    ...result,
+    treatmentSlug: slugValue(result.treatmentSlug),
+    categorySlug: slugValue(result.categorySlug),
+  }));
+
+const cleanArray = (items) => (Array.isArray(items) ? items : items ? [items] : []).filter(Boolean);
+
+const normalizeKeyFacts = (items = []) =>
+  cleanArray(items)
+    .map((item) => ({
+      label: item?.label || "",
+      value: item?.value || "",
+    }))
+    .filter((item) => item.label || item.value);
+
+const parseSchemaJson = (schema) => {
+  if (!schema) return null;
+  if (typeof schema !== "string") return schema;
+  try {
+    return JSON.parse(schema);
+  } catch (_) {
+    return null;
+  }
+};
+
+const normalizeSeo = (page = {}) => ({
+  title: page.seo?.title || page.seoTitle || page.title || "",
+  description: page.seo?.description || page.metaDescription || page.heroDescription || "",
+  keywords: cleanArray(page.seo?.keywords),
+  canonicalUrl: page.seo?.canonicalUrl || "",
+  openGraphImage: page.seo?.openGraphImage || page.heroImage || "",
+  schema: parseSchemaJson(page.seo?.schema),
+  noIndex: Boolean(page.seo?.noIndex),
+});
+
+const normalizeAbout = (about = {}) => {
+  const normalized = {
+    ...about,
+    storyBody: cleanArray(about.storyBody).filter((paragraph) => typeof paragraph === "string" && paragraph.trim()),
+    timeline: normalizeKeyFacts(about.timeline),
+    statistics: normalizeKeyFacts(about.statistics),
+    clinicHighlights: cleanArray(about.clinicHighlights)
+      .map((item) => ({
+        title: item?.title || "",
+        description: item?.description || "",
+        image: item?.image || "",
+        imageAlt: item?.imageAlt || item?.title || "",
+      }))
+      .filter((item) => item.title || item.description || item.image),
+    gallery: cleanArray(about.gallery)
+      .map((image) => ({
+        url: image?.url || "",
+        alt: image?.alt || "",
+      }))
+      .filter((image) => image.url),
+  };
+  return {
+    ...normalized,
+    seo: normalizeSeo(normalized),
+  };
+};
 
 const composeContent = (result = {}) => {
   const site = mergeSite(result.site);
@@ -253,11 +431,11 @@ const composeContent = (result = {}) => {
     categories,
     allServices,
     posts: normalizePosts(result.posts),
-    results: result.results || [],
+    results: normalizeResults(result.results),
     doctors: result.doctors || [],
     testimonials: result.testimonials || [],
     home: result.home || {},
-    about: result.about || {},
+    about: normalizeAbout(result.about),
     contact: result.contact || {},
     footer: result.footer || {},
     seo: result.seo || {},
@@ -274,13 +452,14 @@ async function fetchCmsContent({ signal } = {}) {
   const res = await fetch(`${endpoint}?query=${encodeURIComponent(CMS_QUERY)}`, { signal });
   if (!res.ok) throw new Error(`Sanity request failed (${res.status})`);
   const json = await res.json();
-  console.log("check benefit data",json.result.categories);
 
   return composeContent(json.result || {});
 }
 
 export function CMSContentProvider({ children }) {
   const [content, setContent] = useState(fallbackContent);
+  const [isLoading, setIsLoading] = useState(CMS_ENABLED);
+  const [cmsError, setCmsError] = useState(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -288,12 +467,20 @@ export function CMSContentProvider({ children }) {
     const load = async () => {
       try {
         const next = await fetchCmsContent({ signal: controller.signal });
-        if (live) setContent(next);
+        if (live) {
+          setContent(next);
+          setCmsError(null);
+        }
       } catch (err) {
-  console.error("SANITY ERROR", err);
+        console.error("SANITY ERROR", err);
 
-  if (live) setContent((current) => current || fallbackContent);
-}
+        if (live) {
+          setContent((current) => current || fallbackContent);
+          setCmsError(err);
+        }
+      } finally {
+        if (live) setIsLoading(false);
+      }
     };
     load();
     const timer = REFRESH_MS > 0 ? window.setInterval(load, REFRESH_MS) : null;
@@ -306,13 +493,21 @@ export function CMSContentProvider({ children }) {
 
   const value = useMemo(() => ({
     ...content,
+    isLoading,
+    cmsError,
     findService: (slug) => content.allServices.find((service) => service.slug === slug),
     findCategory: (slug) => content.categories.find((category) => category.slug === slug),
     findPost: (slug) => content.posts.find((post) => post.slug === slug),
-    postsByCategory: (category) => (category && category !== "All" ? content.posts.filter((post) => post.category === category) : content.posts),
+    filterPosts: ({ category = "All", tag = "All" } = {}) =>
+      content.posts.filter((post) => {
+        const categoryMatch = !category || category === "All" || post.category === category || post.categorySlug === category;
+        const tagMatch = !tag || tag === "All" || (post.tags || []).includes(tag);
+        return categoryMatch && tagMatch;
+      }),
+    postsByCategory: (category) => (category && category !== "All" ? content.posts.filter((post) => post.category === category || post.categorySlug === category) : content.posts),
     related: (categorySlug, currentSlug, max = 4) =>
       content.allServices.filter((service) => service.categorySlug === categorySlug && service.slug !== currentSlug).slice(0, max),
-  }), [content]);
+  }), [content, isLoading, cmsError]);
 
   return <CMSContext.Provider value={value}>{children}</CMSContext.Provider>;
 }
@@ -320,9 +515,17 @@ export function CMSContentProvider({ children }) {
 export function useCmsContent() {
   return useContext(CMSContext) || {
     ...fallbackContent,
+    isLoading: false,
+    cmsError: null,
     findService: (slug) => FALLBACK_SERVICES.find((service) => service.slug === slug),
     findCategory: (slug) => FALLBACK_CATEGORIES.find((category) => category.slug === slug),
     findPost: (slug) => FALLBACK_POSTS.find((post) => post.slug === slug),
+    filterPosts: ({ category = "All", tag = "All" } = {}) =>
+      FALLBACK_POSTS.filter((post) => {
+        const categoryMatch = !category || category === "All" || post.category === category;
+        const tagMatch = !tag || tag === "All" || (post.tags || post.keywords || []).includes(tag);
+        return categoryMatch && tagMatch;
+      }),
     postsByCategory: (category) => (category && category !== "All" ? FALLBACK_POSTS.filter((post) => post.category === category) : FALLBACK_POSTS),
     related: (categorySlug, currentSlug, max = 4) =>
       FALLBACK_SERVICES.filter((service) => service.categorySlug === categorySlug && service.slug !== currentSlug).slice(0, max),

@@ -91,7 +91,7 @@ export default function ContactPage() {
             <div className="mt-8 aspect-[16/10] w-full overflow-hidden rounded-lg border border-[#b8894a]/30">
               <iframe
                 title="Artham Aesthetique location map"
-                src={contact?.mapEmbed || "https://maps.google.com/maps?q=Sector%20104%20Noida&t=&z=14&ie=UTF8&iwloc=&output=embed"}
+                src={contact?.mapEmbed || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3505.0014319658903!2d77.36516277554954!3d28.539676675715608!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390ce702378d5aab%3A0x571efada66df6f11!2sArtham%20Aesthetique%20Clinic%20in%20Noida!5e0!3m2!1sen!2sin!4v1784202125131!5m2!1sen!2sin"}
                 className="w-full h-full"
                 loading="lazy"
               />

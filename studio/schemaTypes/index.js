@@ -3,6 +3,7 @@ import {siteSettingsType} from './siteSettingsType'
 import {categoryType} from './categoryType'
 import {treatmentType} from './treatmentType'
 import {doctorType} from './doctorType'
+import {authorType} from './authorType'
 import {beforeAfterType} from './beforeAfterType'
 import {postType} from './postType'
 import {offerType} from './offerType'
@@ -24,6 +25,7 @@ export const schemaTypes = [
   categoryType,
   treatmentType,
   doctorType,
+  authorType,
   beforeAfterType,
   postType,
   offerType,

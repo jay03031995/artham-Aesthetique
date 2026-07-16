@@ -23,7 +23,7 @@ export default function ResultsPage() {
         <div className="container-editorial grid gap-10 lg:grid-cols-2">
           {(results || []).map((item, index) => (
             <article key={item._id || index} className="group overflow-hidden rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] shadow-sm transition-transform duration-300 hover:-translate-y-1">
-              <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr] p-6">
+              <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] p-6 items-start">
                 <div className="space-y-4">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-coronation-gold" style={{ fontFamily: "'Raleway', sans-serif" }}>
                     {item.category || item.treatmentName || "Result"}
@@ -56,22 +56,35 @@ export default function ResultsPage() {
                     )}
                   </dl>
                   {item.note && <p className="fine text-armadillo/80 leading-relaxed">{item.note}</p>}
-                  <Link to={item.treatmentSlug ? `/services/${item.treatmentSlug}` : "/"} className="inline-flex items-center gap-2 text-sm font-semibold text-[#7A3E1D] hover:text-[#5C2E15] transition-colors">
-                    View treatment
-                  </Link>
-                </div>
-                <div className="grid gap-4">
-                  {item.beforeImage && (
-                    <div className="overflow-hidden rounded-3xl bg-white">
-                      <img src={item.beforeImage} alt={`${item.title || "Result"} before`} loading="lazy" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  {item.afterImage && (
-                    <div className="overflow-hidden rounded-3xl bg-white">
-                      <img src={item.afterImage} alt={`${item.title || "Result"} after`} loading="lazy" className="w-full h-full object-cover" />
-                    </div>
+                  {item.treatmentSlug && (
+                    <Link to={`/services/${item.treatmentSlug}`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#7A3E1D] hover:text-[#5C2E15] transition-colors">
+                      View treatment
+                    </Link>
                   )}
                 </div>
+               <div className="grid grid-cols-2 gap-3">
+  {item.beforeImage && (
+    <div className="overflow-hidden rounded-2xl bg-white aspect-[4/5]">
+      <img
+        src={item.beforeImage}
+        alt={`${item.title || "Result"} before`}
+        loading="lazy"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )}
+
+  {item.afterImage && (
+    <div className="overflow-hidden rounded-2xl bg-white aspect-[4/5]">
+      <img
+        src={item.afterImage}
+        alt={`${item.title || "Result"} after`}
+        loading="lazy"
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )}
+</div>
               </div>
             </article>
           ))}

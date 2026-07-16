@@ -3,80 +3,222 @@ import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 
+const hasText = (value) => typeof value === "string" && value.trim().length > 0;
+
+const videoEmbedUrl = (url) => {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url);
+    if (parsed.hostname.includes("youtube.com")) {
+      const id = parsed.searchParams.get("v");
+      return id ? `https://www.youtube.com/embed/${id}` : url;
+    }
+    if (parsed.hostname.includes("youtu.be")) {
+      const id = parsed.pathname.replace("/", "");
+      return id ? `https://www.youtube.com/embed/${id}` : url;
+    }
+    if (parsed.hostname.includes("vimeo.com")) {
+      const id = parsed.pathname.split("/").filter(Boolean)[0];
+      return id ? `https://player.vimeo.com/video/${id}` : url;
+    }
+    return url;
+  } catch (_) {
+    return url;
+  }
+};
+
+const CtaButton = ({ about, onOpenBooking }) => {
+  if (!about.ctaLabel) return null;
+  if (about.ctaLink) {
+    return about.ctaLink.startsWith("/") ? (
+      <Link data-testid="about-cta" to={about.ctaLink} className="btn-primary btn-on-dark">
+        {about.ctaLabel}
+      </Link>
+    ) : (
+      <a data-testid="about-cta" href={about.ctaLink} target="_blank" rel="noreferrer" className="btn-primary btn-on-dark">
+        {about.ctaLabel}
+      </a>
+    );
+  }
+  return (
+    <button data-testid="about-cta" onClick={onOpenBooking} className="btn-primary btn-on-dark">
+      {about.ctaLabel}
+    </button>
+  );
+};
+
 export default function AboutPage({ onOpenBooking }) {
   useReveal();
-  const { site: SITE, about } = useCmsContent();
+  const { about } = useCmsContent();
+  const seo = about?.seo || {};
+  const hasHeroCopy = hasText(about?.eyebrow) || hasText(about?.heroTitle) || hasText(about?.title) || hasText(about?.heroDescription);
+  const hasStory = hasText(about?.storyEyebrow) || hasText(about?.storyTitle) || about?.storyBody?.length || about?.heroImage;
+  const hasMissionVision = hasText(about?.mission) || hasText(about?.vision);
+  const hasTimeline = about?.timeline?.length > 0;
+  const hasHighlights = about?.clinicHighlights?.length > 0;
+  const hasStats = about?.statistics?.length > 0;
+  const hasGallery = about?.gallery?.length > 0;
+  const hasVideo = hasText(about?.videoUrl);
+  const embedUrl = videoEmbedUrl(about?.videoUrl);
+  const hasCta = hasText(about?.ctaTitle) || hasText(about?.ctaText) || hasText(about?.ctaLabel);
+
   return (
     <>
-      <Seo title={about?.seoTitle || "About Us"} description={about?.metaDescription || "A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body."} />
-      <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
-        <div className="container-editorial max-w-4xl">
-          <p className="overline text-coronation-gold mb-4">{about?.eyebrow || "About Artham Aesthetique"}</p>
-          <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-8">{about?.heroTitle || "A quieter dermatology."}</h1>
-          <p className="fine text-lg text-armadillo/80 leading-relaxed">{about?.heroDescription || "Artham Aesthetique is the dermatology and aesthetics vertical of the Artham family of healthcare brands. We began with a simple conviction — that the best clinics do less, but do it beautifully. Every treatment here begins with a consult, not a device."}</p>
-        </div>
-      </section>
+      <Seo
+        title={seo.title || about?.title}
+        description={seo.description}
+        canonical={seo.canonicalUrl}
+        ogImage={seo.openGraphImage || about?.heroImage}
+        keywords={seo.keywords}
+        noIndex={seo.noIndex}
+        jsonLd={seo.schema}
+      />
 
-      <section className="bg-arabian-white py-24 lg:py-28">
-        <div className="container-editorial grid lg:grid-cols-2 gap-14 items-center">
-          <div className="reveal">
-            <p className="overline text-coronation-gold mb-4">{about?.storyEyebrow || "Our story"}</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-6">{about?.storyTitle || "Built around one consult at a time."}</h2>
-            <div className="fine text-armadillo/80 leading-[1.9] space-y-4">
-              {(about?.storyBody || [
-                "Founded by Dr. Omaima Jawed in 2017, Artham Aesthetique began as a single, quiet room — offering considered dermatology to a small circle of Noida families. Nearly a decade later, the room is a full clinic, but the ethos is unchanged.",
-                "We use only FDA-approved devices, single-use consumables and evidence-based protocols. We refuse to sell 'packages' that do not consider your individual skin. And we take our time.",
-              ]).map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+      {hasHeroCopy && (
+        <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
+          <div className="container-editorial max-w-4xl">
+            {about.eyebrow && <p className="overline text-coronation-gold mb-4">{about.eyebrow}</p>}
+            {(about.heroTitle || about.title) && (
+              <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-8">{about.heroTitle || about.title}</h1>
+            )}
+            {about.heroDescription && <p className="fine text-lg text-armadillo/80 leading-relaxed">{about.heroDescription}</p>}
+          </div>
+        </section>
+      )}
+
+      {hasStory && (
+        <section className="bg-arabian-white py-24 lg:py-28">
+          <div className="container-editorial grid lg:grid-cols-2 gap-14 items-center">
+            <div className="reveal">
+              {about.storyEyebrow && <p className="overline text-coronation-gold mb-4">{about.storyEyebrow}</p>}
+              {about.storyTitle && <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-6">{about.storyTitle}</h2>}
+              {about.storyBody?.length > 0 && (
+                <div className="fine text-armadillo/80 leading-[1.9] space-y-4">
+                  {about.storyBody.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+                </div>
+              )}
             </div>
-          </div>
-          <div className="reveal" style={{ transitionDelay: "150ms" }}>
-            <img src={SITE.clinicPhotoUrl} alt="Artham Aesthetique treatment suite in Noida — warm, editorial interior" loading="lazy" className="w-full aspect-[4/5] object-cover rounded-lg" />
-          </div>
-        </div>
-      </section>
-
-      <section id="certifications" className="bg-summer-peach py-24 lg:py-28">
-        <div className="container-editorial">
-          <div className="max-w-2xl mb-14 reveal">
-            <p className="overline text-coronation-gold mb-4">Certifications & Recognitions</p>
-            <h2 className="font-display text-4xl text-armadillo">Recognised for the quiet work.</h2>
-          </div>
-          <div className="grid md:grid-cols-4 gap-6">
-            {["FDA-approved technology", "ISO-certified clinic", "IADVL Member", "Cosmetic Dermatology Society"].map((c) => (
-              <div key={c} className="bg-arabian-white border border-coronation-gold/25 p-8 text-center">
-                <p className="overline text-coronation-gold text-[10px] mb-4">Recognition</p>
-                <p className="font-display text-lg text-armadillo">{c}</p>
+            {about.heroImage && (
+              <div className="reveal" style={{ transitionDelay: "150ms" }}>
+                <img src={about.heroImage} alt={about.heroImageAlt || about.heroTitle || about.title || ""} loading="lazy" className="w-full aspect-[4/5] object-cover rounded-lg" />
               </div>
-            ))}
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* Instagram stub */}
-      <section className="bg-arabian-white py-24">
-        <div className="container-editorial">
-          <div className="flex items-end justify-between mb-10 gap-4 flex-wrap">
-            <div>
-              <p className="overline text-coronation-gold mb-3">On Instagram</p>
-              <h2 className="font-display text-3xl md:text-4xl text-armadillo">@artham.aesthetique</h2>
+      {hasMissionVision && (
+        <section className="bg-summer-peach py-20 lg:py-24">
+          <div className="container-editorial">
+            <div className="max-w-2xl mb-10 reveal">
+              <p className="overline text-coronation-gold mb-4">Purpose</p>
+              <h2 className="font-display text-3xl md:text-4xl text-armadillo">Mission &amp; Vision</h2>
             </div>
-            <a data-testid="about-ig-link" href={SITE.social.instagram} target="_blank" rel="noreferrer" className="link-gold overline">Follow →</a>
+            <div className="grid md:grid-cols-2 gap-8">
+              {about.mission && (
+                <div className="bg-arabian-white border border-coronation-gold/25 p-8 reveal">
+                  <h3 className="font-display text-2xl text-armadillo mb-4">Mission</h3>
+                  <p className="fine text-armadillo/80 leading-relaxed">{about.mission}</p>
+                </div>
+              )}
+              {about.vision && (
+                <div className="bg-arabian-white border border-coronation-gold/25 p-8 reveal" style={{ transitionDelay: "120ms" }}>
+                  <h3 className="font-display text-2xl text-armadillo mb-4">Vision</h3>
+                  <p className="fine text-armadillo/80 leading-relaxed">{about.vision}</p>
+                </div>
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-            {["https://images.unsplash.com/photo-1512290923902-8a9f81dc236c","https://images.unsplash.com/photo-1522337660859-02fbefca4702","https://images.unsplash.com/photo-1570172619644-dfd03ed5d881","https://images.unsplash.com/photo-1585951237318-9ea5e175b891","https://images.unsplash.com/photo-1676302144341-10563603f99a","https://images.unsplash.com/photo-1512290746430-3ea326d9f5c8"].map((u,i)=>(
-              <img key={i} src={`${u}?auto=format&fit=crop&w=500&q=70`} alt="" className="aspect-square object-cover" loading="lazy" />
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      <section className="bg-burma-teak text-arabian-white py-20 text-center">
-        <div className="container-editorial max-w-2xl mx-auto">
-          <h2 className="font-display text-4xl mb-6">Come visit us in Noida.</h2>
-          <p className="fine text-arabian-white/85 mb-8">A 15-minute consult is complimentary.</p>
-          <button data-testid="about-cta" onClick={onOpenBooking} className="btn-primary btn-on-dark">Book Appointment</button>
-        </div>
-      </section>
+      {(hasTimeline || hasHighlights || hasStats) && (
+        <section id="certifications" className="bg-arabian-white py-24 lg:py-28">
+          <div className="container-editorial space-y-16">
+            {hasStats && (
+              <div className="grid md:grid-cols-4 gap-6">
+                {about.statistics.map((item) => (
+                  <div key={`${item.label}-${item.value}`} className="border border-coronation-gold/25 p-8 text-center reveal">
+                    {item.value && <p className="font-display text-2xl md:text-3xl text-armadillo mb-3">{item.value}</p>}
+                    {item.label && <p className="fine text-sm font-medium text-armadillo/75 leading-relaxed">{item.label}</p>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {hasHighlights && (
+              <div>
+                <div className="max-w-2xl mb-10 reveal">
+                  <p className="overline text-coronation-gold mb-4">Clinic Highlights</p>
+                  {about.title && <h2 className="font-display text-4xl text-armadillo">{about.title}</h2>}
+                </div>
+                <div className="grid md:grid-cols-4 gap-6">
+                  {about.clinicHighlights.map((item, index) => (
+                    <div key={`${item.title}-${index}`} className="bg-summer-peach border border-coronation-gold/25 p-8 text-center reveal">
+                      {item.image && <img src={item.image} alt={item.imageAlt || item.title || ""} loading="lazy" className="h-10 w-10 object-contain mx-auto mb-5" />}
+                      {item.title && <p className="font-display text-lg text-armadillo mb-3">{item.title}</p>}
+                      {item.description && <p className="fine text-sm text-armadillo/70 leading-relaxed">{item.description}</p>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {hasTimeline && (
+              <div>
+                <div className="max-w-2xl mb-10 reveal">
+                  <p className="overline text-coronation-gold mb-4">Timeline</p>
+                </div>
+                <div className="grid md:grid-cols-3 gap-6">
+                  {about.timeline.map((item) => (
+                    <div key={`${item.label}-${item.value}`} className="border-l border-coronation-gold/50 pl-6 reveal">
+                      {item.label && <p className="fine text-sm font-medium text-coronation-gold mb-2">{item.label}</p>}
+                      {item.value && <p className="font-display text-lg md:text-xl text-armadillo leading-snug">{item.value}</p>}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {(hasGallery || hasVideo) && (
+        <section className="bg-summer-peach py-24">
+          <div className="container-editorial">
+            {hasVideo && (
+              <div className="mb-12 reveal">
+                <div className="aspect-video overflow-hidden bg-armadillo/10">
+                  <iframe
+                    src={embedUrl}
+                    title={about.title || "About video"}
+                    className="h-full w-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            )}
+            {hasGallery && (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {about.gallery.map((image, index) => (
+                  <img key={`${image.url}-${index}`} src={image.url} alt={image.alt || ""} className="aspect-square object-cover" loading="lazy" />
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
+      {hasCta && (
+        <section className="bg-burma-teak text-arabian-white py-20 text-center">
+          <div className="container-editorial max-w-2xl mx-auto">
+            {about.ctaTitle && <h2 className="font-display text-4xl mb-6">{about.ctaTitle}</h2>}
+            {about.ctaText && <p className="fine text-arabian-white/85 mb-8">{about.ctaText}</p>}
+            <CtaButton about={about} onOpenBooking={onOpenBooking} />
+          </div>
+        </section>
+      )}
     </>
   );
 }
