@@ -12,6 +12,10 @@ export default function ServicePage({ onOpenBooking }) {
   const s = findService(slug);
   const [openFaq, setOpenFaq] = useState(null);
   if (!s) return <Navigate to="/" replace />;
+  console.log("How It Works:", s.howItWorks);
+console.log("Length:", s.howItWorks?.length);
+console.log(s.benefits);
+
   const cat = findCategory(s.categorySlug) || { slug: s.categorySlug || "skin", name: s.category || "Treatments" };
   const related = s.relatedTreatments?.length ? s.relatedTreatments : getRelated(s.categorySlug, s.slug);
 
@@ -28,7 +32,9 @@ export default function ServicePage({ onOpenBooking }) {
   };
 
   return (
+    
     <>
+   
       <Seo
         title={`${s.name} in Noida`}
         description={s.short}
@@ -103,71 +109,150 @@ export default function ServicePage({ onOpenBooking }) {
                 </div>
               </>
             )}
-            {s.symptoms?.length > 0 && (
-              <div>
-                <p className="overline text-armadillo/60 mb-4">Symptoms</p>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {s.symptoms.map((symptom, index) => {
-                    const title = typeof symptom === "string" ? symptom : symptom.title || symptom.description || "Symptom";
-                    const description = typeof symptom === "object" && symptom.description ? symptom.description : null;
-                    const imageUrl = typeof symptom === "object" ? symptom.image?.url || symptom.image?.asset?.asset?.url : null;
-                    return (
-                      <div key={`${title}-${index}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5">
-                        {imageUrl && (
-                          <div className="mb-3 h-12 w-12 overflow-hidden rounded-full bg-white">
-                            <img src={imageUrl} alt={title} className="w-full h-full object-cover" />
-                          </div>
-                        )}
-                        <h3 className="font-semibold text-armadillo mb-2">{title}</h3>
-                        {description && <p className="fine text-armadillo/75 leading-relaxed">{description}</p>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+            
           </div>
+          {s.symptoms?.length > 0 && (
+  <div className="lg:col-span-5 mt-14">
+    <div className="text-center mb-8">
+      <p className="overline text-coronation-gold mb-2">
+        Symptoms
+      </p>
+
+      <h2 className="font-display text-3xl md:text-4xl text-armadillo">
+        Common Symptoms
+      </h2>
+    </div>
+
+    <div className="grid gap-5 md:grid-cols-3">
+      {s.symptoms.map((symptom, index) => {
+        const title =
+          typeof symptom === "string"
+            ? symptom
+            : symptom.title || "Symptom";
+
+        const description =
+          typeof symptom === "object"
+            ? symptom.description
+            : "";
+
+        const imageUrl =
+          symptom?.image?.url ||
+          symptom?.image?.asset?.url ||
+          symptom?.image?.asset?.asset?.url ||
+          "";
+
+        return (
+          <div
+            key={index}
+            className="flex items-start gap-4 rounded-3xl bg-[#FFF8EE] border border-[#E7D2B8] p-5"
+          >
+            {imageUrl && (
+              <img
+                src={imageUrl}
+                alt={title}
+                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
+              />
+            )}
+
+            <div>
+              <h3 className="text-xl font-semibold text-[#3D2F23] mb-2">
+                {title}
+              </h3>
+
+              <p className="text-base leading-7 text-[#6A5A4A]">
+                {description}
+              </p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
         </div>
       </section>
 
       {/* HOW IT WORKS */}
-      <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-how">
-        <div className="container-editorial">
-          <div className="max-w-xl mb-14 reveal">
-            <p className="overline text-coronation-gold mb-4">How it works</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo">A calm, mapped protocol.</h2>
+     <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-how">
+  <div className="container-editorial">
+    <div className="max-w-xl mb-14">
+      <p className="overline text-coronation-gold mb-4">
+        How it works
+      </p>
+      <h2 className="font-display text-3xl md:text-4xl text-armadillo">
+        A calm, mapped protocol.
+      </h2>
+    </div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+      {s.howItWorks.map((step, i) => (
+        <div key={i} className="min-h-[220px]">
+          <div className="flex items-center gap-4 mb-4">
+            <span className="font-display text-4xl text-coronation-gold">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div className="h-px flex-1 bg-coronation-gold/40" />
           </div>
-          <div className="grid md:grid-cols-3 gap-10 lg:gap-14 relative">
-            {s.howItWorks.map((step, i) => (
-              <div key={i} className="reveal" style={{ transitionDelay: `${i * 100}ms` }}>
-                <div className="flex items-center gap-4 mb-4">
-                  <span className="font-display text-4xl text-coronation-gold">0{i + 1}</span>
-                  <div className="h-px flex-1 bg-coronation-gold/40" />
-                </div>
-                <h3 className="font-display text-2xl text-armadillo mb-3">{step.title}</h3>
-                  <p className="fine text-armadillo/75 leading-relaxed">{step.body || step.description}</p>
-              </div>
-            ))}
-          </div>
+
+          <h3 className="font-display text-2xl text-armadillo mb-3">
+            {step.title}
+          </h3>
+
+          <p className="fine text-armadillo/75 leading-relaxed">
+            {step.body || step.description}
+          </p>
         </div>
-      </section>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* BENEFITS + DOWNTIME TABLE */}
       <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-benefits">
         <div className="container-editorial grid lg:grid-cols-2 gap-16">
           <div className="reveal">
-            <p className="overline text-coronation-gold mb-4">Benefits</p>
+            <p className=" text-coronation-gold mb-4">Benefits</p>
             <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Small changes, meaningfully.</h2>
-            <ul className="space-y-4">
-              {(s.benefits || []).map((b, i) => {
-                const text = typeof b === "string" ? b : b.title || b.description || b.text || "";
-                return (
-                  <li key={`${text}-${i}`} className="flex items-start gap-3 fine text-armadillo/85 leading-relaxed">
-                    <span className="w-1.5 h-1.5 rounded-full bg-coronation-gold mt-2.5 shrink-0" />{text}
-                  </li>
-                );
-              })}
-            </ul>
+            
+           <div className="space-y-5">
+  {(s.benefits || []).map((b, i) => {
+    const title = typeof b === "string" ? b : b.title || "";
+    const description = typeof b === "object" ? b.description : "";
+
+    const iconUrl =
+      b?.icon?.url ||
+      b?.icon?.asset?.url ||
+      b?.icon?.asset?.asset?.url ||
+      "";
+
+    return (
+      <div
+        key={i}
+        className="flex items-start gap-4 rounded-2xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5"
+      >
+        {iconUrl && (
+          <img
+            src={iconUrl}
+            alt={title}
+            className="w-12 h-12 object-contain flex-shrink-0"
+          />
+        )}
+
+        <div>
+          <h3 className="font-semibold text-lg text-armadillo mb-1">
+            {title}
+          </h3>
+
+          {description && (
+            <p className="text-armadillo/70 leading-relaxed">
+              {description}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  })}
+</div>
           </div>
           <div className="reveal" style={{ transitionDelay: "120ms" }}>
             <p className="overline text-coronation-gold mb-4">Expectations</p>

@@ -47,8 +47,29 @@ const CMS_QUERY = `{
     "slug": slug.current,
     "image": coalesce(image.url, image.asset.asset->url),
     "services": *[_type == "treatment" && references(^._id) && status != "draft"]|order(order asc, title asc){
-      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, benefits, duration, sessions, priceFrom, pricing, doctorNote, faqs,
-      quickInfo, howItWorks, symptoms, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
+      _id, title, short, heroTitle, hero, description, overviewHeading, ctaText, ctaLink, "heroBackgroundImage": coalesce(heroBackgroundImage.url, heroBackgroundImage.asset.asset->url), "featuredImage": coalesce(featuredImage.url, featuredImage.asset.asset->url), "cardImage": coalesce(cardImage.url, cardImage.asset.asset->url), what, whoFor, "benefits": benefits[]{
+  title,
+  description,
+  "icon": {
+    "url": coalesce(
+      icon.url,
+      icon.asset.asset->url,
+      icon.asset->url
+    )
+  }
+}, duration, sessions, priceFrom, pricing, doctorNote, faqs,
+      quickInfo, howItWorks, "symptoms": symptoms[]{
+  title,
+  description,
+  image{
+    ...,
+    "url": coalesce(
+      url,
+      asset.asset->url,
+      asset->url
+    )
+  }
+}, relatedTreatments[]->{"slug": slug.current, "name": title, short, "image": coalesce(cardImage.url, cardImage.asset.asset->url, image.url, image.asset.asset->url)},
       "realResults": realResults[]->{title, patientAge, gender, description, sessionsInfo, note, "beforeImage": coalesce(beforeImage.url, beforeImage.asset.asset->url), "afterImage": coalesce(afterImage.url, afterImage.asset.asset->url)},
       "name": title,
       "slug": slug.current,
@@ -163,11 +184,23 @@ const normalizeService = (service, category) => {
     image: service.image || service.heroImage || category?.image || FALLBACK_SITE.heroImageUrl,
     what: service.what || service.overviewDescription || service.description || "",
     whoFor: service.whoFor || [],
-    benefits: (service.benefits || []).map((b) =>
-      typeof b === "string"
-        ? b
-        : b.title || b.description || b.text || ""
-    ).filter(Boolean),
+    benefits: (service.benefits || [])
+  .filter(Boolean)
+  .map((b) => {
+    if (typeof b === "string") {
+      return {
+        title: b,
+        description: "",
+        icon: null,
+      };
+    }
+
+    return {
+      title: b?.title || "",
+      description: b?.description || "",
+      icon: b?.icon || null,
+    };
+  }),
     symptoms: service.symptoms || [],
     howItWorks: normalizeSteps(service.howItWorks),
     faqs: normalizeFaqs(service.faqs),
@@ -241,6 +274,8 @@ async function fetchCmsContent({ signal } = {}) {
   const res = await fetch(`${endpoint}?query=${encodeURIComponent(CMS_QUERY)}`, { signal });
   if (!res.ok) throw new Error(`Sanity request failed (${res.status})`);
   const json = await res.json();
+  console.log("check benefit data",json.result.categories);
+
   return composeContent(json.result || {});
 }
 
@@ -254,9 +289,11 @@ export function CMSContentProvider({ children }) {
       try {
         const next = await fetchCmsContent({ signal: controller.signal });
         if (live) setContent(next);
-      } catch (_) {
-        if (live) setContent((current) => current || fallbackContent);
-      }
+      } catch (err) {
+  console.error("SANITY ERROR", err);
+
+  if (live) setContent((current) => current || fallbackContent);
+}
     };
     load();
     const timer = REFRESH_MS > 0 ? window.setInterval(load, REFRESH_MS) : null;
