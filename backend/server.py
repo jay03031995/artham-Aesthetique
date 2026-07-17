@@ -1,8 +1,6 @@
 from fastapi import FastAPI, APIRouter, HTTPException
-from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
-from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, Field, EmailStr, ConfigDict
 from typing import List, Optional
 from pathlib import Path
@@ -11,17 +9,12 @@ import os
 import logging
 import uuid
 import json
+import urllib.error
+import urllib.parse
+import urllib.request
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / ".env")
-
-# Mongo
-mongo_url = os.environ.get("MONGO_URL", "mongodb://localhost:27017")
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ.get("DB_NAME", "artham_aesthetique")]
-
-# Emergent LLM
-EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY", "")
 
 # Sanity — leads are mirrored here so staff manage them in the Studio
 # "Appointments" dashboard. Best-effort: a Sanity outage never blocks a form.
@@ -30,24 +23,42 @@ SANITY_DATASET = os.environ.get("SANITY_DATASET") or os.environ.get("SANITY_STUD
 SANITY_TOKEN = os.environ.get("SANITY_TOKEN") or os.environ.get("SANITY_WRITE_TOKEN") or ""
 
 
-def _mutate_sanity(doc: dict, label: str) -> None:
+def _sanity_mutate(doc: dict, label: str) -> dict:
     if not SANITY_TOKEN:
-        logging.warning("Sanity %s sync skipped: missing SANITY_TOKEN", label)
-        return
-    try:
-        import requests
+        raise HTTPException(status_code=500, detail=f"Sanity {label} sync is not configured")
 
-        url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/{SANITY_DATASET}"
-        response = requests.post(
-            url,
-            headers={"Authorization": f"Bearer {SANITY_TOKEN}", "Content-Type": "application/json"},
-            json={"mutations": [{"createOrReplace": doc}]},
-            timeout=6,
-        )
-        if response.status_code >= 400:
-            logging.warning("Sanity %s sync failed (%s): %s", label, response.status_code, response.text)
-    except Exception as e:  # pragma: no cover - best effort
+    url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/mutate/{SANITY_DATASET}"
+    payload = json.dumps({"mutations": [{"createOrReplace": doc}]}).encode("utf-8")
+    request = urllib.request.Request(
+        url,
+        data=payload,
+        headers={"Authorization": f"Bearer {SANITY_TOKEN}", "Content-Type": "application/json"},
+        method="POST",
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            body = response.read().decode("utf-8")
+            return json.loads(body) if body else {}
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        logging.warning("Sanity %s sync failed (%s): %s", label, e.code, body)
+        raise HTTPException(status_code=502, detail=f"Sanity {label} sync failed")
+    except Exception as e:
         logging.warning("Sanity %s sync failed: %s", label, e)
+        raise HTTPException(status_code=502, detail=f"Sanity {label} sync failed")
+
+
+def _sanity_query(query: str) -> dict:
+    url = f"https://{SANITY_PROJECT_ID}.api.sanity.io/v2023-05-03/data/query/{SANITY_DATASET}?query={urllib.parse.quote(query)}"
+    request = urllib.request.Request(url, headers={"Authorization": f"Bearer {SANITY_TOKEN}"} if SANITY_TOKEN else {})
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:
+            return json.loads(response.read().decode("utf-8"))
+    except urllib.error.HTTPError as e:
+        body = e.read().decode("utf-8")
+        logging.warning("Sanity query failed (%s): %s", e.code, body)
+        raise HTTPException(status_code=502, detail="Sanity query failed")
 
 
 def _sanity_config_status() -> dict:
@@ -75,7 +86,7 @@ def _sync_appointment_to_sanity(booking: "Booking") -> None:
         "source": "booking-modal",
         "createdAt": booking.created_at,
     }
-    _mutate_sanity(doc, "appointment")
+    _sanity_mutate(doc, "appointment")
 
 
 def _sync_callback_to_sanity(callback: "Callback") -> None:
@@ -91,7 +102,7 @@ def _sync_callback_to_sanity(callback: "Callback") -> None:
         "source": "contact-page",
         "createdAt": callback.created_at,
     }
-    _mutate_sanity(doc, "callback")
+    _sanity_mutate(doc, "callback")
 
 
 app = FastAPI(title="Artham Aesthetique API")
@@ -157,11 +168,6 @@ class CallbackCreate(BaseModel):
     concern: Optional[str] = None
 
 
-class ChatIn(BaseModel):
-    session_id: str
-    message: str
-
-
 # ---------------- Endpoints ----------------
 @api.get("/")
 async def root():
@@ -176,104 +182,43 @@ async def sanity_status():
 @api.post("/bookings", response_model=Booking)
 async def create_booking(payload: BookingCreate):
     booking = Booking(**payload.model_dump())
-    await db.bookings.insert_one(booking.model_dump())
     _sync_appointment_to_sanity(booking)
     return booking
 
 
 @api.get("/bookings", response_model=List[Booking])
 async def list_bookings():
-    docs = await db.bookings.find({}, {"_id": 0}).sort("created_at", -1).to_list(500)
-    return docs
+    query = """*[_type == "appointment" && source == "booking-modal"]|order(createdAt desc)[0...500]{
+      _id,
+      "treatment_slug": "",
+      "treatment_name": treatmentName,
+      category,
+      "doctor": "Dr. Omaima Jawed",
+      "date": preferredDate,
+      "time_slot": preferredTime,
+      name,
+      phone,
+      email,
+      note,
+      "created_at": createdAt,
+      status
+    }"""
+    return [
+        {**doc, "id": doc.get("_id", "").replace("appointment-", "")}
+        for doc in _sanity_query(query).get("result", [])
+    ]
 
 
 @api.post("/newsletter", response_model=NewsletterSub)
 async def subscribe_newsletter(payload: NewsletterCreate):
-    existing = await db.newsletter.find_one({"email": payload.email})
-    if existing:
-        existing.pop("_id", None)
-        return existing
-    sub = NewsletterSub(email=payload.email)
-    await db.newsletter.insert_one(sub.model_dump())
-    return sub
+    return NewsletterSub(email=payload.email)
 
 
 @api.post("/callbacks", response_model=Callback)
 async def create_callback(payload: CallbackCreate):
     cb = Callback(**payload.model_dump())
-    await db.callbacks.insert_one(cb.model_dump())
     _sync_callback_to_sanity(cb)
     return cb
-
-
-# ---------------- Chatbot ----------------
-CHAT_SYSTEM_PROMPT = """You are Aara, the warm, articulate concierge for Artham Aesthetique — a luxury dermatology and aesthetics clinic led by Dr. Omaima Jawed, located at Lotus Plaza, Sector 104, Noida.
-
-Your tone: calm, editorial, unhurried — like a trusted friend who is also a knowledgeable clinic host. Keep replies short (2-4 short paragraphs max), use plain language, no medical jargon walls, no emojis.
-
-You help guests with four things only:
-1) Booking an appointment — always end by inviting them to open the 3-step booking flow (mention: 'you can tap Book Appointment anytime, or I can text you the link on WhatsApp: +91 98119 97993').
-2) Treatment questions — explain in warm, human terms. Artham offers: Skin (HydraFacial, Chemical Peels, Acne, Micro Needling, Vampire/PRP, 4D ClearLift, PDRN Boosters), Anti-Ageing (Dermal Fillers, Mesobotox, HIFU, Morpheus8), Laser Hair Removal (Men & Women), Hair (Transplant, Hair Loss, Hair Patch), Body Contouring (CoolSculpting, Med Contour, Weight Loss), and Bridal packages.
-3) Pricing enquiries — pricing is personalised after consultation; offer to arrange a free 15-minute consult with Dr. Omaima.
-4) Human handoff — if unsure or asked, share WhatsApp +91 98119 97993 and clinic hours Mon–Sat 10am–8pm.
-
-Never make medical claims. Never guarantee results. Never share prices as fixed numbers — always frame as 'starts from a consultation'. Never say 'delve', 'unlock', 'elevate your journey', or other AI clichés. Sound human.
-"""
-
-
-@api.post("/chat")
-async def chat_endpoint(payload: ChatIn):
-    if not EMERGENT_LLM_KEY:
-        raise HTTPException(500, "LLM key not configured")
-
-    try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage, TextDelta, StreamDone
-    except Exception as e:
-        raise HTTPException(500, f"LLM library unavailable: {e}")
-
-    session_id = payload.session_id or str(uuid.uuid4())
-
-    # persist inbound message
-    await db.chat_messages.insert_one({
-        "session_id": session_id,
-        "role": "user",
-        "content": payload.message,
-        "created_at": _now(),
-    })
-
-    chat = LlmChat(
-        api_key=EMERGENT_LLM_KEY,
-        session_id=session_id,
-        system_message=CHAT_SYSTEM_PROMPT,
-    ).with_model("anthropic", "claude-sonnet-4-5-20250929")
-
-    async def event_generator():
-        buffer_parts = []
-        try:
-            async for ev in chat.stream_message(UserMessage(text=payload.message)):
-                if isinstance(ev, TextDelta):
-                    buffer_parts.append(ev.content)
-                    yield f"data: {json.dumps({'delta': ev.content})}\n\n"
-                elif isinstance(ev, StreamDone):
-                    break
-        except Exception as e:
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
-        finally:
-            full = "".join(buffer_parts)
-            if full:
-                await db.chat_messages.insert_one({
-                    "session_id": session_id,
-                    "role": "assistant",
-                    "content": full,
-                    "created_at": _now(),
-                })
-            yield "data: [DONE]\n\n"
-
-    return StreamingResponse(
-        event_generator(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
 
 
 app.include_router(api)
@@ -288,8 +233,3 @@ app.add_middleware(
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
-
-
-@app.on_event("shutdown")
-async def shutdown_db_client():
-    client.close()
