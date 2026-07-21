@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 
 const APP_NAME = "Artham Aesthetique";
+const DEFAULT_OG_IMAGE = "https://arthamaesthetic.com/og.jpeg";
 
 export default function Seo({ title, description, canonical, ogImage, jsonLd, keywords, noIndex }) {
   useEffect(() => {
     const fullTitle = title ? `${title} — ${APP_NAME}` : `${APP_NAME} — Where Science meets Soulful Care`;
+    const resolvedOgImage = ogImage || DEFAULT_OG_IMAGE;
     document.title = fullTitle;
 
     const set = (attr, key, value) => {
@@ -29,10 +31,15 @@ export default function Seo({ title, description, canonical, ogImage, jsonLd, ke
     else remove("name", "robots");
     set("property", "og:title", fullTitle);
     set("property", "og:description", description || "");
-    if (ogImage) set("property", "og:image", ogImage);
-    else remove("property", "og:image");
+    set("property", "og:image", resolvedOgImage);
+    set("property", "og:image:secure_url", resolvedOgImage);
+    set("property", "og:image:type", "image/jpeg");
+    set("property", "og:image:width", "1200");
+    set("property", "og:image:height", "630");
     set("name", "twitter:title", fullTitle);
     set("name", "twitter:description", description || "");
+    set("name", "twitter:card", "summary_large_image");
+    set("name", "twitter:image", resolvedOgImage);
 
     // canonical
     if (canonical) {
