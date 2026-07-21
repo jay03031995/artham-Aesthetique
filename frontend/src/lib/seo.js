@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 const APP_NAME = "Artham Aesthetique";
-const DEFAULT_OG_IMAGE = "https://arthamaesthetic.com/og.jpeg";
+const DEFAULT_OG_IMAGE = "https://arthamaesthetic.com/og-image.jpeg";
 
 export default function Seo({ title, description, canonical, ogImage, jsonLd, keywords, noIndex }) {
   useEffect(() => {
