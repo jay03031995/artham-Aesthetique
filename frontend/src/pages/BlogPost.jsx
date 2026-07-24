@@ -191,7 +191,7 @@ export default function BlogPost() {
     return (
       <section className="bg-summer-peach pt-40 pb-24 lg:pt-48">
         <div className="container-editorial">
-          <p className="fine text-armadillo/70">Loading journal article...</p>
+          <p className="fine text-armadillo/70">Loading blog article...</p>
         </div>
       </section>
     );
@@ -261,7 +261,7 @@ export default function BlogPost() {
           <nav className="fine text-xs text-armadillo/60 flex items-center flex-wrap gap-2 mb-6" aria-label="Breadcrumb">
             <Link to="/" className="hover:text-burma-teak">Home</Link>
             <ChevronRight size={12} />
-            <Link to="/blog" className="hover:text-burma-teak">Journal</Link>
+            <Link to="/blog" className="hover:text-burma-teak">Blog</Link>
             <ChevronRight size={12} />
             <Link to={`/blog?category=${encodeURIComponent(post.category)}`} className="hover:text-burma-teak">{post.category}</Link>
             <ChevronRight size={12} />

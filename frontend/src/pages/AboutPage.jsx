@@ -49,7 +49,51 @@ const CtaButton = ({ about, onOpenBooking }) => {
 
 export default function AboutPage({ onOpenBooking }) {
   useReveal();
-  const { about } = useCmsContent();
+  const { site: SITE, about: cmsAbout } = useCmsContent();
+  const fallbackAbout = {
+    title: "Artham Aesthetique",
+    eyebrow: "About Clinic",
+    heroTitle: "A quieter dermatology clinic in Noida.",
+    heroDescription: "Artham Aesthetique is a doctor-led skin, hair and body wellness clinic built around careful consultation, FDA-approved technology and considered treatment plans.",
+    heroImage: SITE.clinicPhotoUrl,
+    heroImageAlt: "Artham Aesthetique clinic",
+    storyEyebrow: "Who We Are",
+    storyTitle: "Medical care with restraint, warmth and clarity.",
+    storyBody: [
+      "Led by Dr. Omaima Jawed, Artham Aesthetique brings medical dermatology and thoughtful aesthetics together under one calm clinical experience.",
+      "Every treatment begins with diagnosis and planning. We focus on what your skin, hair and body actually need, then build protocols that are realistic, safe and easy to follow.",
+    ],
+    mission: "To offer evidence-led dermatology and aesthetics with honest advice, safe technology and care that feels personal from first consult to follow-up.",
+    vision: "To become Noida's most trusted destination for refined skin, hair and body wellness, known for clinical rigour and a slower, more human approach.",
+    statistics: [
+      { value: "10+", label: "Years of Care" },
+      { value: "37+", label: "Signature Treatments" },
+      { value: "5,000+", label: "Happy Clients" },
+      { value: "MD", label: "Dermatologist-led" },
+    ],
+    clinicHighlights: [
+      { title: "FDA-approved Technology", description: "Laser, injectable and regenerative protocols chosen for safety and suitability." },
+      { title: "Consultation-first Care", description: "No rushed packages. Treatment plans begin with skin history, diagnosis and goals." },
+      { title: "Doctor-led Protocols", description: "Clinical decisions are supervised by Dr. Omaima Jawed and the medical team." },
+      { title: "Measured Results", description: "The aim is healthier, calmer skin and natural-looking aesthetic outcomes." },
+    ],
+    gallery: [
+      { url: SITE.clinicPhotoUrl, alt: "Artham Aesthetique clinic interior" },
+      { url: SITE.heroImageUrl, alt: "Artham Aesthetique treatment space" },
+      { url: SITE.doctorPortraitUrl, alt: "Dr. Omaima Jawed" },
+    ],
+    ctaTitle: "Come visit us in Noida.",
+    ctaText: "A 15-minute discovery consult is complimentary.",
+    ctaLabel: "Book Appointment",
+  };
+  const about = {
+    ...fallbackAbout,
+    ...(cmsAbout || {}),
+    storyBody: cmsAbout?.storyBody?.length ? cmsAbout.storyBody : fallbackAbout.storyBody,
+    statistics: cmsAbout?.statistics?.length ? cmsAbout.statistics : fallbackAbout.statistics,
+    clinicHighlights: cmsAbout?.clinicHighlights?.length ? cmsAbout.clinicHighlights : fallbackAbout.clinicHighlights,
+    gallery: cmsAbout?.gallery?.length ? cmsAbout.gallery : fallbackAbout.gallery,
+  };
   const seo = about?.seo || {};
   const hasHeroCopy = hasText(about?.eyebrow) || hasText(about?.heroTitle) || hasText(about?.title) || hasText(about?.heroDescription);
   const hasStory = hasText(about?.storyEyebrow) || hasText(about?.storyTitle) || about?.storyBody?.length || about?.heroImage;
@@ -75,7 +119,7 @@ export default function AboutPage({ onOpenBooking }) {
       />
 
       {hasHeroCopy && (
-        <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
+        <section id="about-clinic" className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24">
           <div className="container-editorial max-w-4xl">
             {about.eyebrow && <p className="overline text-coronation-gold mb-4">{about.eyebrow}</p>}
             {(about.heroTitle || about.title) && (
@@ -87,7 +131,7 @@ export default function AboutPage({ onOpenBooking }) {
       )}
 
       {hasStory && (
-        <section className="bg-arabian-white py-24 lg:py-28">
+        <section id="who-we-are" className="bg-arabian-white py-24 lg:py-28">
           <div className="container-editorial grid lg:grid-cols-2 gap-14 items-center">
             <div className="reveal">
               {about.storyEyebrow && <p className="overline text-coronation-gold mb-4">{about.storyEyebrow}</p>}
@@ -133,7 +177,7 @@ export default function AboutPage({ onOpenBooking }) {
       )}
 
       {(hasTimeline || hasHighlights || hasStats) && (
-        <section id="certifications" className="bg-arabian-white py-24 lg:py-28">
+        <section id="technology" className="bg-arabian-white py-24 lg:py-28">
           <div className="container-editorial space-y-16">
             {hasStats && (
               <div className="grid md:grid-cols-4 gap-6">
@@ -150,7 +194,7 @@ export default function AboutPage({ onOpenBooking }) {
               <div>
                 <div className="max-w-2xl mb-10 reveal">
                   <p className="overline text-coronation-gold mb-4">Clinic Highlights</p>
-                  {about.title && <h2 className="font-display text-4xl text-armadillo">{about.title}</h2>}
+                  <h2 className="font-display text-4xl text-armadillo">Our Technology</h2>
                 </div>
                 <div className="grid md:grid-cols-4 gap-6">
                   {about.clinicHighlights.map((item, index) => (
@@ -184,7 +228,7 @@ export default function AboutPage({ onOpenBooking }) {
       )}
 
       {(hasGallery || hasVideo) && (
-        <section className="bg-summer-peach py-24">
+        <section id="gallery" className="bg-summer-peach py-24">
           <div className="container-editorial">
             {hasVideo && (
               <div className="mb-12 reveal">
@@ -200,9 +244,17 @@ export default function AboutPage({ onOpenBooking }) {
               </div>
             )}
             {hasGallery && (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+              <div className="max-w-2xl mb-10 reveal">
+                <p className="overline text-coronation-gold mb-4">Clinic Gallery</p>
+                <h2 className="font-display text-4xl text-armadillo">A calm clinical space for considered care.</h2>
+              </div>
+            )}
+            {hasGallery && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                 {about.gallery.map((image, index) => (
-                  <img key={`${image.url}-${index}`} src={image.url} alt={image.alt || ""} className="aspect-square object-cover" loading="lazy" />
+                  <div key={`${image.url}-${index}`} className="overflow-hidden rounded-lg bg-arabian-white border border-coronation-gold/25">
+                    <img src={image.url} alt={image.alt || ""} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                  </div>
                 ))}
               </div>
             )}

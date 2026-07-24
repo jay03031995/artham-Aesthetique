@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Phone, MapPin, Clock, Mail, MessageCircle, Navigation } from "lucide-react";
 import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
-import { api } from "../lib/api";
+import { postWithRetry } from "../lib/api";
 import { toast } from "sonner";
 import Seo from "../lib/seo";
 
@@ -25,12 +25,12 @@ export default function ContactPage() {
     if (!validate()) return;
     setBusy(true);
     try {
-      await api.post("/callbacks", form);
+      await postWithRetry("/callbacks", form, { retries: 2, retryDelayMs: 2200 });
       toast.success("We'll call you back within business hours.");
       setForm({ name: "", phone: "", concern: "" });
       setErrors({});
     } catch (e) {
-      toast.error("Could not send. Please try WhatsApp.");
+      toast.error("Could not send right now. Please try once more or WhatsApp us.");
     } finally {
       setBusy(false);
     }

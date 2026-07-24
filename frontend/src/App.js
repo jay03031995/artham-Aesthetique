@@ -12,6 +12,7 @@ import Chatbot from "@/components/layout/Chatbot";
 import BookingFlow from "@/components/booking/BookingFlow";
 import useReveal from "@/hooks/useReveal";
 import { CMSContentProvider } from "@/lib/cmsContent";
+import { warmBackend } from "@/lib/api";
 
 import HomePage from "@/pages/HomePage";
 import CategoryPage from "@/pages/CategoryPage";
@@ -63,6 +64,10 @@ function Layout({ children, onOpenBooking }) {
 function AppInner() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingSlug, setBookingSlug] = useState(null);
+
+  useEffect(() => {
+    warmBackend();
+  }, []);
 
   const openBooking = useCallback((slug = null) => {
     setBookingSlug(slug || null);

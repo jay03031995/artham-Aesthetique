@@ -92,7 +92,7 @@ export default function Footer() {
               {(footer?.quickLinks || [
                 { label: "About", href: "/about" },
                 { label: "Dr. Omaima Jawed", href: "/doctors/dr-omaima-jawed" },
-                { label: "Journal", href: "/blog" },
+                { label: "Blog", href: "/blog" },
                 { label: "Careers", href: "/careers" },
                 { label: "Contact", href: "/contact" },
               ]).map((link) => (

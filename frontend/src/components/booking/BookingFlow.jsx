@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { X, Search, ChevronLeft, Check } from "lucide-react";
-import { api } from "../../lib/api";
+import { postWithRetry } from "../../lib/api";
 import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 import { toast } from "sonner";
 
@@ -69,7 +69,7 @@ export default function BookingFlow({ open, onClose, initialSlug }) {
     }
     setSubmitting(true);
     try {
-      const res = await api.post("/bookings", {
+      const res = await postWithRetry("/bookings", {
         treatment_slug: treatment.slug,
         treatment_name: treatment.name,
         category: treatment.category,

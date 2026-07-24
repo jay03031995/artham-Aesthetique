@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, Instagram, Youtube, Facebook, ArrowRight } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { useCmsContent } from "../../lib/cmsContent";
 import { ALL_SERVICES } from "../../data/treatments";
 
@@ -71,13 +71,32 @@ const CONCERN_LINKS = [
   { label: "Dullness & Glow", href: "/services/hydrafacial-treatment" },
 ];
 
+const ABOUT_LINKS = [
+  { label: "About Clinic", href: "/about#about-clinic" },
+  { label: "Dr. Omaima Jawed", href: "/doctors/dr-omaima-jawed" },
+  { label: "Who We Are", href: "/about#who-we-are" },
+  { label: "Our Technology", href: "/about#technology" },
+  { label: "Clinic Gallery", href: "/about#gallery" },
+];
+
+const NAV_ITEMS = [
+  { label: "About", href: "/about", dropdown: "about" },
+  { label: "Treatments", href: "#treatments", dropdown: "treatments" },
+  { label: "Team", href: "/doctors" },
+  { label: "Result", href: "/results" },
+  { label: "Blog", href: "/blog" },
+  { label: "Contact us", href: "/contact" },
+];
+
 export default function Header({ onOpenBooking }) {
-  const { site: SITE, categories, megaGroups, nav } = useCmsContent();
+  const { site: SITE, categories, megaGroups } = useCmsContent();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(false);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const [openMobileCat, setOpenMobileCat] = useState(null);
   const megaTimeout = useRef(null);
+  const aboutTimeout = useRef(null);
   const location = useLocation();
 
   useEffect(() => {
@@ -90,16 +109,19 @@ export default function Header({ onOpenBooking }) {
   useEffect(() => {
     setMobileOpen(false);
     setMegaOpen(false);
+    setAboutOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
-    const onKey = (e) => { if (e.key === "Escape") { setMegaOpen(false); setMobileOpen(false); } };
+    const onKey = (e) => { if (e.key === "Escape") { setMegaOpen(false); setAboutOpen(false); setMobileOpen(false); } };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
   const openMega = () => { clearTimeout(megaTimeout.current); setMegaOpen(true); };
   const closeMega = () => { megaTimeout.current = setTimeout(() => setMegaOpen(false), 120); };
+  const openAbout = () => { clearTimeout(aboutTimeout.current); setAboutOpen(true); };
+  const closeAbout = () => { aboutTimeout.current = setTimeout(() => setAboutOpen(false), 120); };
 
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + "/");
   const cmsMega = megaGroups?.filter((group) => group.heading && group.items?.length);
@@ -112,18 +134,7 @@ export default function Header({ onOpenBooking }) {
     : [];
   const menuGroups = cmsMega?.length ? cmsMega : (categoryMega.length ? categoryMega : MEGA);
   const featuredService = menuGroups.flatMap((group) => group.items || []).find((item) => item.slug === "hydrafacial-treatment") || menuGroups[0]?.items?.[0];
-  const rawNavItems = nav?.length ? nav : [
-    { label: "Treatments", href: "#treatments" },
-    { label: "Doctor", href: "/doctors/dr-omaima-jawed" },
-    { label: "Journal", href: "/blog" },
-    { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
-  ];
-  const navItems = rawNavItems.filter((item) => {
-    const label = (item.label || "").trim().toLowerCase();
-    const href = (item.href || "").trim().toLowerCase();
-    return label !== "home" && href !== "/" && href !== "#home";
-  });
+  const navItems = NAV_ITEMS;
 
   return (
     <header className="fixed top-0 left-0 right-0 z-40" data-testid="site-header">
@@ -154,18 +165,48 @@ export default function Header({ onOpenBooking }) {
             <img
               src={SITE.logoUrl}
               alt="Artham Aesthetique lotus logo"
-              className="h-12 w-12 lg:h-14 lg:w-14 object-contain transition-transform duration-500 group-hover:scale-105"
+              className="h-14 w-14 lg:h-16 lg:w-16 object-contain transition-transform duration-500 group-hover:scale-105"
             />
-            <div className="leading-tight hidden sm:block">
-              <div className="font-display text-xl lg:text-2xl text-[#3D2F23]" style={{ letterSpacing: "0" }}>Artham</div>
-              <div className="text-[11px] text-[#8A6D3B] font-semibold" style={{ fontFamily: "'Raleway', sans-serif" }}>Aesthetique</div>
-            </div>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-8 flex-nowrap overflow-x-auto">
+          <nav className="hidden lg:flex items-center gap-8 flex-nowrap overflow-visible">
             {navItems.map((item) => {
-              const isTreatments = item.label?.toLowerCase().includes("treatment") || item.href === "#treatments";
+              const isTreatments = item.dropdown === "treatments";
+              const isAbout = item.dropdown === "about";
+              if (isAbout) {
+                return (
+                  <div key={item.label} className="relative" onMouseEnter={openAbout} onMouseLeave={closeAbout}>
+                    <button
+                      data-testid="nav-about"
+                      onFocus={openAbout}
+                      onClick={() => setAboutOpen((v) => !v)}
+                      className={`nav-link flex items-center gap-1.5 ${aboutOpen || isActive("/about") ? "active" : ""}`}
+                      aria-expanded={aboutOpen}
+                      aria-haspopup="true"
+                    >
+                      {item.label} <ChevronDown size={14} className={`transition-transform duration-300 ${aboutOpen ? "rotate-180" : ""}`} />
+                    </button>
+	                    <div
+	                      className={`absolute left-0 top-full z-50 mt-4 w-64 rounded-lg border border-[#b8894a]/35 bg-[#FBF3E7] p-3 shadow-[0_20px_48px_-24px_rgba(72,63,55,0.55)] transition-all duration-200 ${
+                        aboutOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
+                      }`}
+                      data-testid="about-menu"
+                    >
+                      {ABOUT_LINKS.map((link) => (
+                        <Link
+                          key={link.label}
+                          to={link.href}
+                          className="block rounded-md px-3 py-2 text-[14px] text-[#3D2F23] hover:bg-[#f5e6d0] hover:text-[#7A3E1D] transition-colors"
+                          style={{ fontFamily: "'Poppins', sans-serif" }}
+                        >
+                          {link.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
               if (isTreatments) {
                 return (
                   <div key={item.label} className="relative" onMouseEnter={openMega} onMouseLeave={closeMega}>
@@ -189,34 +230,9 @@ export default function Header({ onOpenBooking }) {
           </nav>
 
           <div className="flex items-center gap-3">
-            <div className="hidden xl:flex items-center gap-2" data-testid="header-socials">
-              {[
-                { href: SITE.social.instagram, label: "Instagram", Icon: Instagram },
-                { href: SITE.social.youtube, label: "YouTube", Icon: Youtube },
-                { href: SITE.social.facebook, label: "Facebook", Icon: Facebook },
-              ].map(({ href, label, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={label}
-                  className="w-8 h-8 grid place-items-center rounded-full border border-[#b8894a]/40 text-[#7A5A2E] hover:bg-[#3D2F23] hover:border-[#3D2F23] hover:text-[#F5D89C] transition-colors"
-                >
-                  <Icon size={14} />
-                </a>
-              ))}
-            </div>
-            <a
-              href={`tel:${SITE.phoneDigits}`}
-              className="hidden md:block text-sm font-semibold text-[#3D2F23] hover:text-[#7A3E1D] transition-colors"
-              data-testid="header-phone"
-            >
-              {SITE.phone}
-            </a>
             <button
               data-testid="header-book-btn"
-              onClick={onOpenBooking}
+              onClick={() => onOpenBooking?.()}
               className="btn-primary hidden md:inline-flex whitespace-nowrap shrink-0"
               style={{ padding: "10px 22px", minHeight: "44px" }}
             >
@@ -325,16 +341,28 @@ export default function Header({ onOpenBooking }) {
       >
         <div className="flex items-center justify-between h-[70px] container-editorial border-b border-[#b8894a]/40">
           <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-            <img src={SITE.logoUrl} alt="" className="h-11 w-11 object-contain" />
-            <span className="font-display text-lg text-[#3D2F23]">Artham</span>
+            <img src={SITE.logoUrl} alt="Artham Aesthetique lotus logo" className="h-12 w-12 object-contain" />
           </Link>
           <button data-testid="mobile-drawer-close" onClick={() => setMobileOpen(false)} className="text-[#3D2F23] p-2" aria-label="Close menu"><X size={24} /></button>
         </div>
         <div className="container-editorial py-6 overflow-y-auto h-[calc(100vh-70px)] pb-32">
           <nav className="space-y-1">
-            {navItems.filter((item) => !(item.label?.toLowerCase().includes("treatment") || item.href === "#treatments")).map((item) => (
-              <Link key={item.label} data-testid={`mnav-${item.label.toLowerCase().replace(/\s+/g, "-")}`} to={item.href || "#"} className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">{item.label}</Link>
-            ))}
+            <div className="border-b border-[#b8894a]/25">
+              <button
+                data-testid="mnav-about"
+                onClick={() => setOpenMobileCat(openMobileCat === "about" ? null : "about")}
+                className="w-full flex items-center justify-between py-3 text-[15px] font-medium text-[#3D2F23]"
+              >
+                About <ChevronDown size={16} className={`transition-transform ${openMobileCat === "about" ? "rotate-180" : ""}`} />
+              </button>
+              {openMobileCat === "about" && (
+                <div className="pl-2 pb-3 space-y-1">
+                  {ABOUT_LINKS.map((link) => (
+                    <Link key={link.label} to={link.href} className="block py-2 text-[14px] text-[#5C4A38]">{link.label}</Link>
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="border-b border-[#b8894a]/25">
               <button
                 data-testid="mnav-treatments"
@@ -377,8 +405,11 @@ export default function Header({ onOpenBooking }) {
                 </div>
               )}
             </div>
+            {navItems.filter((item) => !item.dropdown).map((item) => (
+              <Link key={item.label} data-testid={`mnav-${item.label.toLowerCase().replace(/\s+/g, "-")}`} to={item.href || "#"} className="block py-3 text-[15px] font-medium text-[#3D2F23] border-b border-[#b8894a]/25">{item.label}</Link>
+            ))}
           </nav>
-          <button data-testid="mnav-book" onClick={() => { setMobileOpen(false); onOpenBooking(); }} className="btn-primary w-full mt-6">Book Appointment</button>
+          <button data-testid="mnav-book" onClick={() => { setMobileOpen(false); onOpenBooking?.(); }} className="btn-primary w-full mt-6">Book Appointment</button>
           <div className="mt-8 text-[13px] text-[#5C4A38] leading-relaxed">
             <p className="font-semibold text-[#3D2F23]">{SITE.phone}</p>
             <p>{SITE.hours}</p>

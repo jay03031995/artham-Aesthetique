@@ -185,6 +185,9 @@ a:focus-visible, button:focus-visible {
 /* Nav links — Poppins 15px Medium, NORMAL CASE */
 .nav-link {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
   padding: 6px 2px;
   color: #3D2F23;
   font-family: 'Poppins', sans-serif;
@@ -195,7 +198,7 @@ a:focus-visible, button:focus-visible {
   transition: color 300ms ease;
 }
 .nav-link::after {
-  content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 100%;
+  content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 2px; width: 100%;
   background: #7A3E1D; transform: scaleX(0); transform-origin: left;
   transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
 }

@@ -49,12 +49,12 @@ export default function BlogIndex() {
 
   return (
     <>
-      <Seo title="Journal" description="Notes from the clinic — considered posts on skin, hair, ageing and wellness by Dr. Omaima Jawed." />
+      <Seo title="Blog" description="Latest blogs from the clinic on skin, hair, ageing and wellness by Dr. Omaima Jawed." />
 
       {/* Hero */}
       <section className="bg-summer-peach pt-40 pb-16 lg:pt-48 lg:pb-24" data-testid="blog-hero">
         <div className="container-editorial">
-          <p className="overline text-coronation-gold mb-4">The Journal</p>
+          <p className="overline text-coronation-gold mb-4">Blog</p>
           <h1 className="font-display text-5xl md:text-6xl text-armadillo leading-[1.05] mb-6">Golden tips &amp; considered notes.</h1>
           <p className="fine text-lg text-armadillo/80 max-w-2xl">Editorial writing from Dr. Omaima and the Artham team — honest, useful and unafraid to say 'no' to a trend.</p>
         </div>
@@ -63,7 +63,7 @@ export default function BlogIndex() {
       {isLoading && (
         <section className="bg-arabian-white py-10">
           <div className="container-editorial">
-            <p className="fine text-armadillo/65">Loading journal articles...</p>
+            <p className="fine text-armadillo/65">Loading blog articles...</p>
           </div>
         </section>
       )}

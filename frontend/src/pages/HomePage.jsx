@@ -307,8 +307,8 @@ export default function HomePage({ onOpenBooking }) {
         <div className="container-editorial">
           <div className="flex items-end justify-between mb-10 gap-6 flex-wrap reveal">
             <div>
-              <p className="overline mb-3">The Journal</p>
-              <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Notes from the clinic.</h2>
+              <p className="overline mb-3">Latest Blogs</p>
+              <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Our Latest Blogs.</h2>
             </div>
             <Link to="/blog" data-testid="home-blog-all" className="link-gold text-[15px] font-semibold">Read all →</Link>
           </div>
@@ -334,7 +334,7 @@ export default function HomePage({ onOpenBooking }) {
       </section>
 
       {/* 9. CTA BAND — dermaheal "simple book" style */}
-      <section className="bg-[#3D2F23] text-[#FFF7EC] py-20 lg:py-24 overflow-hidden" data-testid="cta-band">
+      <section className="bg-[#7a3f1f] text-[#FFF7EC] py-20 lg:py-24 overflow-hidden" data-testid="cta-band">
         <div className="container-editorial reveal">
           <div className="max-w-2xl">
             <p className="inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.22em] font-semibold text-[#F5D89C] mb-5">
@@ -344,7 +344,7 @@ export default function HomePage({ onOpenBooking }) {
             <h2 className="font-display text-[36px] md:text-[44px] leading-[1.1] mb-4">Ready for your consultation?</h2>
             <p className="text-[17px] leading-[1.65] text-[#FFF7EC]/75 mb-8 max-w-lg">A 15-minute discovery consult with Dr. Omaima Jawed is complimentary — an unhurried conversation about your skin, no obligation.</p>
             <div className="flex flex-wrap gap-3">
-              <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-on-dark inline-flex items-center gap-2"><CalendarCheck size={16} /> Book Appointment</button>
+              <button data-testid="cta-book-btn" onClick={onOpenBooking} className="btn-on-dark inline-flex items-center gap-2 px-2"><CalendarCheck size={16} /> Book Appointment</button>
               <a data-testid="cta-wa-btn" href={cmsWhatsAppLink(SITE)} target="_blank" rel="noreferrer" className="btn-outline-light inline-flex items-center gap-2"><MessageCircle size={15} /> WhatsApp</a>
               <a data-testid="cta-call-btn" href={`tel:${SITE.phoneDigits}`} className="btn-outline-light inline-flex items-center gap-2"><Phone size={15} /> {SITE.phone}</a>
             </div>
@@ -358,7 +358,7 @@ export default function HomePage({ onOpenBooking }) {
       </section>
 
       {/* STATS strip (small, moved after main content per revised order) */}
-      <section className="bg-[#3D2F23] py-12" data-testid="stats-strip">
+      <section className="bg-[#7a3f1f] py-12" data-testid="stats-strip">
         <div className="container-editorial grid grid-cols-3 gap-6 text-center">
           <div ref={statsRef1}>
             <div className="font-display text-3xl md:text-4xl text-[#FFF7EC]">{n1}+</div>

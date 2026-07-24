@@ -323,7 +323,7 @@ const normalizeRelatedBlogs = (relatedBlogs = []) =>
     .filter((post) => post?.slug)
     .map((post) => ({
       ...post,
-      category: post.category || "Journal",
+      category: post.category || "Blog",
       tags: post.tags || [],
       coverImage: post.coverImage || FALLBACK_SITE.clinicPhotoUrl,
       readingTimeMin: readingTimeForPost(post),
@@ -335,7 +335,7 @@ const normalizePosts = (posts = []) =>
         .filter((post) => post?.slug && post?.title)
         .map((post) => ({
           ...post,
-          category: post.category || "Journal",
+          category: post.category || "Blog",
           categorySlug: post.categorySlug || "",
           tags: post.tags || [],
           author: normalizeAuthor(post.author),
