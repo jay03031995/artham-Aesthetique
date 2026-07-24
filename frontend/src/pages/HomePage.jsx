@@ -110,7 +110,7 @@ export default function HomePage({ onOpenBooking }) {
           className="absolute inset-0"
           style={{ zIndex: 1, background: "linear-gradient(180deg, rgba(30,20,10,0.55) 0%, rgba(30,20,10,0.3) 45%, rgba(30,20,10,0.65) 100%)" }}
         />
-        <div className="relative container-editorial py-20 lg:py-28 flex flex-col justify-center" style={{ zIndex: 2, minHeight: "inherit" }}>
+        <div className="relative container-editorial hero-content py-20 lg:py-28 flex flex-col justify-center" style={{ zIndex: 2, minHeight: "inherit" }}>
           <p className="text-[13px] font-semibold text-[#F5D89C] mb-5 animate-fade-up" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>Artham Aesthetique · Noida</p>
           <h1 className="font-display text-[#FFF7EC] leading-[1.15] max-w-3xl animate-fade-up" style={{ animationDelay: "120ms", fontSize: "clamp(2rem, 5.5vw, 3.5rem)", fontWeight: 600 }}>
             Where Science meets<br /><em className="italic font-light">Soulful Care.</em>
@@ -118,7 +118,7 @@ export default function HomePage({ onOpenBooking }) {
           <p className="text-[17px] md:text-[18px] leading-[1.6] text-[#FFF7EC] max-w-xl mt-6 animate-fade-up" style={{ animationDelay: "220ms", fontFamily: "'Poppins', sans-serif" }}>
             Dr-led skin, hair and body wellness — practised with restraint, considered like a ritual.
           </p>
-          <div className="flex flex-wrap gap-4 mt-8 animate-fade-up" style={{ animationDelay: "320ms" }}>
+          <div className="hero-actions flex flex-wrap gap-4 mt-8 animate-fade-up" style={{ animationDelay: "320ms" }}>
             <button data-testid="hero-book-btn" onClick={onOpenBooking} className="btn-primary">Book Appointment</button>
             <Link to="/category/skin" data-testid="hero-explore-btn" className="btn-outline-light">Explore Treatments</Link>
           </div>

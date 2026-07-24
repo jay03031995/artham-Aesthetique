@@ -238,11 +238,17 @@ a:focus-visible, button:focus-visible {
 
 /* ===== Custom overrides ===== */
 
-/* Square buttons — no rounded corners */
+/* Buttons keep only a slight curve for a softer clinical UI. */
 .btn-primary,
 .btn-secondary,
 .btn-on-dark,
-.btn-outline-light { border-radius: 0 !important; }
+.btn-outline-light { border-radius: 6px !important; }
+
+.header-book-button {
+  padding: 10px 22px;
+  min-height: 44px;
+  border-radius: 6px !important;
+}
 
 /* Remove decorative kicker/eyebrow lines above headings.
    Only the <p> eyebrows are hidden; functional <span>/<label>/<dt> labels stay. */
@@ -283,6 +289,67 @@ p.overline { display: none !important; }
   section[class*="py-20"], section[class*="py-24"], section[class*="py-28"] {
     padding-top: 3.25rem !important;
     padding-bottom: 3.25rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  html { scroll-padding-top: 92px; }
+
+  [data-testid="site-header"] [data-testid="announce-bar"] .container-editorial {
+    height: 32px;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+
+  [data-testid="header-logo"] img {
+    width: 48px;
+    height: 48px;
+  }
+
+  .header-book-button {
+    padding: 8px 12px;
+    min-height: 40px;
+    font-size: 13px;
+    border-width: 1px;
+  }
+
+  .hero-content {
+    justify-content: flex-start;
+    padding-top: clamp(6rem, 18vh, 8rem);
+    padding-bottom: 8rem;
+  }
+
+  .hero-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: min(100%, 220px);
+    gap: 0.75rem;
+  }
+
+  .hero-actions .btn-primary,
+  .hero-actions .btn-outline-light {
+    width: 100%;
+    padding: 11px 18px;
+    min-height: 46px;
+    font-size: 14px;
+  }
+
+  [data-testid="sticky-mobile-bar"] {
+    z-index: 45;
+  }
+
+  [data-testid="sticky-mobile-bar"] > div {
+    height: 60px;
+  }
+
+  [data-testid="smb-book"] {
+    width: 58px;
+    height: 58px;
+    min-height: 58px;
+    justify-self: center;
+    margin-top: -16px;
   }
 }
 

@@ -159,7 +159,7 @@ export default function Header({ onOpenBooking }) {
             : "bg-[#FBF3E7] border-b border-[#b8894a]/25"
         }`}
       >
-        <div className="container-editorial flex items-center justify-between h-[76px] lg:h-[80px]">
+        <div className="container-editorial flex items-center justify-between gap-3 h-[76px] lg:h-[80px]">
           {/* Logo — gold transparent lotus, rendered as-is (no wrapper) */}
           <Link to="/" data-testid="header-logo" aria-label="Artham Aesthetique home" className="flex items-center gap-3 group shrink-0">
             <img
@@ -233,8 +233,7 @@ export default function Header({ onOpenBooking }) {
             <button
               data-testid="header-book-btn"
               onClick={() => onOpenBooking?.()}
-              className="btn-primary hidden md:inline-flex whitespace-nowrap shrink-0"
-              style={{ padding: "10px 22px", minHeight: "44px" }}
+              className="btn-primary header-book-button inline-flex whitespace-nowrap shrink-0"
             >
               Book Appointment
             </button>
@@ -253,13 +252,13 @@ export default function Header({ onOpenBooking }) {
         <div
           onMouseEnter={openMega}
           onMouseLeave={closeMega}
-          className={`hidden lg:block absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[920px] max-w-[calc(100vw-32px)] rounded-xl border border-[#b8894a]/40 bg-[#FBF3E7] shadow-[0_28px_64px_-28px_rgba(72,63,55,0.5)] transition-all duration-200 ${
+          className={`hidden lg:block absolute top-full left-1/2 -translate-x-1/2 mt-2 w-[min(1120px,calc(100vw-48px))] max-h-[calc(100vh-140px)] overflow-y-auto rounded-lg border border-[#b8894a]/40 bg-[#FBF3E7] shadow-[0_28px_64px_-28px_rgba(72,63,55,0.5)] transition-all duration-200 ${
             megaOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
           }`}
           data-testid="mega-panel"
         >
-          <div className="px-8 py-8">
-            <div className="grid grid-cols-5 gap-x-8 gap-y-2">
+          <div className="px-5 py-6 xl:px-8 xl:py-8">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(150px,1fr))] gap-x-6 gap-y-6">
               {menuGroups.map((col) => (
                 <div key={col.heading}>
                   <p className="text-[13px] font-semibold text-[#8A6D3B] mb-4" style={{ fontFamily: "'Raleway', sans-serif", letterSpacing: 0 }}>
@@ -310,7 +309,7 @@ export default function Header({ onOpenBooking }) {
                 </ul>
               </div>
               {/* Featured card */}
-              <div className="col-span-5 pt-6 mt-4 border-t border-[#b8894a]/30">
+              <div className="col-span-full pt-6 mt-2 border-t border-[#b8894a]/30">
                 <Link
                   to={featuredService ? `/services/${featuredService.slug}` : "/category/skin"}
                   data-testid={featuredService ? `mega-featured-${featuredService.slug}` : "mega-featured"}
