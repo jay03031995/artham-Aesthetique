@@ -215,9 +215,9 @@ export default function HomePage({ onOpenBooking }) {
           <div className="relative order-2 lg:order-1 reveal">
             <div className="bg-[#f5e6d0] rounded-lg overflow-hidden aspect-[4/5] flex items-end justify-center">
               <img
-                src={SITE.doctorPortraitUrl}
+                src="/media/dr.jpeg"
                 alt="Dr. Omaima Jawed, Dermatologist and Founder of Artham Aesthetique"
-                className="w-full h-full object-contain object-bottom"
+                className="w-full h-full object-cover object-top"
                 loading="lazy"
               />
             </div>
