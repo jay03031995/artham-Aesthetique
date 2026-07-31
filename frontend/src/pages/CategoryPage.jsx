@@ -3,6 +3,7 @@ import { ArrowRight, ChevronRight } from "lucide-react";
 import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
+import { CATEGORY_KEYWORDS, categoryCanonical, servicePath } from "../data/seoKeywords";
 
 export default function CategoryPage({ onOpenBooking }) {
   useReveal();
@@ -10,12 +11,15 @@ export default function CategoryPage({ onOpenBooking }) {
   const { findCategory } = useCmsContent();
   const cat = findCategory(slug);
   if (!cat) return <Navigate to="/" replace />;
+  const seoKeywords = CATEGORY_KEYWORDS[cat.slug] || [];
 
   return (
     <>
       <Seo
         title={`${cat.name} Treatments in Noida`}
         description={cat.intro}
+        canonical={categoryCanonical(cat.slug)}
+        keywords={seoKeywords}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "BreadcrumbList",
@@ -24,6 +28,7 @@ export default function CategoryPage({ onOpenBooking }) {
             { "@type": "ListItem", position: 2, name: "Treatments", item: "/category/" + cat.slug },
             { "@type": "ListItem", position: 3, name: cat.name, item: "/category/" + cat.slug },
           ],
+          keywords: seoKeywords.join(", "),
         }}
       />
 
@@ -58,7 +63,7 @@ export default function CategoryPage({ onOpenBooking }) {
               <Link
                 key={s.slug}
                 data-testid={`cat-svc-${s.slug}`}
-                to={`/services/${s.slug}`}
+                to={servicePath(s.slug)}
                 className="group block reveal card-3d rounded-lg overflow-hidden"
                 style={{ transitionDelay: `${(i % 6) * 80}ms` }}
               >

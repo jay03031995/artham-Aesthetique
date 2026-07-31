@@ -4,6 +4,7 @@ import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Aw
 import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
+import { servicePath } from "../data/seoKeywords";
 
 const useCountUp = (target, duration = 1400) => {
   const [n, setN] = useState(0);
@@ -186,11 +187,11 @@ export default function HomePage({ onOpenBooking }) {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {signature.map((s, i) => (
               <div key={s.slug} className="card-3d rounded-lg overflow-hidden flex flex-col reveal" style={{ transitionDelay: `${i * 80}ms` }} data-testid={`sig-${s.slug}`}>
-                <Link to={`/services/${s.slug}`} className="block aspect-[4/3] overflow-hidden">
+                <Link to={servicePath(s.slug)} className="block aspect-[4/3] overflow-hidden">
                   <img src={s.image} alt={s.name} loading="lazy" className="w-full h-full object-cover transition-transform duration-[1000ms] hover:scale-105" />
                 </Link>
                 <div className="p-6 flex flex-col flex-1">
-                  <Link to={`/services/${s.slug}`}>
+                  <Link to={servicePath(s.slug)}>
                     <h3 className="font-display text-xl text-[#3D2F23] mb-2 hover:text-[#7A3E1D] transition-colors">{s.name}</h3>
                   </Link>
                   <p className="text-[14px] text-[#5C4A38] leading-relaxed mb-4">{s.short}</p>
@@ -200,7 +201,7 @@ export default function HomePage({ onOpenBooking }) {
                   </div>
                   <div className="flex items-center gap-3 mt-auto">
                     <button data-testid={`sig-book-${s.slug}`} onClick={() => onOpenBooking()} className="btn-primary" style={{ padding: "10px 20px", minHeight: "40px", fontSize: "13px" }}>Book</button>
-                    <Link to={`/services/${s.slug}`} className="text-[14px] font-semibold text-[#7A3E1D] hover:underline">Learn more →</Link>
+                    <Link to={servicePath(s.slug)} className="text-[14px] font-semibold text-[#7A3E1D] hover:underline">Learn more →</Link>
                   </div>
                 </div>
               </div>

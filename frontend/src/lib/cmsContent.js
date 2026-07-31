@@ -58,6 +58,15 @@ const CMS_QUERY = `{
     )
   }
 }, duration, sessions, priceFrom, pricing, doctorNote, faqs,
+      "seo": {
+        "title": seo.title,
+        "description": seo.description,
+        "keywords": seo.keywords,
+        "canonicalUrl": seo.canonicalUrl,
+        "openGraphImage": coalesce(seo.openGraphImage.url, seo.openGraphImage.asset.asset->url),
+        "schema": seo.schema,
+        "noIndex": seo.noIndex
+      },
       quickInfo, howItWorks, "symptoms": symptoms[]{
   title,
   description,
@@ -260,6 +269,15 @@ const normalizeService = (service, category) => {
     relatedTreatments: service.relatedTreatments || [],
     realResults: service.realResults || [],
     results: (service.realResults && service.realResults.length) ? service.realResults : service.results || [],
+    seo: {
+      title: service.seo?.title || service.seoTitle || "",
+      description: service.seo?.description || service.metaDescription || "",
+      keywords: cleanArray(service.seo?.keywords),
+      canonicalUrl: service.seo?.canonicalUrl || "",
+      openGraphImage: service.seo?.openGraphImage || "",
+      schema: service.seo?.schema || null,
+      noIndex: Boolean(service.seo?.noIndex),
+    },
   };
 };
 

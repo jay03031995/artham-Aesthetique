@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
+import { servicePath } from "../data/seoKeywords";
 
 export default function ResultsPage() {
   useReveal();
@@ -57,7 +58,7 @@ export default function ResultsPage() {
                   </dl>
                   {item.note && <p className="fine text-armadillo/80 leading-relaxed">{item.note}</p>}
                   {item.treatmentSlug && (
-                    <Link to={`/services/${item.treatmentSlug}`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#7A3E1D] hover:text-[#5C2E15] transition-colors">
+                    <Link to={servicePath(item.treatmentSlug)} className="inline-flex items-center gap-2 text-sm font-semibold text-[#7A3E1D] hover:text-[#5C2E15] transition-colors">
                       View treatment
                     </Link>
                   )}

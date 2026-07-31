@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { useCmsContent } from "../../lib/cmsContent";
 import { ALL_SERVICES } from "../../data/treatments";
+import { servicePath } from "../../data/seoKeywords";
 
 // Group services into Dermapuritys-style mega menu columns.
 // (Internal category URLs stay /category/{slug}.)
@@ -62,13 +63,13 @@ const MEGA = [
 ];
 
 const CONCERN_LINKS = [
-  { label: "Acne & Scars", href: "/services/acne-treatment" },
-  { label: "Pigmentation", href: "/services/hello-bright-zo-obagi" },
-  { label: "Hair Loss", href: "/services/hair-loss-treatment" },
-  { label: "Anti-Ageing", href: "/services/dermal-fillers" },
-  { label: "Bridal Runway", href: "/services/wedding-package" },
-  { label: "Body Contour", href: "/services/coolsculpting" },
-  { label: "Dullness & Glow", href: "/services/hydrafacial-treatment" },
+  { label: "Acne & Scars", href: servicePath("acne-treatment") },
+  { label: "Pigmentation", href: servicePath("hello-bright-zo-obagi") },
+  { label: "Hair Loss", href: servicePath("hair-loss-treatment") },
+  { label: "Anti-Ageing", href: servicePath("dermal-fillers") },
+  { label: "Bridal Runway", href: servicePath("wedding-package") },
+  { label: "Body Contour", href: servicePath("coolsculpting") },
+  { label: "Dullness & Glow", href: servicePath("hydrafacial-treatment") },
 ];
 
 const ABOUT_LINKS = [
@@ -269,7 +270,7 @@ export default function Header({ onOpenBooking }) {
                       <li key={s.slug}>
                         <Link
                           data-testid={`mega-svc-${s.slug}`}
-                          to={`/services/${s.slug}`}
+                          to={servicePath(s.slug)}
                           className="text-[15px] text-[#3D2F23] hover:text-[#7A3E1D] hover:underline underline-offset-4 transition-colors"
                           style={{ fontFamily: "'Poppins', sans-serif" }}
                         >
@@ -311,7 +312,7 @@ export default function Header({ onOpenBooking }) {
               {/* Featured card */}
               <div className="col-span-full pt-6 mt-2 border-t border-[#b8894a]/30">
                 <Link
-                  to={featuredService ? `/services/${featuredService.slug}` : "/category/skin"}
+                  to={featuredService ? servicePath(featuredService.slug) : "/category/skin"}
                   data-testid={featuredService ? `mega-featured-${featuredService.slug}` : "mega-featured"}
                   className="flex items-center gap-6 group"
                 >
@@ -384,7 +385,7 @@ export default function Header({ onOpenBooking }) {
                         </li>
                         {col.items.map((s) => (
                           <li key={s.slug}>
-                            <Link data-testid={`mnav-svc-${s.slug}`} to={`/services/${s.slug}`} className="text-[14px] text-[#5C4A38]">{s.name}</Link>
+                            <Link data-testid={`mnav-svc-${s.slug}`} to={servicePath(s.slug)} className="text-[14px] text-[#5C4A38]">{s.name}</Link>
                           </li>
                         ))}
                       </ul>

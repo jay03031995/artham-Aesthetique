@@ -8,7 +8,8 @@
     "start": "sanity dev",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "seed": "node scripts/seed.mjs"
+    "seed": "node scripts/seed.mjs",
+    "patch:treatments": "node scripts/patch-empty-treatment-content.mjs"
   },
   "dependencies": {
     "@sanity/vision": "^3.57.0",

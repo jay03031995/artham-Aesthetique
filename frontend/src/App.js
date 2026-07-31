@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useParams, Navigate } from "react-router-dom";
 import "@/App.css";
 import "@/index.css";
 import { Toaster } from "sonner";
@@ -61,6 +61,11 @@ function Layout({ children, onOpenBooking }) {
   );
 }
 
+function ServiceRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/${slug}`} replace />;
+}
+
 function AppInner() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [bookingSlug, setBookingSlug] = useState(null);
@@ -83,7 +88,7 @@ function AppInner() {
         <Routes>
           <Route path="/" element={<HomePage onOpenBooking={() => openBooking(null)} />} />
           <Route path="/category/:slug" element={<CategoryPage onOpenBooking={() => openBooking(null)} />} />
-          <Route path="/services/:slug" element={<ServicePage onOpenBooking={(s) => openBooking(s)} />} />
+          <Route path="/services/:slug" element={<ServiceRedirect />} />
           <Route path="/doctors" element={<DoctorsIndex />} />
           <Route path="/doctors/:slug" element={<DoctorProfile onOpenBooking={() => openBooking(null)} />} />
           <Route path="/blog" element={<BlogIndex />} />
@@ -97,6 +102,7 @@ function AppInner() {
           <Route path="/policies/:slug" element={<PolicyPage />} />
           <Route path="/book" element={<BookingRouteBridge onOpenBooking={openBooking} />} />
           <Route path="/book/:slug" element={<BookingRouteBridge onOpenBooking={openBooking} />} />
+          <Route path="/:slug" element={<ServicePage onOpenBooking={(s) => openBooking(s)} />} />
           <Route path="*" element={<HomePage onOpenBooking={() => openBooking(null)} />} />
         </Routes>
       </Layout>

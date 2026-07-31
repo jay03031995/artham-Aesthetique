@@ -3,6 +3,7 @@ import { ChevronRight } from "lucide-react";
 import { useCmsContent } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
+import { servicePath } from "../data/seoKeywords";
 
 const cleanList = (items) => (Array.isArray(items) ? items : items ? [items] : []).filter(Boolean);
 const firstText = (items = []) => cleanList(items)[0] || "";
@@ -197,7 +198,7 @@ export default function DoctorProfile({ onOpenBooking }) {
                 <Link
                   key={service.slug}
                   data-testid={`dr-sig-${service.slug}`}
-                  to={`/services/${service.slug}`}
+                  to={servicePath(service.slug)}
                   className="group block reveal"
                   style={{ transitionDelay: `${index * 80}ms` }}
                 >

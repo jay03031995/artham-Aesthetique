@@ -5,6 +5,7 @@ import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 import ImageLightbox from "../components/ImageLightbox";
+import { TREATMENT_KEYWORDS, serviceCanonical, servicePath } from "../data/seoKeywords";
 
 export default function ServicePage({ onOpenBooking }) {
   useReveal();
@@ -34,6 +35,10 @@ console.log(s.benefits);
 
   const cat = findCategory(s.categorySlug) || { slug: s.categorySlug || "skin", name: s.category || "Treatments" };
   const related = s.relatedTreatments?.length ? s.relatedTreatments : getRelated(s.categorySlug, s.slug);
+  const seoKeywords = s.seo?.keywords?.length ? s.seo.keywords : TREATMENT_KEYWORDS[s.slug] || [];
+  const seoTitle = s.seo?.title || `${s.name} in Noida`;
+  const seoDescription = s.seo?.description || s.short;
+  const canonicalUrl = s.seo?.canonicalUrl || serviceCanonical(s.slug);
 
   const bookThis = () => onOpenBooking(s.slug);
 
@@ -45,6 +50,8 @@ console.log(s.benefits);
     bodyLocation: s.category,
     performerType: "Dermatologist",
     performer: { "@type": "Physician", name: "Dr. Omaima Jawed" },
+    url: canonicalUrl,
+    keywords: seoKeywords.join(", "),
   };
 
   return (
@@ -52,10 +59,13 @@ console.log(s.benefits);
     <>
    
       <Seo
-        title={`${s.name} in Noida`}
-        description={s.short}
+        title={seoTitle}
+        description={seoDescription}
+        canonical={canonicalUrl}
+        keywords={seoKeywords}
         jsonLd={jsonLd}
-        ogImage={s.image}
+        ogImage={s.seo?.openGraphImage || s.image}
+        noIndex={s.seo?.noIndex}
       />
 
       {/* HERO */}
@@ -483,7 +493,7 @@ console.log(s.benefits);
                 <Link
                   key={r.slug}
                   data-testid={`svc-related-${r.slug}`}
-                  to={`/services/${r.slug}`}
+                  to={servicePath(r.slug)}
                   className="group block"
                 >
                   <div className="aspect-square overflow-hidden mb-4">
