@@ -46,12 +46,8 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-6 lg:grid-cols-12 gap-10">
           {/* Brand */}
           <div className="col-span-2 md:col-span-6 lg:col-span-4">
-            <div className="flex items-center gap-3 mb-6">
-              <img src={SITE.footerLogoUrl} alt="Artham Aesthetique lotus" className="h-14 w-14 object-contain rounded-md" />
-              <div>
-                <div className="font-display text-xl text-[#FFF7EC]">Artham</div>
-                <div className="text-[10px] uppercase tracking-[0.18em] font-semibold text-[#b8894a]">Aesthetique</div>
-              </div>
+            <div className="flex items-center mb-6">
+              <img src={SITE.footerLogoUrl} alt="Artham Aesthetique lotus" className="h-20 w-20 object-contain rounded-md" />
             </div>
             <p className="fine text-arabian-white/70 text-sm max-w-sm leading-relaxed">
               {footer?.brandText || "A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body."}

@@ -116,6 +116,21 @@ export const keyFact = defineType({
   preview: {select: {title: 'label', subtitle: 'value'}},
 })
 
+export const costItem = defineType({
+  name: 'costItem',
+  title: 'Cost item',
+  type: 'object',
+  fields: [
+    defineField({name: 'label', title: 'Label', type: 'string'}),
+    defineField({name: 'value', title: 'Value', type: 'string'}),
+    defineField({name: 'description', title: 'Details', type: 'text', rows: 2}),
+  ],
+  preview: {
+    select: {title: 'label', subtitle: 'value'},
+    prepare: ({title, subtitle}) => ({title: title || 'Cost item', subtitle}),
+  },
+})
+
 export const tableRow = defineType({
   name: 'tableRow',
   title: 'Row',
@@ -210,6 +225,7 @@ export const objectTypes = [
   iconText,
   benefitItem,
   keyFact,
+  costItem,
   tableRow,
   journalBlock,
   journalSection,

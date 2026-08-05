@@ -29,9 +29,6 @@ export default function ServicePage({ onOpenBooking }) {
     [s],
   );
   if (!s) return <Navigate to="/" replace />;
-  console.log("How It Works:", s.howItWorks);
-console.log("Length:", s.howItWorks?.length);
-console.log(s.benefits);
 
   const cat = findCategory(s.categorySlug) || { slug: s.categorySlug || "skin", name: s.category || "Treatments" };
   const related = s.relatedTreatments?.length ? s.relatedTreatments : getRelated(s.categorySlug, s.slug);
@@ -81,7 +78,7 @@ console.log(s.benefits);
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <p className="overline mb-3">{cat.name}</p>
-              <h1 className="font-display leading-[1.05] text-[#3D2F23] mb-4" style={{ fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)" }}>{s.name}</h1>
+              <h1 className="font-display leading-[1.05] text-[#3D2F23] mb-4" style={{ fontSize: "clamp(2.25rem, 4.5vw, 3.5rem)" }}>{s.pageTitle || `${s.name} in Noida`}</h1>
               {s.heroTitle && <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7A5A2E] mb-3">{s.heroTitle}</p>}
               <p className="text-body-lg text-[#5C4A38] mb-4">{s.hero}</p>
               {s.heroDescription && <p className="fine text-armadillo/75 leading-relaxed mb-6">{s.heroDescription}</p>}
@@ -117,17 +114,16 @@ console.log(s.benefits);
       <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-what">
         <div className="container-editorial grid lg:grid-cols-5 gap-16">
           <div className="lg:col-span-2 reveal">
-            <p className="overline text-coronation-gold mb-4">What is {s.name}</p>
+            <p className="overline text-coronation-gold mb-4">{s.whatHeading || `What is ${s.name}`}</p>
             <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">
-              {s.overviewHeading || "A quiet primer — "}
-              {!s.overviewHeading && <em className="italic font-light">before you book.</em>}
+              {s.overviewHeading || `${s.name} treatment, explained simply.`}
             </h2>
           </div>
           <div className="lg:col-span-3 reveal" style={{ transitionDelay: "120ms" }}>
             <p className="fine text-armadillo/85 leading-[1.9] mb-8">{s.what}</p>
             {s.whoFor.length > 0 && (
               <>
-                <p className="overline text-armadillo/60 mb-4">Who it's for</p>
+                <p className="overline text-armadillo/60 mb-4">{s.idealCandidateHeading || "Ideal candidate for the treatment"}</p>
                 <div className="flex flex-wrap gap-2 mb-8">
                   {s.whoFor.map((w) => (
                     <span key={w} className="fine text-sm px-4 py-1.5 border border-coronation-gold/50 text-armadillo/80">{w}</span>
@@ -203,10 +199,10 @@ console.log(s.benefits);
   <div className="container-editorial">
     <div className="max-w-xl mb-14">
       <p className="overline text-coronation-gold mb-4">
-        How it works
+        {s.procedureHeading || `Procedures of ${s.name}`}
       </p>
       <h2 className="font-display text-3xl md:text-4xl text-armadillo">
-        A calm, mapped protocol.
+        {s.processHeading || `A Step-by-Step Approach to ${s.name}`}
       </h2>
     </div>
 
@@ -237,8 +233,8 @@ console.log(s.benefits);
       <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-benefits">
         <div className="container-editorial grid lg:grid-cols-2 gap-16">
           <div className="reveal">
-            <p className=" text-coronation-gold mb-4">Benefits</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Small changes, meaningfully.</h2>
+            <p className="overline text-coronation-gold mb-4">Benefits</p>
+            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">{s.benefitsHeading || `Benefits of ${s.name}`}</h2>
             
            <div className="space-y-5">
   {(s.benefits || []).map((b, i) => {
@@ -293,6 +289,12 @@ console.log(s.benefits);
             </dl>
             {(s.priceFrom || (s.pricing || []).length > 0) && (
               <div className="mt-8 space-y-6">
+                {(s.costHeading || s.costDescription) && (
+                  <div>
+                    {s.costHeading && <p className="font-display text-2xl text-armadillo mb-2">{s.costHeading}</p>}
+                    {s.costDescription && <p className="fine text-sm text-armadillo/70 leading-relaxed">{s.costDescription}</p>}
+                  </div>
+                )}
                 {s.priceFrom && (
                   <div className="rounded-3xl bg-[#f7f0e4] p-6 border border-[#b8894a]/20">
                     <p className="overline text-armadillo/60 mb-2">Starting price</p>
@@ -305,6 +307,7 @@ console.log(s.benefits);
                       <div key={`${item.label || item.value}-${index}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-4">
                         {item.label && <dt className="overline text-armadillo/60 mb-2 block">{item.label}</dt>}
                         <dd className="fine text-sm text-armadillo">{item.value}</dd>
+                        {item.description && <p className="fine text-xs text-armadillo/65 leading-relaxed mt-2">{item.description}</p>}
                       </div>
                     ))}
                   </dl>
@@ -329,7 +332,7 @@ console.log(s.benefits);
             Before & After
           </p>
           <h2 className="font-display text-3xl md:text-4xl text-armadillo">
-            Real patient results.
+            {s.resultsHeading || "Before after results"}
           </h2>
         </div>
 
@@ -414,6 +417,54 @@ console.log(s.benefits);
   </section>
 )}
 
+      {(s.whyChooseHeading || s.whyChooseDescription || s.whyChooseItems?.length > 0) && (
+        <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-why-choose">
+          <div className="container-editorial grid lg:grid-cols-5 gap-16">
+            <div className="lg:col-span-2 reveal">
+              <p className="overline text-coronation-gold mb-4">Why Choose Us</p>
+              <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">
+                {s.whyChooseHeading || `Why Choose Artham Aesthetics for ${s.name}`}
+              </h2>
+            </div>
+            <div className="lg:col-span-3 reveal" style={{ transitionDelay: "120ms" }}>
+              {s.whyChooseDescription && <p className="fine text-armadillo/80 leading-[1.9] mb-8">{s.whyChooseDescription}</p>}
+              {s.whyChooseItems?.length > 0 && (
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {s.whyChooseItems.map((item) => (
+                    <div key={item} className="rounded-2xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5">
+                      <p className="fine text-sm text-armadillo/80 leading-relaxed">{item}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {(s.specialistHeading || s.specialistDescription || s.specialistHighlights?.length > 0) && (
+        <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-specialist">
+          <div className="container-editorial grid lg:grid-cols-5 gap-16 items-start">
+            <div className="lg:col-span-2 reveal">
+              <p className="overline text-coronation-gold mb-4">Doctor Expertise</p>
+              <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">
+                {s.specialistHeading || `Best Skin Doctor for ${s.name}`}
+              </h2>
+            </div>
+            <div className="lg:col-span-3 reveal" style={{ transitionDelay: "120ms" }}>
+              {s.specialistDescription && <p className="fine text-armadillo/80 leading-[1.9] mb-8">{s.specialistDescription}</p>}
+              {s.specialistHighlights?.length > 0 && (
+                <ul className="space-y-3">
+                  {s.specialistHighlights.map((item) => (
+                    <li key={item} className="fine text-sm text-armadillo/80 border-b border-coronation-gold/25 pb-3">{item}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* DOCTOR'S NOTE */}
       <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-doctor-note">
         <div className="container-editorial max-w-3xl reveal">
@@ -434,7 +485,7 @@ console.log(s.benefits);
         <div className="container-editorial grid lg:grid-cols-5 gap-16">
           <div className="lg:col-span-2 reveal">
             <p className="overline text-coronation-gold mb-4">FAQs</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo">What patients ask, honestly.</h2>
+            <h2 className="font-display text-3xl md:text-4xl text-armadillo">{s.faqHeading || "Frequently Asked Question (FAQs)"}</h2>
           </div>
           <div className="lg:col-span-3 divide-y divide-coronation-gold/30 border-y border-coronation-gold/30 reveal" style={{ transitionDelay: "120ms" }}>
             {(s.faqs || []).map((f, i) => {
