@@ -4,7 +4,7 @@ import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Aw
 import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
-import { servicePath } from "../data/seoKeywords";
+import { seoTreatmentSlug, servicePath } from "../data/seoKeywords";
 
 const useCountUp = (target, duration = 1400) => {
   const [n, setN] = useState(0);
@@ -52,7 +52,7 @@ export default function HomePage({ onOpenBooking }) {
     desc: cat.intro,
   }));
   const homeCategories = cmsHomeCategories.length ? cmsHomeCategories : HOME_CATEGORIES;
-  const signature = SIGNATURE_SLUGS.map((s) => ALL_SERVICES.find((x) => x.slug === s)).filter(Boolean);
+  const signature = SIGNATURE_SLUGS.map((s) => ALL_SERVICES.find((x) => x.slug === s || x.slug === seoTreatmentSlug(s))).filter(Boolean);
   const homeTestimonials = testimonials?.length ? testimonials.map((t) => ({
     name: t.name,
     area: t.area || "Artham Guest",
