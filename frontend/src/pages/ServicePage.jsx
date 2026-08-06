@@ -5,7 +5,7 @@ import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
 import ImageLightbox from "../components/ImageLightbox";
-import { TREATMENT_KEYWORDS, serviceCanonical, servicePath } from "../data/seoKeywords";
+import { TREATMENT_KEYWORDS, baseTreatmentSlug, serviceCanonical, servicePath } from "../data/seoKeywords";
 
 export default function ServicePage({ onOpenBooking }) {
   useReveal();
@@ -29,10 +29,13 @@ export default function ServicePage({ onOpenBooking }) {
     [s],
   );
   if (!s) return <Navigate to="/" replace />;
+  const canonicalPath = servicePath(s.slug);
+  if (`/${slug}` !== canonicalPath) return <Navigate to={canonicalPath} replace />;
 
   const cat = findCategory(s.categorySlug) || { slug: s.categorySlug || "skin", name: s.category || "Treatments" };
   const related = s.relatedTreatments?.length ? s.relatedTreatments : getRelated(s.categorySlug, s.slug);
-  const seoKeywords = s.seo?.keywords?.length ? s.seo.keywords : TREATMENT_KEYWORDS[s.slug] || [];
+  const keywordSlug = baseTreatmentSlug(s.slug);
+  const seoKeywords = s.seo?.keywords?.length ? s.seo.keywords : TREATMENT_KEYWORDS[s.slug] || TREATMENT_KEYWORDS[keywordSlug] || [];
   const seoTitle = s.seo?.title || `${s.name} in Noida`;
   const seoDescription = s.seo?.description || s.short;
   const canonicalUrl = s.seo?.canonicalUrl || serviceCanonical(s.slug);

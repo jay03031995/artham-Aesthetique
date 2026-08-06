@@ -235,6 +235,7 @@ const normalizeService = (service, category) => {
     ...service,
     name: service.name || service.title,
     slug: service.slug,
+    legacySlug: baseTreatmentSlug(service.slug),
     pageTitle: service.pageTitle || "",
     category: service.category || category?.name,
     categorySlug: service.categorySlug || category?.slug,
@@ -395,6 +396,15 @@ const normalizePosts = (posts = []) =>
     : FALLBACK_POSTS;
 
 const slugValue = (slug) => (typeof slug === "string" ? slug : slug?.current || "");
+const baseTreatmentSlug = (slug = "") => slugValue(slug).replace(/-in-noida$/i, "");
+const seoTreatmentSlug = (slug = "") => {
+  const value = slugValue(slug);
+  return value && !/-in-noida$/i.test(value) ? `${value}-in-noida` : value;
+};
+const matchesTreatmentSlug = (service, slug) => {
+  const requested = slugValue(slug);
+  return service?.slug === requested || service?.slug === seoTreatmentSlug(requested) || baseTreatmentSlug(service?.slug) === baseTreatmentSlug(requested);
+};
 
 const normalizeResults = (results = []) =>
   results.map((result) => ({
@@ -533,7 +543,7 @@ export function CMSContentProvider({ children }) {
     ...content,
     isLoading,
     cmsError,
-    findService: (slug) => content.allServices.find((service) => service.slug === slug),
+    findService: (slug) => content.allServices.find((service) => matchesTreatmentSlug(service, slug)),
     findCategory: (slug) => content.categories.find((category) => category.slug === slug),
     findPost: (slug) => content.posts.find((post) => post.slug === slug),
     filterPosts: ({ category = "All", tag = "All" } = {}) =>
@@ -555,7 +565,7 @@ export function useCmsContent() {
     ...fallbackContent,
     isLoading: false,
     cmsError: null,
-    findService: (slug) => FALLBACK_SERVICES.find((service) => service.slug === slug),
+    findService: (slug) => FALLBACK_SERVICES.find((service) => matchesTreatmentSlug(service, slug)),
     findCategory: (slug) => FALLBACK_CATEGORIES.find((category) => category.slug === slug),
     findPost: (slug) => FALLBACK_POSTS.find((post) => post.slug === slug),
     filterPosts: ({ category = "All", tag = "All" } = {}) =>

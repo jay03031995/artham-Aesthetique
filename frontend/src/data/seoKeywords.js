@@ -443,6 +443,12 @@ export const CATEGORY_KEYWORDS = {
   ],
 };
 
-export const servicePath = (slug) => (slug ? `/${slug}` : "/");
-export const serviceCanonical = (slug) => (slug ? `https://arthamaesthetic.com/${slug}` : "");
+export const baseTreatmentSlug = (slug = "") => slug.replace(/-in-noida$/i, "");
+export const seoTreatmentSlug = (slug = "") => {
+  if (!slug) return "";
+  return /-in-noida$/i.test(slug) ? slug : `${slug}-in-noida`;
+};
+
+export const servicePath = (slug) => (slug ? `/${seoTreatmentSlug(slug)}` : "/");
+export const serviceCanonical = (slug) => (slug ? `https://arthamaesthetic.com/${seoTreatmentSlug(slug)}` : "");
 export const categoryCanonical = (slug) => (slug ? `https://arthamaesthetic.com/category/${slug}` : "");
