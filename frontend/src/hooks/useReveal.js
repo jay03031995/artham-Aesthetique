@@ -12,39 +12,58 @@ import { useEffect } from "react";
  */
 export default function useReveal(dep) {
   useEffect(() => {
-    // 1. Auto-tag section-level blocks (skip the hero, and sections that already
-    //    animate their own children). ":not(section section)" avoids nested
-    //    sections such as the Journal article's internal <section>s.
-    document.querySelectorAll("main section:not(section section)").forEach((sec) => {
-      if (sec.getAttribute("data-testid") === "hero") return;
-      if (sec.dataset.noReveal !== undefined) return;
-      if (sec.classList.contains("reveal") || sec.querySelector(".reveal")) return;
-      sec.classList.add("reveal");
-    });
+    const seen = new WeakSet();
+    const revealNow = (el) => el.classList.add("is-visible");
 
-    const els = document.querySelectorAll(".reveal:not(.is-visible)");
-    if (!els.length) return;
+    const io = typeof IntersectionObserver !== "undefined"
+      ? new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                revealNow(e.target);
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0, rootMargin: "0px 0px -60px 0px" },
+        )
+      : null;
 
-    // 2. Fallback: no IntersectionObserver → just show everything.
-    if (typeof IntersectionObserver === "undefined") {
-      els.forEach((el) => el.classList.add("is-visible"));
-      return;
+    const observeReveal = (el) => {
+      if (seen.has(el) || el.classList.contains("is-visible")) return;
+      seen.add(el);
+      if (io) io.observe(el);
+      else revealNow(el);
+    };
+
+    const scan = () => {
+      // Auto-tag section-level blocks (skip the hero, and sections that already
+      // animate their own children). ":not(section section)" avoids nested
+      // sections such as the Journal article's internal <section>s.
+      document.querySelectorAll("main section:not(section section)").forEach((sec) => {
+        if (sec.getAttribute("data-testid") === "hero") return;
+        if (sec.dataset.noReveal !== undefined) return;
+        if (sec.classList.contains("reveal") || sec.querySelector(".reveal")) return;
+        sec.classList.add("reveal");
+      });
+
+      document.querySelectorAll(".reveal:not(.is-visible)").forEach(observeReveal);
+    };
+
+    scan();
+
+    const mo = typeof MutationObserver !== "undefined"
+      ? new MutationObserver(scan)
+      : null;
+    const main = document.querySelector("main");
+    if (mo && main) {
+      mo.observe(main, { childList: true, subtree: true });
     }
 
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add("is-visible");
-            io.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0, rootMargin: "0px 0px -60px 0px" },
-    );
-    els.forEach((el) => io.observe(el));
-
-    return () => io.disconnect();
+    return () => {
+      if (mo) mo.disconnect();
+      if (io) io.disconnect();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dep]);
 }
