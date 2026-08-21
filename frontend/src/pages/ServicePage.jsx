@@ -87,14 +87,25 @@ export default function ServicePage({ onOpenBooking }) {
               {s.heroDescription && <p className="fine text-armadillo/75 leading-relaxed mb-6">{s.heroDescription}</p>}
 
               {/* Quick facts row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 py-6 border-y border-[#b8894a]/30">
-                {(s.quickInfoRows || []).slice(0, 3).map((row) => (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 py-6 border-y border-[#b8894a]/30">
+                {(s.quickInfoRows || []).slice(0, 6).map((row) => (
                   <div key={row.label}>
                     <div className="flex items-center gap-2 text-[#7A5A2E]"><span className="overline text-[10px] mb-0">{row.label}</span></div>
                     <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{row.value}</p>
                   </div>
                 ))}
               </div>
+              {(s.priceFrom || s.costDescription) && (
+                <div className="mb-8 border border-[#b8894a]/30 bg-white/40 px-5 py-4 shadow-[0_18px_45px_-30px_rgba(122,62,29,0.55)]">
+                  <p className="overline text-[10px] text-[#7A5A2E] mb-2">{s.costHeading || "Treatment Cost"}</p>
+                  <p className="text-[15px] md:text-[16px] font-semibold italic text-[#3D2F23] leading-relaxed">
+                    {s.priceFrom || s.costDescription}
+                  </p>
+                  {s.priceFrom && s.costDescription && (
+                    <p className="fine text-sm text-[#5C4A38] leading-relaxed mt-2">{s.costDescription}</p>
+                  )}
+                </div>
+              )}
 
               <div className="flex flex-wrap gap-3">
                 <button data-testid="svc-book-btn" onClick={bookThis} className="btn-primary flex items-center gap-2"><CalendarCheck size={15} /> Book {s.name}</button>
@@ -136,64 +147,6 @@ export default function ServicePage({ onOpenBooking }) {
             )}
             
           </div>
-          {s.symptoms?.length > 0 && (
-  <div className="lg:col-span-5 mt-14">
-    <div className="text-center mb-8">
-      <p className="overline text-coronation-gold mb-2">
-        Symptoms
-      </p>
-
-      <h2 className="font-display text-3xl md:text-4xl text-armadillo">
-        Common Symptoms
-      </h2>
-    </div>
-
-    <div className="grid gap-5 md:grid-cols-3">
-      {s.symptoms.map((symptom, index) => {
-        const title =
-          typeof symptom === "string"
-            ? symptom
-            : symptom.title || "Symptom";
-
-        const description =
-          typeof symptom === "object"
-            ? symptom.description
-            : "";
-
-        const imageUrl =
-          symptom?.image?.url ||
-          symptom?.image?.asset?.url ||
-          symptom?.image?.asset?.asset?.url ||
-          "";
-
-        return (
-          <div
-            key={index}
-            className="flex items-start gap-4 rounded-3xl bg-[#FFF8EE] border border-[#E7D2B8] p-5"
-          >
-            {imageUrl && (
-              <img
-                src={imageUrl}
-                alt={title}
-                className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-              />
-            )}
-
-            <div>
-              <h3 className="text-xl font-semibold text-[#3D2F23] mb-2">
-                {title}
-              </h3>
-
-              <p className="text-base leading-7 text-[#6A5A4A]">
-                {description}
-              </p>
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  </div>
-)}
         </div>
       </section>
 
@@ -234,12 +187,12 @@ export default function ServicePage({ onOpenBooking }) {
 
       {/* BENEFITS + DOWNTIME TABLE */}
       <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-benefits">
-        <div className="container-editorial grid lg:grid-cols-2 gap-16">
+        <div className="container-editorial">
           <div className="reveal">
             <p className="overline text-coronation-gold mb-4">Benefits</p>
             <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">{s.benefitsHeading || `Benefits of ${s.name}`}</h2>
             
-           <div className="space-y-5">
+           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
   {(s.benefits || []).map((b, i) => {
     const title = typeof b === "string" ? b : b.title || "";
     const description = typeof b === "object" ? b.description : "";
@@ -253,13 +206,13 @@ export default function ServicePage({ onOpenBooking }) {
     return (
       <div
         key={i}
-        className="flex items-start gap-4 rounded-2xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5"
+        className="h-full rounded-2xl border border-[#b8894a]/20 bg-[#FFF8EE] p-5 shadow-sm"
       >
         {iconUrl && (
           <img
             src={iconUrl}
             alt={title}
-            className="w-12 h-12 object-contain flex-shrink-0"
+            className="w-12 h-12 object-contain mb-4"
           />
         )}
 
@@ -279,47 +232,75 @@ export default function ServicePage({ onOpenBooking }) {
   })}
 </div>
           </div>
-          <div className="reveal" style={{ transitionDelay: "120ms" }}>
-            <p className="overline text-coronation-gold mb-4">Expectations</p>
-            <h2 className="font-display text-3xl md:text-4xl text-armadillo mb-8">Time, downtime, and results.</h2>
-            <dl className="divide-y divide-coronation-gold/30 border-y border-coronation-gold/30">
-              {(s.downtime || []).map((row) => (
-                <div key={row.label} className="flex justify-between py-4 gap-4 flex-wrap">
-                  <dt className="overline text-armadillo/60">{row.label}</dt>
-                  <dd className="fine text-sm text-armadillo">{row.value}</dd>
-                </div>
-              ))}
-            </dl>
-            {(s.priceFrom || (s.pricing || []).length > 0) && (
-              <div className="mt-8 space-y-6">
-                {(s.costHeading || s.costDescription) && (
-                  <div>
-                    {s.costHeading && <p className="font-display text-2xl text-armadillo mb-2">{s.costHeading}</p>}
-                    {s.costDescription && <p className="fine text-sm text-armadillo/70 leading-relaxed">{s.costDescription}</p>}
-                  </div>
-                )}
-                {s.priceFrom && (
-                  <div className="rounded-3xl bg-[#f7f0e4] p-6 border border-[#b8894a]/20">
-                    <p className="overline text-armadillo/60 mb-2">Starting price</p>
-                    <p className="text-2xl font-semibold text-armadillo">{s.priceFrom}</p>
-                  </div>
-                )}
-                {(s.pricing || []).length > 0 && (
-                  <dl className="grid gap-4 sm:grid-cols-2">
-                    {s.pricing.map((item, index) => (
-                      <div key={`${item.label || item.value}-${index}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-4">
-                        {item.label && <dt className="overline text-armadillo/60 mb-2 block">{item.label}</dt>}
-                        <dd className="fine text-sm text-armadillo">{item.value}</dd>
-                        {item.description && <p className="fine text-xs text-armadillo/65 leading-relaxed mt-2">{item.description}</p>}
-                      </div>
-                    ))}
-                  </dl>
-                )}
-              </div>
-            )}
-          </div>
         </div>
       </section>
+
+      {s.symptoms?.length > 0 && (
+        <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-concerns">
+          <div className="container-editorial">
+            <div className="max-w-2xl mb-12 reveal">
+              <p className="overline text-coronation-gold mb-4">Concerns</p>
+              <h2 className="font-display text-3xl md:text-4xl text-armadillo">
+                Concerns that {s.name} covers
+              </h2>
+            </div>
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {s.symptoms.map((symptom, index) => {
+                const title = typeof symptom === "string" ? symptom : symptom.title || "Concern";
+                const description = typeof symptom === "object" ? symptom.description : "";
+                const imageUrl =
+                  symptom?.image?.url ||
+                  symptom?.image?.asset?.url ||
+                  symptom?.image?.asset?.asset?.url ||
+                  "";
+
+                return (
+                  <div key={index} className="flex items-start gap-4 rounded-3xl bg-[#FFF8EE] border border-[#E7D2B8] p-5 reveal" style={{ transitionDelay: `${index * 40}ms` }}>
+                    {imageUrl && (
+                      <img src={imageUrl} alt={title} className="w-12 h-12 rounded-full object-cover flex-shrink-0" />
+                    )}
+                    <div>
+                      <h3 className="text-xl font-semibold text-[#3D2F23] mb-2">{title}</h3>
+                      {description && <p className="text-base leading-7 text-[#6A5A4A]">{description}</p>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {(s.priceFrom || s.costHeading || s.costDescription || (s.pricing || []).length > 0) && (
+        <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-cost">
+          <div className="container-editorial grid lg:grid-cols-5 gap-16">
+            <div className="lg:col-span-2 reveal">
+              <p className="overline text-coronation-gold mb-4">Cost</p>
+              <h2 className="font-display text-3xl md:text-4xl text-armadillo leading-tight">{s.costHeading || `Cost of ${s.name}`}</h2>
+            </div>
+            <div className="lg:col-span-3 reveal" style={{ transitionDelay: "120ms" }}>
+              {s.costDescription && <p className="fine text-armadillo/80 leading-[1.9] mb-8">{s.costDescription}</p>}
+              {s.priceFrom && (
+                <div className="rounded-3xl bg-[#f7f0e4] p-6 border border-[#b8894a]/20 mb-6">
+                  <p className="overline text-armadillo/60 mb-2">Starting price</p>
+                  <p className="text-2xl font-semibold text-armadillo">{s.priceFrom}</p>
+                </div>
+              )}
+              {(s.pricing || []).length > 0 && (
+                <dl className="grid gap-4 sm:grid-cols-2">
+                  {s.pricing.map((item, index) => (
+                    <div key={`${item.label || item.value}-${index}`} className="rounded-3xl border border-[#b8894a]/20 bg-[#FFF8EE] p-4">
+                      {item.label && <dt className="overline text-armadillo/60 mb-2 block">{item.label}</dt>}
+                      <dd className="fine text-sm text-armadillo">{item.value}</dd>
+                      {item.description && <p className="fine text-xs text-armadillo/65 leading-relaxed mt-2">{item.description}</p>}
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* BEFORE / AFTER RESULTS */}
      {s.results?.length > 0 && (
@@ -415,6 +396,11 @@ export default function ServicePage({ onOpenBooking }) {
           </article>
         );
         })}
+      </div>
+      <div className="mt-10 text-center">
+        <Link to="/results" className="btn-secondary inline-flex items-center gap-2">
+          View all results <ChevronRight size={15} />
+        </Link>
       </div>
     </div>
   </section>

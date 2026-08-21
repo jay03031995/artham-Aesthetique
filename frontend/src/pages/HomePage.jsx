@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Award, Users, Clock, Quote, Phone, MessageCircle, Check, CalendarCheck } from "lucide-react";
+import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, BadgeCheck, Star, Award, Users, Clock, Quote, Phone, MessageCircle, Check, CalendarCheck, ChevronDown } from "lucide-react";
 import { useCmsContent, cmsWhatsAppLink } from "../lib/cmsContent";
 import Seo from "../lib/seo";
 import useReveal from "../hooks/useReveal";
@@ -44,7 +44,7 @@ const SIGNATURE_SLUGS = ["hydrafacial-treatment", "pdrn-skin-boosters", "hifu", 
 
 export default function HomePage({ onOpenBooking }) {
   useReveal();
-  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, posts: POSTS, testimonials } = useCmsContent();
+  const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, posts: POSTS, testimonials, home: HOME, results: RESULTS } = useCmsContent();
   const cmsHomeCategories = CATEGORIES.slice(0, 4).map((cat) => ({
     name: cat.name,
     link: `/category/${cat.slug}`,
@@ -67,6 +67,27 @@ export default function HomePage({ onOpenBooking }) {
   const [statsRef1, n1] = useCountUp(10);
   const [statsRef2, n2] = useCountUp(37);
   const [statsRef3, n3] = useCountUp(5000);
+  const [openHomeFaq, setOpenHomeFaq] = useState(null);
+  const whyChooseItems = HOME?.whyChooseUs?.length
+    ? HOME.whyChooseUs.map((item) => ({
+      title: item.title,
+      body: item.description,
+      icon: HeartHandshake,
+    })).filter((item) => item.title || item.body)
+    : [
+      { icon: HeartHandshake, title: "Personalised protocols", body: "Never a shelf package. Every plan is written to your skin, calendar and season." },
+      { icon: Sparkles, title: "Medical-grade devices", body: "FDA-approved technology, single-use consumables — physician oversight on every visit." },
+      { icon: BadgeCheck, title: "Consultation-first", body: "Your plan is shaped in a complimentary consult — only what your skin actually needs, nothing it doesn't." },
+      { icon: ShieldCheck, title: "Follow-up care", body: "You are never handed off. The same doctor sees you at every visit and follow-up." },
+    ];
+  const homeResults = (RESULTS || []).filter((item) => item.beforeImage || item.afterImage).slice(0, 3);
+  const homeFaqs = (HOME?.faqs || []).filter((faq) => (faq.q || faq.question) && (faq.a || faq.answer));
+  const whyChooseImage =
+    HOME?.whyChooseImage?.url ||
+    HOME?.whyChooseImage?.asset?.asset?.url ||
+    HOME?.whyChooseImage?.asset?.url ||
+    SITE.clinicPhotoUrl ||
+    SITE.heroImageUrl;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -127,8 +148,8 @@ export default function HomePage({ onOpenBooking }) {
       </section>
 
       {/* 2. TRUST BAR */}
-      <section className="bg-[#3D2F23] py-6" data-testid="trust-bar">
-        <div className="container-editorial flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-[13px] md:text-[14px] text-[#FFF7EC]" style={{ fontFamily: "'Poppins', sans-serif" }}>
+      <section className="bg-[#3D2F23] py-7" data-testid="trust-bar">
+        <div className="max-w-[1480px] mx-auto px-4 sm:px-6 lg:px-10 flex flex-wrap items-center justify-center gap-x-10 lg:gap-x-14 gap-y-3 text-[13px] md:text-[14px] text-[#FFF7EC]" style={{ fontFamily: "'Poppins', sans-serif" }}>
           <div className="flex items-center gap-2"><BadgeCheck size={16} className="text-[#F5D89C]" /> Dr-led</div>
           <div className="hidden md:block h-4 w-px bg-[#FFF7EC]/25" />
           <div className="flex items-center gap-2"><ShieldCheck size={16} className="text-[#F5D89C]" /> FDA-approved technology</div>
@@ -145,9 +166,9 @@ export default function HomePage({ onOpenBooking }) {
       <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="categories-section">
         <div className="container-editorial">
           <div className="max-w-2xl mb-14 reveal">
-            <p className="overline mb-3">Explore Our Treatments</p>
-            <h2 className="text-[36px] md:text-[44px] leading-[1.1] mb-4">Four worlds of care, one editorial approach.</h2>
-            <p className="text-body-lg text-[#5C4A38]">From the softest facials to advanced regenerative protocols — designed and supervised by Dr. Omaima Jawed.</p>
+            <p className="overline mb-3">{HOME?.expertiseEyebrow || "Explore Our Treatments"}</p>
+            <h2 className="text-[36px] md:text-[44px] leading-[1.1] mb-4">{HOME?.expertiseHeading || "Explore Our Expertise"}</h2>
+            <p className="text-body-lg text-[#5C4A38]">{HOME?.expertiseDescription || "From the softest facials to advanced regenerative protocols — designed and supervised by Dr. Omaima Jawed."}</p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {homeCategories.map((cat, i) => (
@@ -174,7 +195,34 @@ export default function HomePage({ onOpenBooking }) {
         </div>
       </section>
 
-      {/* 4. SIGNATURE TREATMENTS */}
+      {/* 4. WHY ARTHAM */}
+      <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="why-us">
+        <div className="container-editorial grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="reveal">
+            <p className="overline mb-3">{HOME?.whyChooseEyebrow || "Why Artham"}</p>
+            <h2 className="text-[36px] md:text-[44px] leading-[1.1]">{HOME?.whyChooseHeading || "Why Choose Artham Aesthetics?"}</h2>
+            {HOME?.whyChooseDescription && <p className="text-body-lg text-[#5C4A38] mt-5">{HOME.whyChooseDescription}</p>}
+            <div className="grid sm:grid-cols-2 gap-6 mt-10">
+              {whyChooseItems.map((p, i) => (
+                <div key={p.title || i} className="reveal" style={{ transitionDelay: `${i * 80}ms` }}>
+                  <div className="w-12 h-12 rounded-full bg-white border border-[#b8894a]/50 flex items-center justify-center mb-4">
+                    <p.icon className="text-[#7A3E1D]" size={20} />
+                  </div>
+                  <h4 className="font-display text-xl text-[#3D2F23] mb-2 leading-tight">{p.title}</h4>
+                  <p className="text-[15px] text-[#5C4A38] leading-relaxed">{p.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="reveal" style={{ transitionDelay: "120ms" }}>
+            <div className="aspect-[4/5] rounded-lg overflow-hidden border border-[#b8894a]/25 bg-white">
+              <img src={whyChooseImage} alt="Artham Aesthetique clinic" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. SIGNATURE TREATMENTS */}
       <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="signature-treatments">
         <div className="container-editorial">
           <div className="flex items-end justify-between mb-12 gap-8 flex-wrap reveal">
@@ -210,7 +258,7 @@ export default function HomePage({ onOpenBooking }) {
         </div>
       </section>
 
-      {/* 5. MEET THE DOCTOR */}
+      {/* 6. MEET THE DOCTOR */}
       <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="meet-doctor">
         <div className="container-editorial grid lg:grid-cols-2 gap-16 items-center">
           <div className="relative order-2 lg:order-1 reveal">
@@ -249,7 +297,36 @@ export default function HomePage({ onOpenBooking }) {
         </div>
       </section>
 
-      {/* 6. TESTIMONIALS */}
+      {/* 7. REAL RESULTS */}
+      {homeResults.length > 0 && (
+        <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="home-results">
+          <div className="container-editorial">
+            <div className="max-w-2xl mb-12 reveal">
+              <p className="overline mb-3">Real Results</p>
+              <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Treatment Before and After</h2>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              {homeResults.map((item, index) => (
+                <article key={item._id || index} className="rounded-2xl overflow-hidden border border-[#b8894a]/20 bg-white shadow-sm reveal" style={{ transitionDelay: `${index * 80}ms` }}>
+                  <div className="grid grid-cols-2 gap-[2px]">
+                    {item.beforeImage && <img src={item.beforeImage} alt={`${item.title || "Treatment"} before`} loading="lazy" className="block w-full h-52 object-cover" />}
+                    {item.afterImage && <img src={item.afterImage} alt={`${item.title || "Treatment"} after`} loading="lazy" className="block w-full h-52 object-cover" />}
+                  </div>
+                  <div className="p-5">
+                    <h3 className="font-display text-xl text-[#3D2F23] mb-2">{item.title || item.treatmentName}</h3>
+                    {item.sessionsInfo && <p className="text-[#5C4A38] text-sm">{item.sessionsInfo}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <Link to="/results" className="btn-secondary inline-flex items-center gap-2">View all results <ArrowRight size={15} /></Link>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* 8. TESTIMONIALS */}
       <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="testimonials">
         <div className="container-editorial">
           <div className="max-w-2xl mb-12 reveal">
@@ -277,33 +354,37 @@ export default function HomePage({ onOpenBooking }) {
         </div>
       </section>
 
-      {/* 7. WHY ARTHAM */}
-      <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="why-us">
-        <div className="container-editorial">
-          <div className="max-w-2xl mb-14 reveal">
-            <p className="overline mb-3">Why Artham</p>
-            <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Four quiet reasons patients stay.</h2>
+      {/* 9. FAQ */}
+      {homeFaqs.length > 0 && (
+        <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="home-faqs">
+          <div className="container-editorial grid lg:grid-cols-5 gap-16">
+            <div className="lg:col-span-2 reveal">
+              <p className="overline mb-4">FAQs</p>
+              <h2 className="text-[36px] md:text-[44px] leading-[1.1]">Frequently Asked Questions</h2>
+            </div>
+            <div className="lg:col-span-3 divide-y divide-[#b8894a]/30 border-y border-[#b8894a]/30 reveal" style={{ transitionDelay: "120ms" }}>
+              {homeFaqs.map((faq, i) => {
+                const open = openHomeFaq === i;
+                return (
+                  <div key={faq._key || i}>
+                    <button onClick={() => setOpenHomeFaq(open ? null : i)} className="w-full flex items-center justify-between py-6 text-left">
+                      <span className="font-display text-lg text-[#3D2F23] pr-4">{faq.q || faq.question}</span>
+                      <ChevronDown size={18} className={`text-[#7A3E1D] transition-transform duration-500 ${open ? "rotate-180" : ""}`} />
+                    </button>
+                    <div className={`grid transition-all duration-500 ${open ? "grid-rows-[1fr] pb-6" : "grid-rows-[0fr]"}`}>
+                      <div className="overflow-hidden">
+                        <p className="text-[15px] text-[#5C4A38] leading-relaxed">{faq.a || faq.answer}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: HeartHandshake, title: "Personalised protocols", body: "Never a shelf package. Every plan is written to your skin, calendar and season." },
-              { icon: Sparkles, title: "Medical-grade devices", body: "FDA-approved technology, single-use consumables — physician oversight on every visit." },
-              { icon: BadgeCheck, title: "Consultation-first", body: "Your plan is shaped in a complimentary consult — only what your skin actually needs, nothing it doesn't." },
-              { icon: ShieldCheck, title: "Follow-up care", body: "You are never handed off. The same doctor sees you at every visit and follow-up." },
-            ].map((p, i) => (
-              <div key={p.title} className="reveal" style={{ transitionDelay: `${i * 80}ms` }}>
-                <div className="w-12 h-12 rounded-full bg-white border border-[#b8894a]/50 flex items-center justify-center mb-4">
-                  <p.icon className="text-[#7A3E1D]" size={20} />
-                </div>
-                <h4 className="font-display text-xl text-[#3D2F23] mb-2 leading-tight">{p.title}</h4>
-                <p className="text-[15px] text-[#5C4A38] leading-relaxed">{p.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
+      )}
 
-      {/* 8. JOURNAL TEASER */}
+      {/* 10. JOURNAL TEASER */}
       <section className="bg-white py-20 lg:py-24 border-t border-[#b8894a]/25" data-testid="latest-blog">
         <div className="container-editorial">
           <div className="flex items-end justify-between mb-10 gap-6 flex-wrap reveal">
@@ -359,7 +440,7 @@ export default function HomePage({ onOpenBooking }) {
       </section>
 
       {/* STATS strip (small, moved after main content per revised order) */}
-      <section className="bg-[#7a3f1f] py-12" data-testid="stats-strip">
+      <section className="bg-[#3d2f23] py-12" data-testid="stats-strip">
         <div className="container-editorial grid grid-cols-3 gap-6 text-center">
           <div ref={statsRef1}>
             <div className="font-display text-3xl md:text-4xl text-[#FFF7EC]">{n1}+</div>
