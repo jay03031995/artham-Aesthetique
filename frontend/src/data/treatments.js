@@ -94,11 +94,15 @@ const SKIN = [
   serviceTemplate({
     slug: "hydrafacial-treatment", name: "HydraFacial Treatment", short: "Cleanse, extract, hydrate — in one calm hour.",
     hero: "The gold-standard three-step facial for clean, plump, camera-ready skin.", image: IMG.skin2,
-    duration: "60 min", sessions: "1–6 sessions", priceFrom: "₹5,500",
+    duration: "45–60 minutes", sessions: "1 session", priceFrom: "Rs. 2,000 – Rs. 6,000 per session",
+    quickInfo: {
+      treatmentTime: "45–60 minutes",
+      downtime: "Minimal",
+      results: "1–2 weeks",
+      sessionsRequired: "1 session",
+    },
     pricing: [
-      { label: "Signature (Single)", value: "₹5,500" },
-      { label: "Elite (Single)", value: "₹8,500" },
-      { label: "Signature × 3", value: "₹14,850 (save 10%)" },
+      { label: "Single Session", value: "Rs. 2,000 – Rs. 6,000 per session" },
     ],
     what: "HydraFacial uses patented vortex technology to lift debris from pores while simultaneously infusing serums that hydrate and soothe. It is dermatologist-loved because it works for almost every skin — teen or mature, oily or dry — and requires no downtime.",
     whoFor: ["Congested pores", "Dullness", "Fine lines", "Pre-event", "Every skin type"],

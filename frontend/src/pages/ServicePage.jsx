@@ -39,6 +39,11 @@ export default function ServicePage({ onOpenBooking }) {
   const seoTitle = s.seo?.title || `${s.name} in Noida`;
   const seoDescription = s.seo?.description || s.short;
   const canonicalUrl = s.seo?.canonicalUrl || serviceCanonical(s.slug);
+  const hydrafacialCostLine =
+    baseTreatmentSlug(s.slug) === "hydrafacial-treatment"
+      ? "Cost of Hydrafacial treatment in Noida ranges from Rs. 2,000 to Rs. 6,000 per session."
+      : "";
+  const heroCostCopy = hydrafacialCostLine || s.priceFrom || s.costDescription;
 
   const bookThis = () => onOpenBooking(s.slug);
 
@@ -87,23 +92,20 @@ export default function ServicePage({ onOpenBooking }) {
               {s.heroDescription && <p className="fine text-armadillo/75 leading-relaxed mb-6">{s.heroDescription}</p>}
 
               {/* Quick facts row */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 py-6 border-y border-[#b8894a]/30">
-                {(s.quickInfoRows || []).slice(0, 6).map((row) => (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 py-6 border-y border-[#b8894a]/30">
+                {(s.quickInfoRows || []).slice(0, 4).map((row) => (
                   <div key={row.label}>
                     <div className="flex items-center gap-2 text-[#7A5A2E]"><span className="overline text-[10px] mb-0">{row.label}</span></div>
                     <p className="text-[14px] font-semibold text-[#3D2F23] mt-1">{row.value}</p>
                   </div>
                 ))}
               </div>
-              {(s.priceFrom || s.costDescription) && (
+              {heroCostCopy && (
                 <div className="mb-8 border border-[#b8894a]/30 bg-white/40 px-5 py-4 shadow-[0_18px_45px_-30px_rgba(122,62,29,0.55)]">
                   <p className="overline text-[10px] text-[#7A5A2E] mb-2">{s.costHeading || "Treatment Cost"}</p>
                   <p className="text-[15px] md:text-[16px] font-semibold italic text-[#3D2F23] leading-relaxed">
-                    {s.priceFrom || s.costDescription}
+                    {heroCostCopy}
                   </p>
-                  {s.priceFrom && s.costDescription && (
-                    <p className="fine text-sm text-[#5C4A38] leading-relaxed mt-2">{s.costDescription}</p>
-                  )}
                 </div>
               )}
 
@@ -407,7 +409,7 @@ export default function ServicePage({ onOpenBooking }) {
 )}
 
       {(s.whyChooseHeading || s.whyChooseDescription || s.whyChooseItems?.length > 0) && (
-        <section className="bg-arabian-white py-24 lg:py-28" data-testid="svc-why-choose">
+        <section className="bg-summer-peach py-24 lg:py-28 border-t border-[#b8894a]/25" data-testid="svc-why-choose">
           <div className="container-editorial grid lg:grid-cols-5 gap-16">
             <div className="lg:col-span-2 reveal">
               <p className="overline text-coronation-gold mb-4">Why Choose Us</p>

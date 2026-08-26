@@ -80,7 +80,20 @@ export default function HomePage({ onOpenBooking }) {
       { icon: BadgeCheck, title: "Consultation-first", body: "Your plan is shaped in a complimentary consult — only what your skin actually needs, nothing it doesn't." },
       { icon: ShieldCheck, title: "Follow-up care", body: "You are never handed off. The same doctor sees you at every visit and follow-up." },
     ];
-  const homeResults = (RESULTS || []).filter((item) => item.beforeImage || item.afterImage).slice(0, 3);
+  const serviceResults = ALL_SERVICES.flatMap((service) =>
+    (service.results || []).map((item) => ({
+      ...item,
+      title: item.title || item.treatmentName || service.name,
+      treatmentSlug: item.treatmentSlug || service.slug,
+    })),
+  );
+  const homeResults = [...(RESULTS || []), ...serviceResults]
+    .filter((item) => item.beforeImage || item.afterImage)
+    .filter((item, index, list) => {
+      const key = `${item.beforeImage || ""}|${item.afterImage || ""}`;
+      return list.findIndex((candidate) => `${candidate.beforeImage || ""}|${candidate.afterImage || ""}` === key) === index;
+    })
+    .slice(0, 3);
   const homeFaqs = (HOME?.faqs || []).filter((faq) => (faq.q || faq.question) && (faq.a || faq.answer));
   const whyChooseImage =
     HOME?.whyChooseImage?.url ||
@@ -223,7 +236,7 @@ export default function HomePage({ onOpenBooking }) {
       </section>
 
       {/* 5. SIGNATURE TREATMENTS */}
-      <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="signature-treatments">
+      <section className="bg-[#efdfc8] py-20 lg:py-28 border-t border-[#b8894a]/25" data-testid="signature-treatments">
         <div className="container-editorial">
           <div className="flex items-end justify-between mb-12 gap-8 flex-wrap reveal">
             <div className="max-w-xl">
@@ -299,7 +312,7 @@ export default function HomePage({ onOpenBooking }) {
 
       {/* 7. REAL RESULTS */}
       {homeResults.length > 0 && (
-        <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="home-results">
+        <section className="bg-[#f5e6d0] py-20 lg:py-28 border-t border-[#b8894a]/25" data-testid="home-results">
           <div className="container-editorial">
             <div className="max-w-2xl mb-12 reveal">
               <p className="overline mb-3">Real Results</p>
@@ -327,7 +340,7 @@ export default function HomePage({ onOpenBooking }) {
       )}
 
       {/* 8. TESTIMONIALS */}
-      <section className="bg-[#f5e6d0] py-20 lg:py-28" data-testid="testimonials">
+      <section className="bg-[#efdfc8] py-20 lg:py-28 border-t border-[#b8894a]/25" data-testid="testimonials">
         <div className="container-editorial">
           <div className="max-w-2xl mb-12 reveal">
             <p className="overline mb-3">In Our Guests' Words</p>
