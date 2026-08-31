@@ -434,7 +434,7 @@ export default function ServicePage({ onOpenBooking }) {
       )}
 
       {(s.specialistHeading || s.specialistDescription || s.specialistHighlights?.length > 0) && (
-        <section className="bg-summer-peach py-24 lg:py-28" data-testid="svc-specialist">
+        <section className="bg-arabian-white py-24 lg:py-28 border-t border-[#b8894a]/25" data-testid="svc-specialist">
           <div className="container-editorial grid lg:grid-cols-5 gap-16 items-start">
             <div className="lg:col-span-2 reveal">
               <p className="overline text-coronation-gold mb-4">Doctor Expertise</p>

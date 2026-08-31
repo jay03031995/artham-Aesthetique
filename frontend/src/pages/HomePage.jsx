@@ -42,6 +42,23 @@ const HOME_CATEGORIES = [
 // 6 signature treatments with quick facts
 const SIGNATURE_SLUGS = ["hydrafacial-treatment", "pdrn-skin-boosters", "hifu", "laser-hair-removal", "acne-treatment", "vampire-facial-prp"];
 
+const DUMMY_HOME_RESULTS = [
+  {
+    _id: "dummy-before-after-1",
+    title: "Skin Rejuvenation",
+    sessionsInfo: "Placeholder before & after",
+    beforeImage: "https://placehold.co/600x520/f1d8c7/7A3E1D?text=Before",
+    afterImage: "https://placehold.co/600x520/f8efe3/7A3E1D?text=After",
+  },
+  {
+    _id: "dummy-before-after-2",
+    title: "Texture Refinement",
+    sessionsInfo: "Placeholder before & after",
+    beforeImage: "https://placehold.co/600x520/ead0bd/7A3E1D?text=Before",
+    afterImage: "https://placehold.co/600x520/f7ebdd/7A3E1D?text=After",
+  },
+];
+
 export default function HomePage({ onOpenBooking }) {
   useReveal();
   const { site: SITE, categories: CATEGORIES, allServices: ALL_SERVICES, posts: POSTS, testimonials, home: HOME, results: RESULTS } = useCmsContent();
@@ -87,13 +104,17 @@ export default function HomePage({ onOpenBooking }) {
       treatmentSlug: item.treatmentSlug || service.slug,
     })),
   );
-  const homeResults = [...(RESULTS || []), ...serviceResults]
+  const realHomeResults = [...(RESULTS || []), ...serviceResults]
     .filter((item) => item.beforeImage || item.afterImage)
     .filter((item, index, list) => {
       const key = `${item.beforeImage || ""}|${item.afterImage || ""}`;
       return list.findIndex((candidate) => `${candidate.beforeImage || ""}|${candidate.afterImage || ""}` === key) === index;
     })
     .slice(0, 3);
+  const homeResults = [
+    ...realHomeResults,
+    ...DUMMY_HOME_RESULTS.slice(0, Math.max(0, 3 - realHomeResults.length)),
+  ];
   const homeFaqs = (HOME?.faqs || []).filter((faq) => (faq.q || faq.question) && (faq.a || faq.answer));
   const whyChooseImage =
     HOME?.whyChooseImage?.url ||
@@ -272,7 +293,7 @@ export default function HomePage({ onOpenBooking }) {
       </section>
 
       {/* 6. MEET THE DOCTOR */}
-      <section className="bg-[#efdfc8] py-20 lg:py-28" data-testid="meet-doctor">
+      <section className="bg-[#f8eddd] py-20 lg:py-28 border-t border-[#b8894a]/25" data-testid="meet-doctor">
         <div className="container-editorial grid lg:grid-cols-2 gap-16 items-center">
           <div className="relative order-2 lg:order-1 reveal">
             <div className="bg-[#f5e6d0] rounded-lg overflow-hidden aspect-[4/5] flex items-end justify-center">
