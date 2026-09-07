@@ -89,6 +89,13 @@ const NAV_ITEMS = [
   { label: "Contact us", href: "/contact" },
 ];
 
+const FALLBACK_LOGO_URL = "/media/logo.png";
+
+const useFallbackLogo = (event) => {
+  if (event.currentTarget.src.endsWith(FALLBACK_LOGO_URL)) return;
+  event.currentTarget.src = FALLBACK_LOGO_URL;
+};
+
 export default function Header({ onOpenBooking }) {
   const { site: SITE, categories, megaGroups } = useCmsContent();
   const [scrolled, setScrolled] = useState(false);
@@ -166,6 +173,7 @@ export default function Header({ onOpenBooking }) {
             <img
               src={SITE.logoUrl}
               alt="Artham Aesthetique lotus logo"
+              onError={useFallbackLogo}
               className="h-14 w-14 lg:h-16 lg:w-16 object-contain transition-transform duration-500 group-hover:scale-105"
             />
           </Link>
@@ -341,7 +349,7 @@ export default function Header({ onOpenBooking }) {
       >
         <div className="flex items-center justify-between h-[70px] container-editorial border-b border-[#b8894a]/40">
           <Link to="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
-            <img src={SITE.logoUrl} alt="Artham Aesthetique lotus logo" className="h-12 w-12 object-contain" />
+            <img src={SITE.logoUrl} alt="Artham Aesthetique lotus logo" onError={useFallbackLogo} className="h-12 w-12 object-contain" />
           </Link>
           <button data-testid="mobile-drawer-close" onClick={() => setMobileOpen(false)} className="text-[#3D2F23] p-2" aria-label="Close menu"><X size={24} /></button>
         </div>

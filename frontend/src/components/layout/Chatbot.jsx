@@ -4,6 +4,12 @@ import { streamChat } from "../../lib/api";
 import { useCmsContent, cmsWhatsAppLink } from "../../lib/cmsContent";
 
 const uuid = () => Math.random().toString(36).slice(2) + Date.now().toString(36);
+const FALLBACK_LOGO_URL = "/media/logo.png";
+
+const useFallbackLogo = (event) => {
+  if (event.currentTarget.src.endsWith(FALLBACK_LOGO_URL)) return;
+  event.currentTarget.src = FALLBACK_LOGO_URL;
+};
 
 export default function Chatbot({ onOpenBooking }) {
   const { site: SITE } = useCmsContent();
@@ -70,7 +76,7 @@ export default function Chatbot({ onOpenBooking }) {
           open ? "opacity-0 scale-90 pointer-events-none" : "opacity-100 scale-100"
         }`}
       >
-        <img src={SITE.logoUrl} alt="" className="w-9 h-9 object-contain" />
+        <img src={SITE.logoUrl} alt="" onError={useFallbackLogo} className="w-9 h-9 object-contain" />
       </button>
 
       {/* Panel */}
@@ -83,7 +89,7 @@ export default function Chatbot({ onOpenBooking }) {
         <div className="flex items-center justify-between p-4 border-b border-coronation-gold/30 bg-armadillo text-arabian-white">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-full bg-arabian-white/10 flex items-center justify-center overflow-hidden">
-              <img src={SITE.logoUrl} alt="" className="w-full h-full object-contain" />
+              <img src={SITE.logoUrl} alt="" onError={useFallbackLogo} className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="font-display text-base leading-tight">Aara · Artham Concierge</div>
