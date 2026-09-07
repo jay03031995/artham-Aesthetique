@@ -450,5 +450,5 @@ export const seoTreatmentSlug = (slug = "") => {
 };
 
 export const servicePath = (slug) => (slug ? `/${seoTreatmentSlug(slug)}` : "/");
-export const serviceCanonical = (slug) => (slug ? `https://arthamaesthetic.com/${seoTreatmentSlug(slug)}` : "");
-export const categoryCanonical = (slug) => (slug ? `https://arthamaesthetic.com/category/${slug}` : "");
+export const serviceCanonical = (slug) => (slug ? `https://www.arthamaesthetique.com/${seoTreatmentSlug(slug)}` : "");
+export const categoryCanonical = (slug) => (slug ? `https://www.arthamaesthetique.com/category/${slug}` : "");
