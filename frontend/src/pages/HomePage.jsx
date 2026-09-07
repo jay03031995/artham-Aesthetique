@@ -116,12 +116,7 @@ export default function HomePage({ onOpenBooking }) {
     ...DUMMY_HOME_RESULTS.slice(0, Math.max(0, 3 - realHomeResults.length)),
   ];
   const homeFaqs = (HOME?.faqs || []).filter((faq) => (faq.q || faq.question) && (faq.a || faq.answer));
-  const whyChooseImage =
-    HOME?.whyChooseImage?.url ||
-    HOME?.whyChooseImage?.asset?.asset?.url ||
-    HOME?.whyChooseImage?.asset?.url ||
-    SITE.clinicPhotoUrl ||
-    SITE.heroImageUrl;
+  const whyChooseImage = SITE.clinicPhotoUrl || SITE.heroImageUrl;
 
   const jsonLd = {
     "@context": "https://schema.org",

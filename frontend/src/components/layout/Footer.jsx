@@ -11,6 +11,13 @@ const XIcon = ({ size = 16 }) => (
   </svg>
 );
 
+const FALLBACK_FOOTER_LOGO_URL = "/media/footer-logo.png";
+
+const useFallbackFooterLogo = (event) => {
+  if (event.currentTarget.src.endsWith(FALLBACK_FOOTER_LOGO_URL)) return;
+  event.currentTarget.src = FALLBACK_FOOTER_LOGO_URL;
+};
+
 export default function Footer() {
   const { site: SITE, categories: CATEGORIES, footer } = useCmsContent();
   const [email, setEmail] = useState("");
@@ -47,7 +54,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="col-span-2 md:col-span-6 lg:col-span-4">
             <div className="flex items-center mb-6">
-              <img src={SITE.footerLogoUrl} alt="Artham Aesthetique lotus" className="h-20 w-20 object-contain rounded-md" />
+              <img src={SITE.footerLogoUrl} alt="Artham Aesthetique lotus" onError={useFallbackFooterLogo} className="h-20 w-20 object-contain rounded-md" />
             </div>
             <p className="fine text-arabian-white/70 text-sm max-w-sm leading-relaxed">
               {footer?.brandText || "A dr-led clinic in Noida — where medical rigour meets a slower, editorial approach to skin, hair and body."}

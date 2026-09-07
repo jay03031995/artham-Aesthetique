@@ -2,6 +2,12 @@
   "redirects": [
     {
       "source": "/:path*",
+      "has": [{ "type": "host", "value": "arthamaesthetique.com" }],
+      "destination": "https://www.arthamaesthetique.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
       "has": [{ "type": "host", "value": "arthamaesthetic.com" }],
       "destination": "https://www.arthamaesthetique.com/:path*",
       "permanent": true
