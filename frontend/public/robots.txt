@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://arthamaesthetic.com/sitemap.xml
+Sitemap: https://www.arthamaesthetique.com/sitemap.xml

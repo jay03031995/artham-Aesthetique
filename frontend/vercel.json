@@ -1,4 +1,18 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "arthamaesthetic.com" }],
+      "destination": "https://www.arthamaesthetique.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.arthamaesthetic.com" }],
+      "destination": "https://www.arthamaesthetique.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     { "source": "/studio/:path*", "destination": "/studio/index.html" },
     { "source": "/:path*", "destination": "/index.html" }
