@@ -20,6 +20,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/studio/:path*", "destination": "/studio/index.html" },
     { "source": "/:path*", "destination": "/index.html" }
   ]
