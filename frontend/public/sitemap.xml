@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://www.arthamaesthetique.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/</loc><lastmod>2026-08-21T12:11:09.000Z</lastmod><priority>1.0</priority></url>
   <url><loc>https://www.arthamaesthetique.com/doctors</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/doctors/dr-omaima-jawed</loc><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/doctors/dr-omaima-jawed</loc><lastmod>2026-07-24T13:15:21.000Z</lastmod><priority>0.8</priority></url>
   <url><loc>https://www.arthamaesthetique.com/blog</loc><priority>0.7</priority></url>
   <url><loc>https://www.arthamaesthetique.com/results</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/about</loc><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/about</loc><lastmod>2026-07-16T11:12:12.000Z</lastmod><priority>0.7</priority></url>
   <url><loc>https://www.arthamaesthetique.com/contact</loc><priority>0.8</priority></url>
   <url><loc>https://www.arthamaesthetique.com/faq</loc><priority>0.6</priority></url>
   <url><loc>https://www.arthamaesthetique.com/careers</loc><priority>0.4</priority></url>
@@ -15,53 +15,66 @@
   <url><loc>https://www.arthamaesthetique.com/policies/privacy</loc><priority>0.3</priority></url>
   <url><loc>https://www.arthamaesthetique.com/policies/refund</loc><priority>0.3</priority></url>
   <url><loc>https://www.arthamaesthetique.com/policies/cancellation</loc><priority>0.3</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/category/skin</loc><priority>0.8</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/category/anti-ageing</loc><priority>0.8</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/category/laser-hair-removal</loc><priority>0.8</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/category/hair</loc><priority>0.8</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/category/body</loc><priority>0.8</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/category/bridal</loc><priority>0.8</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hello-bright-zo-obagi</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/derma-genesis-facial</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hydrafacial-treatment</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/acne-treatment</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/preime-dermafacial</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/pdrn-skin-boosters</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/permanent-makeup</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/good-gene-therapy</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/nad-iv-infusion</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/vampire-facial-prp</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hydrafacial-elite</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/microdermabrasion</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/chemical-peel</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/micro-needling</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/4d-clearlift</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/dermal-fillers</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/mesobotox</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/opus-plasma</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hifu</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hydration-injections</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/morpheus</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/skin-tightening</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/laser-hair-removal</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/laser-hair-removal-men</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/laser-hair-removal-women</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/advanced-hair-transplant</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hair-loss-treatment</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/hair-patch-treatment</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/med-contour</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/body-shaping-figure-correction</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/contour-cheeks</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/coolsculpting</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/weight-loss-treatment</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/chin-enhancement</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/jawline-definition</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/face-lifting</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/wedding-package</loc><priority>0.7</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/blog/how-to-read-your-skin-before-a-facial</loc><priority>0.5</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/blog/the-quiet-case-for-restraint-in-injectables</loc><priority>0.5</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/blog/laser-hair-removal-on-south-asian-skin</loc><priority>0.5</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/blog/hair-loss-what-actually-helps</loc><priority>0.5</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/blog/coolsculpting-and-what-it-cannot-do</loc><priority>0.5</priority></url>
-  <url><loc>https://www.arthamaesthetique.com/blog/the-six-month-bridal-runway</loc><priority>0.5</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/skin</loc><lastmod>2026-07-24T13:12:52.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/anti-ageing</loc><lastmod>2026-07-24T13:07:39.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/laser-hair-removal</loc><lastmod>2026-07-24T13:08:59.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/hair</loc><lastmod>2026-07-24T13:12:14.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/body</loc><lastmod>2026-07-24T13:10:04.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/bridal</loc><lastmod>2026-07-24T13:10:54.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/category/permanent-makeup</loc><lastmod>2026-08-05T07:29:01.000Z</lastmod><priority>0.8</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/advanced-hair-transplant-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/dermal-fillers-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hello-bright-zo-obagi-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/laser-hair-removal-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/med-contour-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/microblading-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/wedding-package-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/body-shaping-figure-correction-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/derma-facial-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hair-loss-treatment-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/laser-hair-removal-men-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/mesobotox-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/nanoblading-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/acne-treatment-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/contour-cheeks-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hair-patch-treatment-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hydrafacial-treatment-in-noida</loc><lastmod>2026-08-21T12:20:16.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/laser-hair-removal-women-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/ombre-powder-brows-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/opus-plasma-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/combination-brows-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/coolsculpting-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hifu-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/brows-correction-shape-colour-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hydration-injections-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/preime-dermafacial-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/weight-loss-treatment-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/chin-enhancement-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/lip-tint-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/morpheus-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/pdrn-skin-boosters-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/jawline-definition-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/lip-blush-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/permanent-makeup-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/skin-tightening-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/face-lifting-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/good-gene-therapy-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/lip-correction-neutralisation-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/nad-iv-infusion-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/scalp-micropigmentation-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/permanent-beauty-mark-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/vampire-facial-prp-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/eyelash-lift-and-tint-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/hydrafacial-elite-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/eyebrow-lamination-and-tint-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/microdermabrasion-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/chemical-peel-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/micro-needling-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/4d-clearlift-in-noida</loc><lastmod>2026-08-06T12:54:31.000Z</lastmod><priority>0.7</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/blog/the-six-month-bridal-runway</loc><lastmod>2026-08-07T10:54:12.000Z</lastmod><priority>0.5</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/blog/coolsculpting-and-what-it-cannot-do</loc><lastmod>2026-08-07T10:51:16.000Z</lastmod><priority>0.5</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/blog/hair-loss-what-actually-helps</loc><lastmod>2026-08-07T10:50:32.000Z</lastmod><priority>0.5</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/blog/laser-hair-removal-on-south-asian-skin</loc><lastmod>2026-08-07T10:49:33.000Z</lastmod><priority>0.5</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/blog/the-quiet-case-for-restraint-in-injectables</loc><lastmod>2026-08-07T10:48:45.000Z</lastmod><priority>0.5</priority></url>
+  <url><loc>https://www.arthamaesthetique.com/blog/how-to-read-your-skin-before-a-facial</loc><lastmod>2026-08-07T10:47:52.000Z</lastmod><priority>0.5</priority></url>
 </urlset>
